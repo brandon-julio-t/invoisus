@@ -60,14 +60,11 @@ Reminder:
 Please use computer technology to open and analyze the image file, and provide a detailed detection report.
 `.trim();
 
-const FOR_DEV_SPEED_PRESET = 1 === 1 ? "fast" : "slow";
-
-const model =
-  FOR_DEV_SPEED_PRESET === "fast" ? openai("gpt-5-nano") : openai("gpt-5-mini");
+const model = openai("gpt-5");
 
 const providerOptions = {
   openai: {
-    reasoningEffort: FOR_DEV_SPEED_PRESET === "fast" ? "minimal" : "medium",
+    reasoningEffort: "medium",
   } satisfies OpenAIResponsesProviderOptions,
 };
 
