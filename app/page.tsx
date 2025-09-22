@@ -26,16 +26,18 @@ import { api } from "@/convex/_generated/api";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
-import { format } from "date-fns";
-import { CheckIcon, HourglassIcon, Loader2Icon, XIcon } from "lucide-react";
-import React from "react";
+import { CheckIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const fileUploadSchema = z.object({
-  files: z.array(z.instanceof(File)),
-  fileUrls: z.array(z.string()),
+  files: z.array(
+    z.object({
+      rawFile: z.instanceof(File),
+      status: z.enum(["pending", "uploading", "success", "error"]),
+    }),
+  ),
 });
 
 type FileUploadForm = z.infer<typeof fileUploadSchema>;
@@ -45,9 +47,10 @@ const HomePage = () => {
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
-      fileUrls: [],
     },
   });
+
+  const uploadFile = useUploadFile(api.r2);
 
   const handleEnqueueAiInvoiceAnalysis = useMutation(
     api.myFunctions.handleEnqueueAiInvoiceAnalysis,
@@ -56,17 +59,54 @@ const HomePage = () => {
   const onSubmit = form.handleSubmit(async (data) => {
     console.log(data);
 
-    if (data.fileUrls.length <= 0) {
+    if (data.files.length <= 0) {
       toast.error("No files uploaded", {
         description: "Please upload at least one file",
       });
       return;
     }
 
+    const uploadedFiles: Array<{
+      name: string;
+      size: number;
+      type: string;
+      fileKey: string;
+    }> = [];
+
+    await Promise.all(
+      data.files.map(async (fileItem, index) => {
+        const file = fileItem.rawFile;
+
+        try {
+          form.setValue(`files.${index}.status`, "uploading");
+
+          const uploadedFileKey = await toast
+            .promise(uploadFile(file), {
+              loading: `Uploading "${file.name}"...`,
+              success: `"${file.name}" uploaded successfully`,
+              error: `Failed to upload "${file.name}"`,
+            })
+            .unwrap();
+
+          uploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            fileKey: uploadedFileKey,
+          });
+
+          form.setValue(`files.${index}.status`, "success");
+        } catch (error) {
+          console.error(error);
+          form.setValue(`files.${index}.status`, "error");
+        }
+      }),
+    );
+
     await toast
       .promise(
         handleEnqueueAiInvoiceAnalysis({
-          fileUrls: data.fileUrls,
+          files: uploadedFiles,
         }),
         {
           loading: "Submitting invoice analysis request...",
@@ -94,8 +134,10 @@ const HomePage = () => {
                     accept={{ "application/pdf": [] }}
                     onDrop={(files: File[]) => {
                       form.reset({
-                        files,
-                        fileUrls: [],
+                        files: files.map((file) => ({
+                          rawFile: file,
+                          status: "pending",
+                        })),
                       });
                     }}
                     onError={(err) => {
@@ -105,7 +147,11 @@ const HomePage = () => {
                         description: err.message,
                       });
                     }}
-                    src={field.value.length ? field.value : undefined}
+                    src={
+                      field.value.length
+                        ? field.value.map((f) => f.rawFile)
+                        : undefined
+                    }
                   >
                     <DropzoneEmptyState />
                     <DropzoneContent />
@@ -118,6 +164,17 @@ const HomePage = () => {
           />
 
           <DropzoneCustomContent form={form} />
+
+          <section className="flex justify-end">
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                <SendIcon />
+              )}
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </section>
         </form>
       </Form>
     </main>
@@ -142,22 +199,16 @@ function DropzoneCustomContent({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1">{/* upload status */}</TableHead>
+            <TableHead className="w-1">{/* status */}</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Size</TableHead>
             <TableHead>Type</TableHead>
-            <TableHead>Last Modified</TableHead>
             <TableHead className="w-1">{/* actions */}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {files.map((file, index) => (
-            <TableRowFile
-              key={`${file.name}-${index}`}
-              form={form}
-              file={file}
-              index={index}
-            />
+            <TableRowFile key={index} form={form} index={index} />
           ))}
         </TableBody>
       </Table>
@@ -167,14 +218,13 @@ function DropzoneCustomContent({
 
 function TableRowFile({
   form,
-  file,
   index,
 }: {
   form: UseFormReturn<FileUploadForm>;
-  file: File;
   index: number;
 }) {
-  const uploadFile = useUploadFile(api.r2);
+  const fileItem = form.watch(`files.${index}`);
+  const file = fileItem.rawFile;
 
   // Format file size in human readable format
   const formatFileSize = (bytes: number) => {
@@ -182,75 +232,31 @@ function TableRowFile({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return (
+      Number(
+        (bytes / Math.pow(k, i)).toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+        }),
+      ) +
+      " " +
+      sizes[i]
+    );
   };
-
-  const [uploadStatus, setUploadStatus] = React.useState<
-    "pending" | "success" | "error"
-  >("pending");
-
-  const [isLoading, startTransition] = React.useTransition();
-
-  React.useEffect(() => {
-    if (isLoading || uploadStatus !== "pending") {
-      return;
-    }
-
-    startTransition(async () => {
-      // TODO: change this when Cloudflare R2 is ready
-      const promise =
-        new Promise<string>((resolve) => {
-          setTimeout(() => {
-            resolve("https://www.google.com");
-          }, 1000);
-        }) ?? uploadFile(file);
-
-      await toast
-        .promise(promise, {
-          loading: `Uploading file "${file.name}"...`,
-
-          success: (uploadedFileUrl) => {
-            setUploadStatus("success");
-
-            form.setValue("fileUrls", [
-              ...form.getValues("fileUrls"),
-              uploadedFileUrl,
-            ]);
-
-            return `File "${file.name}" uploaded successfully`;
-          },
-
-          error: (error) => {
-            console.error(error);
-            setUploadStatus("error");
-            return `Failed to upload file "${file.name}"`;
-          },
-        })
-        .unwrap();
-    });
-  }, [file, form, isLoading, uploadFile, uploadStatus]);
 
   return (
     <TableRow>
       <TableCell className="w-1">
-        {isLoading ? (
-          <Loader2Icon className="size-(--text-sm) animate-spin" />
-        ) : (
-          <>
-            {uploadStatus === "success" ? (
-              <CheckIcon className="size-(--text-sm) text-success" />
-            ) : uploadStatus === "error" ? (
-              <XIcon className="size-(--text-sm) text-destructive" />
-            ) : uploadStatus === "pending" ? (
-              <HourglassIcon className="size-(--text-sm) text-warning" />
-            ) : null}
-          </>
-        )}
+        {fileItem.status === "success" ? (
+          <CheckIcon className="text-success size-(--text-sm)" />
+        ) : fileItem.status === "error" ? (
+          <XIcon className="text-destructive size-(--text-sm)" />
+        ) : fileItem.status === "uploading" ? (
+          <Loader2Icon className="animate-spin size-(--text-sm)" />
+        ) : null}
       </TableCell>
       <TableCell className="font-medium">{file.name}</TableCell>
       <TableCell>{formatFileSize(file.size)}</TableCell>
       <TableCell>{file.type || "Unknown"}</TableCell>
-      <TableCell>{format(file.lastModified, "PPPp")}</TableCell>
       <TableCell className="w-1">
         <Button
           type="button"
