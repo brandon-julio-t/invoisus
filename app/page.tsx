@@ -223,11 +223,11 @@ function TableRowFile({
         ) : (
           <>
             {uploadStatus === "success" ? (
-              <CheckIcon />
+              <CheckIcon className="text-success" />
             ) : uploadStatus === "error" ? (
-              <XIcon />
+              <XIcon className="text-destructive" />
             ) : uploadStatus === "pending" ? (
-              <HourglassIcon />
+              <HourglassIcon className="text-warning" />
             ) : null}
           </>
         )}
