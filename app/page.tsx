@@ -63,16 +63,18 @@ const HomePage = () => {
       return;
     }
 
-    toast.promise(
-      handleEnqueueAiInvoiceAnalysis({
-        fileUrls: data.fileUrls,
-      }),
-      {
-        loading: "Submitting invoice analysis request...",
-        success: "Invoice analysis request submitted successfully",
-        error: "Failed to submit invoice analysis request",
-      },
-    );
+    await toast
+      .promise(
+        handleEnqueueAiInvoiceAnalysis({
+          fileUrls: data.fileUrls,
+        }),
+        {
+          loading: "Submitting invoice analysis request...",
+          success: "Invoice analysis request submitted successfully",
+          error: "Failed to submit invoice analysis request",
+        },
+      )
+      .unwrap();
   });
 
   return (
