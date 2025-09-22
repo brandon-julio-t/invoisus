@@ -52,6 +52,7 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
         await ctx.db.patch(analysisWorkflowDetail._id, {
           status: "failed",
           errorMessage: errorMessage,
+          problemExistanceType: "certainly has problem",
         });
       } else if (args.result.kind === "canceled") {
         await ctx.db.patch(analysisWorkflowDetail._id, {
