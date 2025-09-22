@@ -98,7 +98,7 @@ export const WorkflowDetailsTable = ({
                                       className="*:border-border hover:bg-background [&>:not(:last-child)]:border-r"
                                     >
                                       <TableCell className="bg-muted/50 py-2 font-medium w-1/3">
-                                        {key}
+                                        {formatKeyLabel(key)}
                                       </TableCell>
                                       <TableCell className="py-2">
                                         {value}
@@ -184,4 +184,11 @@ const formatFileSize = (bytes: number) => {
   const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
+
+const formatKeyLabel = (key: string) => {
+  // Convert camelCase to human readable format
+  return key
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
 };
