@@ -16,9 +16,7 @@ export const updateAnalysisWorkflowDetail = internalMutation({
 
     const { id, data } = args;
 
-    await ctx.db.patch(id, {
-      analysisResult: data.analysisResult,
-    });
+    await ctx.db.patch(id, data);
   },
 });
 
