@@ -3,6 +3,6 @@ import { components } from "./_generated/api";
 
 export const workflow = new WorkflowManager(components.workflow, {
   workpoolOptions: {
-    // retryActionsByDefault: true,
+    retryActionsByDefault: true,
   },
 });
