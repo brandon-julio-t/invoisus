@@ -29,7 +29,7 @@ import { useMutation } from "convex/react";
 import { format } from "date-fns";
 import { CheckIcon, HourglassIcon, Loader2Icon, XIcon } from "lucide-react";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -93,8 +93,10 @@ const HomePage = () => {
                     maxFiles={1_000}
                     accept={{ "application/pdf": [] }}
                     onDrop={(files: File[]) => {
-                      console.log(files);
-                      field.onChange(files);
+                      form.reset({
+                        files,
+                        fileUrls: [],
+                      });
                     }}
                     onError={(err) => {
                       console.error(err);
@@ -111,14 +113,11 @@ const HomePage = () => {
                 </FormControl>
 
                 <FormMessage />
-
-                <DropzoneCustomContent
-                  files={field.value}
-                  onChange={field.onChange}
-                />
               </FormItem>
             )}
           />
+
+          <DropzoneCustomContent form={form} />
         </form>
       </Form>
     </main>
@@ -126,12 +125,12 @@ const HomePage = () => {
 };
 
 function DropzoneCustomContent({
-  files,
-  onChange,
+  form,
 }: {
-  files: File[];
-  onChange: (files: File[]) => void;
+  form: UseFormReturn<FileUploadForm>;
 }) {
+  const files = form.watch("files");
+
   if (files.length === 0) {
     return null;
   }
@@ -154,10 +153,9 @@ function DropzoneCustomContent({
         <TableBody>
           {files.map((file, index) => (
             <TableRowFile
-              key={index}
+              key={`${file.name}-${index}`}
+              form={form}
               file={file}
-              onChange={onChange}
-              files={files}
               index={index}
             />
           ))}
@@ -168,14 +166,12 @@ function DropzoneCustomContent({
 }
 
 function TableRowFile({
+  form,
   file,
-  onChange,
-  files,
   index,
 }: {
+  form: UseFormReturn<FileUploadForm>;
   file: File;
-  onChange: (files: File[]) => void;
-  files: File[];
   index: number;
 }) {
   const uploadFile = useUploadFile(api.r2);
@@ -196,15 +192,34 @@ function TableRowFile({
   const [isLoading, startTransition] = React.useTransition();
 
   React.useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || uploadStatus !== "pending") {
+      return;
+    }
+
     startTransition(async () => {
+      // TODO: change this when Cloudflare R2 is ready
+      const promise =
+        new Promise<string>((resolve) => {
+          setTimeout(() => {
+            resolve("https://www.google.com");
+          }, 1000);
+        }) ?? uploadFile(file);
+
       await toast
-        .promise(uploadFile(file), {
+        .promise(promise, {
           loading: `Uploading file "${file.name}"...`,
-          success: () => {
+
+          success: (uploadedFileUrl) => {
             setUploadStatus("success");
+
+            form.setValue("fileUrls", [
+              ...form.getValues("fileUrls"),
+              uploadedFileUrl,
+            ]);
+
             return `File "${file.name}" uploaded successfully`;
           },
+
           error: (error) => {
             console.error(error);
             setUploadStatus("error");
@@ -213,21 +228,21 @@ function TableRowFile({
         })
         .unwrap();
     });
-  }, [file, isLoading, uploadFile]);
+  }, [file, form, isLoading, uploadFile, uploadStatus]);
 
   return (
     <TableRow>
       <TableCell className="w-1">
         {isLoading ? (
-          <Loader2Icon className="animate-spin" />
+          <Loader2Icon className="size-(--text-sm) animate-spin" />
         ) : (
           <>
             {uploadStatus === "success" ? (
-              <CheckIcon className="text-success" />
+              <CheckIcon className="size-(--text-sm) text-success" />
             ) : uploadStatus === "error" ? (
-              <XIcon className="text-destructive" />
+              <XIcon className="size-(--text-sm) text-destructive" />
             ) : uploadStatus === "pending" ? (
-              <HourglassIcon className="text-warning" />
+              <HourglassIcon className="size-(--text-sm) text-warning" />
             ) : null}
           </>
         )}
@@ -238,11 +253,13 @@ function TableRowFile({
       <TableCell>{format(file.lastModified, "PPPp")}</TableCell>
       <TableCell className="w-1">
         <Button
+          type="button"
           size="icon"
+          variant="ghost"
           onClick={() => {
-            const newFiles = [...files];
+            const newFiles = form.getValues("files");
             newFiles.splice(index, 1);
-            onChange(newFiles);
+            form.setValue("files", newFiles);
 
             toast.success(`File "${file.name}" removed successfully`);
           }}
