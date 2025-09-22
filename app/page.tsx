@@ -27,6 +27,7 @@ import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { CheckIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -43,6 +44,8 @@ const fileUploadSchema = z.object({
 type FileUploadForm = z.infer<typeof fileUploadSchema>;
 
 const HomePage = () => {
+  const router = useRouter();
+
   const form = useForm<FileUploadForm>({
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
@@ -53,7 +56,7 @@ const HomePage = () => {
   const uploadFile = useUploadFile(api.r2);
 
   const handleEnqueueAiInvoiceAnalysis = useMutation(
-    api.myFunctions.handleEnqueueAiInvoiceAnalysis,
+    api.domains.analyzeInvoice.mutations.handleEnqueueAiInvoiceAnalysis,
   );
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -103,7 +106,7 @@ const HomePage = () => {
       }),
     );
 
-    await toast
+    const analysisWorkflowHeaderId = await toast
       .promise(
         handleEnqueueAiInvoiceAnalysis({
           files: uploadedFiles,
@@ -115,6 +118,8 @@ const HomePage = () => {
         },
       )
       .unwrap();
+
+    router.push(`/workflows/${analysisWorkflowHeaderId}`);
   });
 
   return (
