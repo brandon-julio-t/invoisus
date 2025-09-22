@@ -27,6 +27,7 @@ import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { CheckIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
@@ -123,7 +124,13 @@ const HomePage = () => {
   });
 
   return (
-    <main className="container mx-auto py-16">
+    <main className="container mx-auto py-8 space-y-6">
+      <section>
+        <Button variant="outline" asChild>
+          <Link href="/workflows">View Workflows</Link>
+        </Button>
+      </section>
+
       <Form {...form}>
         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
           <FormField

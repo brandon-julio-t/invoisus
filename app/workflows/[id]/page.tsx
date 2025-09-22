@@ -15,6 +15,9 @@ import { useParams } from "next/navigation";
 import { WorkflowDetailsTable } from "./_components/workflow-details-table";
 import React from "react";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ChevronLeftIcon } from "lucide-react";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -43,6 +46,15 @@ const WorkflowDetailPage = () => {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
+      <section>
+        <Button variant="outline" asChild>
+          <Link href="/workflows">
+            <ChevronLeftIcon />
+            Back to Workflows
+          </Link>
+        </Button>
+      </section>
+
       <Card>
         <CardHeader>
           <CardTitle>Workflow Overview</CardTitle>
