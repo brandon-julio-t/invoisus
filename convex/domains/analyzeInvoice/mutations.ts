@@ -37,6 +37,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
             internal.domains.analyzeInvoice.internalMutations
               .aiInvoiceAnalysisWorkflowComplete,
           context: analysisWorkflowHeaderId,
+          startAsync: true,
         },
       );
 

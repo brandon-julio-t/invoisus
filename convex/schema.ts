@@ -26,6 +26,10 @@ export default defineSchema({
     ),
     errorMessage: v.optional(v.string()),
     analysisResult: v.optional(v.string()),
+    dataExtractionResult: v.optional(v.record(v.string(), v.string())),
+    problemExistanceType: v.optional(
+      v.union(v.literal("certainly has problem"), v.literal("not certain")),
+    ),
   }).index("by_analysis_workflow_header_id_and_workflow_id", [
     "analysisWorkflowHeaderId",
     "workflowId",

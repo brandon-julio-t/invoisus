@@ -1,8 +1,10 @@
 import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
 import { partial } from "convex-helpers/validators";
+import { FunctionReturnType } from "convex/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
+import { internal } from "../../_generated/api";
 import { internalMutation } from "../../_generated/server";
 import schema from "../../schema";
 
@@ -46,12 +48,17 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
     }
 
     if (args.result.kind === "success") {
-      const analysisResult = args.result.returnValue.data;
+      const analysisResult: FunctionReturnType<
+        typeof internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi
+      > = args.result.returnValue.data;
 
       await ctx.db.patch(analysisWorkflowDetail._id, {
         status: "success",
         errorMessage: undefined,
-        analysisResult: analysisResult,
+        analysisResult: analysisResult.analysisResult,
+        dataExtractionResult: analysisResult.dataExtractionResult,
+        problemExistanceType:
+          analysisResult.dataExtractionResult.problemExistanceType,
       });
     } else if (args.result.kind === "failed") {
       const errorMessage = args.result.error;

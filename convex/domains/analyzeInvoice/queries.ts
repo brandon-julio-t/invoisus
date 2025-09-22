@@ -1,5 +1,6 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
+import { components } from "../../_generated/api";
 import { query } from "../../_generated/server";
 
 export const getPaginatedAnalysisWorkflowHeaders = query({
@@ -34,7 +35,20 @@ export const getAnalysisWorkflowDetail = query({
 
     return {
       header,
-      details,
+      details: await Promise.all(
+        details.map(async (detail) => {
+          const workflowStatus = await ctx
+            .runQuery(components.workflow.workflow.getStatus, {
+              workflowId: detail.workflowId,
+            })
+            .catch(() => null);
+
+          return {
+            ...detail,
+            workflowStatus,
+          };
+        }),
+      ),
     };
   },
 });

@@ -1,10 +1,5 @@
 "use client";
 
-import React from "react";
-import { useParams } from "next/navigation";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import {
   Card,
   CardContent,
@@ -12,20 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { format } from "date-fns";
+import { useParams } from "next/navigation";
+import { WorkflowDetailsTable } from "./_components/workflow-details-table";
+import React from "react";
+import { Separator } from "@/components/ui/separator";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -48,28 +37,9 @@ const WorkflowDetailPage = () => {
 
   const { header, details } = workflowData;
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case "success":
-        return "default";
-      case "failed":
-        return "destructive";
-      case "processing":
-        return "secondary";
-      case "queued":
-        return "outline";
-      default:
-        return "outline";
-    }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
+  const problemExistances = Array.from(
+    new Set(details.map((detail) => detail.problemExistanceType)),
+  );
 
   return (
     <div className="container mx-auto py-8 space-y-6">
@@ -77,7 +47,7 @@ const WorkflowDetailPage = () => {
         <CardHeader>
           <CardTitle>Workflow Overview</CardTitle>
           <CardDescription>
-            Created on {new Date(header._creationTime).toLocaleString()}
+            Created on {format(header._creationTime, "PPPPpppp")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -100,68 +70,34 @@ const WorkflowDetailPage = () => {
             workflow
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>File Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Analysis Result</TableHead>
-                <TableHead>Error</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {details.map((detail) => (
-                <TableRow key={detail._id}>
-                  <TableCell className="font-medium">
-                    {detail.fileName}
-                  </TableCell>
-                  <TableCell>{detail.fileType}</TableCell>
-                  <TableCell>{formatFileSize(detail.fileSize)}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusBadgeVariant(detail.status)}>
-                      {detail.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {detail.analysisResult ? (
-                      <Tooltip>
-                        <TooltipTrigger className="truncate max-w-xs">
-                          {detail.analysisResult}
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-sm">
-                          <p className="whitespace-pre-wrap">
-                            {detail.analysisResult}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      "-"
+
+        <Separator />
+
+        {problemExistances.length ? (
+          <div className="flex flex-col gap-6">
+            {problemExistances.map((problemExistance) => (
+              <React.Fragment key={problemExistance}>
+                <CardContent>
+                  <h3 className="text-lg font-medium capitalize mb-4">
+                    {problemExistance}
+                  </h3>
+                  <WorkflowDetailsTable
+                    details={details.filter(
+                      (detail) =>
+                        detail.problemExistanceType === problemExistance,
                     )}
-                  </TableCell>
-                  <TableCell>
-                    {detail.errorMessage ? (
-                      <Tooltip>
-                        <TooltipTrigger className="max-w-xs truncate text-destructive">
-                          {detail.errorMessage}
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-sm">
-                          <p className="whitespace-pre-wrap">
-                            {detail.errorMessage}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
+                  />
+                </CardContent>
+
+                <Separator className="last:hidden" />
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          <CardContent>
+            <WorkflowDetailsTable details={details} />
+          </CardContent>
+        )}
       </Card>
     </div>
   );

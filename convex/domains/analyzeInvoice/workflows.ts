@@ -1,4 +1,5 @@
 import { WorkflowId } from "@convex-dev/workflow";
+import { FunctionReturnType } from "convex/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
@@ -12,13 +13,16 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     step,
     args,
   ): Promise<{
-    data: string;
+    data: FunctionReturnType<
+      typeof internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi
+    >;
   }> => {
     console.log("step.workflowId", step.workflowId);
     console.log("args", args);
 
     const analysisWorkflowDetail = await step.runQuery(
-      internal.domains.analyzeInvoice.internalQueries.getAnalysisWorkflowDetail,
+      internal.domains.analyzeInvoice.internalQueries
+        .getAnalysisWorkflowDetailByWorkflowId,
       {
         analysisWorkflowHeaderId: args.analysisWorkflowHeaderId,
         workflowId: step.workflowId as WorkflowId,

@@ -2,7 +2,7 @@ import { vWorkflowId } from "@convex-dev/workflow";
 import { v } from "convex/values";
 import { internalQuery } from "../../_generated/server";
 
-export const getAnalysisWorkflowDetail = internalQuery({
+export const getAnalysisWorkflowDetailByWorkflowId = internalQuery({
   args: {
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
     workflowId: vWorkflowId,
