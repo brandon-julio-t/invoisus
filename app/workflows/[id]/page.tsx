@@ -39,7 +39,7 @@ const WorkflowDetailPage = () => {
 
   const problemExistances = Array.from(
     new Set(details.map((detail) => detail.problemExistanceType)),
-  );
+  ).toSorted();
 
   return (
     <div className="container mx-auto py-8 space-y-6">

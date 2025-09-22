@@ -1,5 +1,4 @@
 import { WorkflowId } from "@convex-dev/workflow";
-import { FunctionReturnType } from "convex/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
@@ -9,14 +8,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
     fileKey: v.string(),
   },
-  handler: async (
-    step,
-    args,
-  ): Promise<{
-    data: FunctionReturnType<
-      typeof internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi
-    >;
-  }> => {
+  handler: async (step, args) => {
     console.log("step.workflowId", step.workflowId);
     console.log("args", args);
 
@@ -62,8 +54,39 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
 
     console.log("AI analysis result", aiAnalysisResult);
 
-    return {
-      data: aiAnalysisResult,
-    };
+    await step.runMutation(
+      internal.domains.analyzeInvoice.internalMutations
+        .updateAnalysisWorkflowDetail,
+      {
+        id: analysisWorkflowDetail._id,
+        data: { analysisResult: aiAnalysisResult },
+      },
+    );
+
+    const aiDataExtractionResult = await step.runAction(
+      internal.domains.analyzeInvoice.internalActions
+        .extractDataFromInvoiceWithAi,
+      {
+        supplementaryAnalysisResult: aiAnalysisResult,
+        fileName: analysisWorkflowDetail.fileName,
+        fileSize: analysisWorkflowDetail.fileSize,
+        fileType: analysisWorkflowDetail.fileType,
+        fileKey: analysisWorkflowDetail.fileKey,
+      },
+    );
+
+    console.log("AI data extraction result", aiDataExtractionResult);
+
+    await step.runMutation(
+      internal.domains.analyzeInvoice.internalMutations
+        .updateAnalysisWorkflowDetail,
+      {
+        id: analysisWorkflowDetail._id,
+        data: {
+          dataExtractionResult: aiDataExtractionResult,
+          problemExistanceType: aiDataExtractionResult.problemExistanceType,
+        },
+      },
+    );
   },
 });

@@ -64,7 +64,7 @@ const model = openai("gpt-5");
 
 const providerOptions = {
   openai: {
-    reasoningEffort: "medium",
+    // reasoningEffort: "minimal", // can uncomment for maximum speed
   } satisfies OpenAIResponsesProviderOptions,
 };
 
@@ -105,6 +105,24 @@ export const analyzeInvoiceWithAi = internalAction({
 
     console.log("analysisResult", analysisResult);
 
+    return analysisResult.text;
+  },
+});
+
+export const extractDataFromInvoiceWithAi = internalAction({
+  args: {
+    supplementaryAnalysisResult: v.string(),
+    fileName: v.string(),
+    fileSize: v.number(),
+    fileType: v.string(),
+    fileKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    console.log("args", args);
+
+    const fileUrl = await r2.getUrl(args.fileKey);
+    console.log("fileUrl", fileUrl);
+
     const dataExtractionResult = await generateObject({
       model,
 
@@ -142,7 +160,7 @@ export const analyzeInvoiceWithAi = internalAction({
             {
               type: "text",
               text: `
-<supplementary_analysis_result>${analysisResult.text}</supplementary_analysis_result>
+<supplementary_analysis_result>${args.supplementaryAnalysisResult}</supplementary_analysis_result>
               `.trim(),
             },
           ],
@@ -152,9 +170,6 @@ export const analyzeInvoiceWithAi = internalAction({
 
     console.log("dataExtractionResult", dataExtractionResult);
 
-    return {
-      analysisResult: analysisResult.text,
-      dataExtractionResult: dataExtractionResult.object,
-    };
+    return dataExtractionResult.object;
   },
 });

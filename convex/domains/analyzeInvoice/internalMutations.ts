@@ -1,10 +1,8 @@
 import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
 import { partial } from "convex-helpers/validators";
-import { FunctionReturnType } from "convex/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
-import { internal } from "../../_generated/api";
 import { internalMutation } from "../../_generated/server";
 import schema from "../../schema";
 
@@ -42,36 +40,27 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
       )
       .unique();
 
-    if (!analysisWorkflowDetail) {
+    if (analysisWorkflowDetail) {
+      if (args.result.kind === "success") {
+        await ctx.db.patch(analysisWorkflowDetail._id, {
+          status: "success",
+          errorMessage: undefined,
+        });
+      } else if (args.result.kind === "failed") {
+        const errorMessage = args.result.error;
+
+        await ctx.db.patch(analysisWorkflowDetail._id, {
+          status: "failed",
+          errorMessage: errorMessage,
+        });
+      } else if (args.result.kind === "canceled") {
+        await ctx.db.patch(analysisWorkflowDetail._id, {
+          status: "queued",
+          errorMessage: "Workflow canceled",
+        });
+      }
+    } else {
       console.error("Analysis workflow detail not found");
-      return;
-    }
-
-    if (args.result.kind === "success") {
-      const analysisResult: FunctionReturnType<
-        typeof internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi
-      > = args.result.returnValue.data;
-
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "success",
-        errorMessage: undefined,
-        analysisResult: analysisResult.analysisResult,
-        dataExtractionResult: analysisResult.dataExtractionResult,
-        problemExistanceType:
-          analysisResult.dataExtractionResult.problemExistanceType,
-      });
-    } else if (args.result.kind === "failed") {
-      const errorMessage = args.result.error;
-
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "failed",
-        errorMessage: errorMessage,
-      });
-    } else if (args.result.kind === "canceled") {
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "queued",
-        errorMessage: "Workflow canceled",
-      });
     }
 
     console.log("Cleaning up workflow", args.workflowId);
