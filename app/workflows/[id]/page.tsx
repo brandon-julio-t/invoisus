@@ -87,8 +87,8 @@ const WorkflowDetailPage = () => {
 
         {problemExistances.length ? (
           <div className="flex flex-col gap-6">
-            {problemExistances.map((problemExistance) => (
-              <React.Fragment key={problemExistance}>
+            {problemExistances.map((problemExistance, index) => (
+              <React.Fragment key={`${problemExistance}-${index}`}>
                 <CardContent>
                   <h3 className="text-lg font-medium capitalize mb-4">
                     {problemExistance}
