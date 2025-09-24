@@ -1,23 +1,32 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { format } from "date-fns";
-import { useParams } from "next/navigation";
-import { WorkflowDetailsTable } from "./_components/workflow-details-table";
-import React from "react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import {
+  ChevronLeftIcon,
+  DownloadIcon,
+  FolderArchiveIcon,
+  Loader2Icon,
+} from "lucide-react";
 import Link from "next/link";
-import { ChevronLeftIcon } from "lucide-react";
+import { useParams } from "next/navigation";
+import React from "react";
+import { toast } from "sonner";
+import { WorkflowDetailsTable } from "./_components/workflow-details-table";
+import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
+import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -30,9 +39,39 @@ const WorkflowDetailPage = () => {
     },
   );
 
+  const onExportExcel = () => {
+    if (!workflowData) {
+      toast.error("Workflow details not found");
+      return;
+    }
+
+    const toastId = toast.loading("Exporting to Excel...");
+    exportWorkflowDetailsToExcel({ workflowData });
+    toast.dismiss(toastId);
+    toast.success("Excel file exported successfully");
+  };
+
+  const [isDownloading, startDownloading] = React.useTransition();
+  const onDownloadFiles = () => {
+    startDownloading(async () => {
+      if (!workflowData) {
+        toast.error("Workflow details not found");
+        return;
+      }
+
+      await toast
+        .promise(downloadWorkflowDetailsFile({ workflowData }), {
+          loading: "Downloading files...",
+          success: "Files downloaded successfully",
+          error: "Failed to download files",
+        })
+        .unwrap();
+    });
+  };
+
   if (!workflowData) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container py-8">
         <div className="text-center">Loading workflow details...</div>
       </div>
     );
@@ -45,23 +84,27 @@ const WorkflowDetailPage = () => {
   ).toSorted();
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container py-8 space-y-6">
       <section>
-        <Button variant="outline" asChild>
-          <Link href="/workflows">
-            <ChevronLeftIcon />
-            Back to Workflows
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/workflows">
+              <ChevronLeftIcon />
+              Back to Workflows
+            </Link>
+          </Button>
+        </div>
       </section>
 
       <Card>
         <CardHeader>
           <CardTitle>Workflow Overview</CardTitle>
+
           <CardDescription>
             Created on {format(header._creationTime, "PPPPpppp")}
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -72,6 +115,30 @@ const WorkflowDetailPage = () => {
             </div>
           </div>
         </CardContent>
+
+        <CardFooter className="gap-2 md:justify-end flex-col md:flex-row items-stretch">
+          <Button
+            variant="outline"
+            onClick={onExportExcel}
+            disabled={details.length === 0}
+          >
+            <DownloadIcon />
+            Export to Excel
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={onDownloadFiles}
+            disabled={details.length === 0 || isDownloading}
+          >
+            {isDownloading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <FolderArchiveIcon />
+            )}
+            Download Files
+          </Button>
+        </CardFooter>
       </Card>
 
       <Card>

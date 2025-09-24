@@ -4,17 +4,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
+import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import {
   CheckIcon,
   ChevronDownIcon,
+  DownloadIcon,
   HourglassIcon,
   Loader2Icon,
   XIcon,
 } from "lucide-react";
 import React from "react";
+import { toast } from "sonner";
 import { WorkflowDetailsType } from "./types";
-import { format } from "date-fns";
 
 export const WorkflowDetailsTableRow = ({
   detail,
@@ -26,6 +30,24 @@ export const WorkflowDetailsTableRow = ({
   const internalWorkflowStatus = detail.internalWorkflowStatus;
   const inProgress = internalWorkflowStatus?.inProgress ?? [];
 
+  const [isDownloading, startDownloading] = React.useTransition();
+  const onDownloadFile = () => {
+    startDownloading(async () => {
+      await toast
+        .promise(
+          triggerBrowserDownloadFileFromUrl({
+            url: detail.fileDownloadUrl,
+            filename: detail.fileName,
+          }),
+          {
+            loading: `Downloading file ${detail.fileName}...`,
+            success: `File ${detail.fileName} downloaded successfully`,
+            error: `Failed to download file ${detail.fileName}`,
+          },
+        )
+        .unwrap();
+    });
+  };
   return (
     <React.Fragment>
       <TableRow>
@@ -43,7 +65,26 @@ export const WorkflowDetailsTableRow = ({
             />
           </Button>
         </TableCell>
-        <TableCell className="font-medium">{detail.fileName}</TableCell>
+        <TableCell>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onDownloadFile}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                <DownloadIcon />
+              )}
+            </Button>
+
+            <div className="truncate max-w-xs font-medium">
+              {detail.fileName}
+            </div>
+          </div>
+        </TableCell>
         <TableCell>{detail.fileType}</TableCell>
         <TableCell>{formatFileSize(detail.fileSize)}</TableCell>
         <TableCell>
@@ -84,7 +125,7 @@ export const WorkflowDetailsTableRow = ({
                                 className="*:border-border hover:bg-background [&>:not(:last-child)]:border-r"
                               >
                                 <TableCell className="bg-muted/50 py-2 font-medium w-1/3">
-                                  {formatKeyLabel(key)}
+                                  {formatCamelCaseToHuman(key)}
                                 </TableCell>
                                 <TableCell className="py-2">{value}</TableCell>
                               </TableRow>
@@ -188,19 +229,4 @@ const getStatusBadgeVariant = (status: string) => {
     default:
       return "outline";
   }
-};
-
-const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return "0 Bytes";
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-};
-
-const formatKeyLabel = (key: string) => {
-  // Convert camelCase to human readable format
-  return key
-    .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space before capital letters
-    .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
 };
