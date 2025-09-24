@@ -124,7 +124,7 @@ const HomePage = () => {
   });
 
   return (
-    <main className="container mx-auto py-8 space-y-6">
+    <main className="container py-8 space-y-6">
       <section>
         <Button variant="outline" asChild>
           <Link href="/workflows">View Workflows</Link>

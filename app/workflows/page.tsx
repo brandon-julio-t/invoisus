@@ -36,7 +36,7 @@ const WorkflowListPage = () => {
   const canLoadMore = status === "CanLoadMore";
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container py-8 space-y-6">
       <section>
         <Button variant="outline" asChild>
           <Link href="/">

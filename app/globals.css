@@ -121,6 +121,15 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
+@utility container {
+  @apply mx-auto;
+  @apply p-4;
+}
+
+@utility debug {
+  @apply border-2 border-red-600;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
