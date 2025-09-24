@@ -37,15 +37,16 @@ export const getAnalysisWorkflowDetail = query({
       header,
       details: await Promise.all(
         details.map(async (detail) => {
-          const workflowStatus = await ctx
-            .runQuery(components.workflow.workflow.getStatus, {
-              workflowId: detail.workflowId,
-            })
-            .catch(() => null);
-
           return {
             ...detail,
-            workflowStatus,
+            internalWorkflowStatus: await ctx
+              .runQuery(components.workflow.workflow.getStatus, {
+                workflowId: detail.workflowId,
+              })
+              .catch((error) => {
+                console.error("Error getting workflow status", error);
+                return null;
+              }),
           };
         }),
       ),

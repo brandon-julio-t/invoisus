@@ -2,7 +2,6 @@ import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
 import { partial } from "convex-helpers/validators";
 import { v } from "convex/values";
-import { workflow } from "../..";
 import { internalMutation } from "../../_generated/server";
 import schema from "../../schema";
 
@@ -63,9 +62,5 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
     } else {
       console.error("Analysis workflow detail not found");
     }
-
-    console.log("Cleaning up workflow", args.workflowId);
-
-    await workflow.cleanup(ctx, args.workflowId);
   },
 });
