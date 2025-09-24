@@ -36,7 +36,7 @@ const WorkflowListPage = () => {
   const canLoadMore = status === "CanLoadMore";
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className="container space-y-6 py-8">
       <section>
         <Button variant="outline" asChild>
           <Link href="/">
@@ -55,7 +55,7 @@ const WorkflowListPage = () => {
         </CardHeader>
         <CardContent>
           {results.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="py-8 text-center">
               <p className="text-muted-foreground">No workflows found</p>
             </div>
           ) : (
@@ -86,7 +86,7 @@ const WorkflowListPage = () => {
                             className="flex items-center gap-2"
                           >
                             View Details
-                            <ArrowRightIcon className="w-4 h-4" />
+                            <ArrowRightIcon className="h-4 w-4" />
                           </Link>
                         </Button>
                       </TableCell>
@@ -96,7 +96,7 @@ const WorkflowListPage = () => {
               </Table>
 
               {canLoadMore && (
-                <div className="flex justify-center mt-6">
+                <div className="mt-6 flex justify-center">
                   <Button
                     onClick={() => loadMore(ITEMS_PER_PAGE)}
                     disabled={isLoadingMore}
@@ -104,7 +104,7 @@ const WorkflowListPage = () => {
                   >
                     {isLoadingMore ? (
                       <>
-                        <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+                        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                         Loading...
                       </>
                     ) : (

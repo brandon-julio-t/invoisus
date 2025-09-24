@@ -84,7 +84,7 @@ const WorkflowDetailPage = () => {
   ).toSorted();
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className="container space-y-6 py-8">
       <section>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
@@ -106,7 +106,7 @@ const WorkflowDetailPage = () => {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <strong>Files Count:</strong> {header.filesCount}
             </div>
@@ -116,7 +116,7 @@ const WorkflowDetailPage = () => {
           </div>
         </CardContent>
 
-        <CardFooter className="gap-2 md:justify-end flex-col md:flex-row items-stretch">
+        <CardFooter className="flex-col items-stretch gap-2 md:flex-row md:justify-end">
           <Button
             variant="outline"
             onClick={onExportExcel}
@@ -157,7 +157,7 @@ const WorkflowDetailPage = () => {
             {problemExistances.map((problemExistance, index) => (
               <React.Fragment key={`${problemExistance}-${index}`}>
                 <CardContent>
-                  <h3 className="text-lg font-medium capitalize mb-4">
+                  <h3 className="mb-4 text-lg font-medium capitalize">
                     {problemExistance}
                   </h3>
                   <WorkflowDetailsTable

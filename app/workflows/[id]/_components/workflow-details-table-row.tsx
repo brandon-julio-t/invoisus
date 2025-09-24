@@ -80,7 +80,7 @@ export const WorkflowDetailsTableRow = ({
               )}
             </Button>
 
-            <div className="truncate max-w-xs font-medium">
+            <div className="max-w-xs truncate font-medium">
               {detail.fileName}
             </div>
           </div>
@@ -112,7 +112,7 @@ export const WorkflowDetailsTableRow = ({
           <TableCell colSpan={6}>
             <div className="flex flex-col gap-4">
               <div>
-                <h4 className="font-semibold mb-2">Data Extraction Result</h4>
+                <h4 className="mb-2 font-semibold">Data Extraction Result</h4>
                 <div className="text-sm">
                   {detail.dataExtractionResult ? (
                     <div className="bg-background overflow-hidden rounded-md border">
@@ -124,7 +124,7 @@ export const WorkflowDetailsTableRow = ({
                                 key={key}
                                 className="*:border-border hover:bg-background [&>:not(:last-child)]:border-r"
                               >
-                                <TableCell className="bg-muted/50 py-2 font-medium w-1/3">
+                                <TableCell className="bg-muted/50 w-1/3 py-2 font-medium">
                                   {formatCamelCaseToHuman(key)}
                                 </TableCell>
                                 <TableCell className="py-2">{value}</TableCell>
@@ -145,7 +145,7 @@ export const WorkflowDetailsTableRow = ({
               <Separator />
 
               <div>
-                <h4 className="font-semibold mb-2">Analysis Result</h4>
+                <h4 className="mb-2 font-semibold">Analysis Result</h4>
                 <div className="text-sm">
                   {detail.analysisResult ? (
                     <p className="whitespace-pre-wrap">
@@ -162,19 +162,19 @@ export const WorkflowDetailsTableRow = ({
               <Separator />
 
               <div>
-                <h4 className="font-semibold mb-2">Currently Running</h4>
+                <h4 className="mb-2 font-semibold">Currently Running</h4>
                 <div className="text-sm">
                   {inProgress.length > 0 ? (
                     <div className="space-y-2">
                       {inProgress.map((step) => (
                         <div
                           key={step._id}
-                          className="flex items-center gap-2 p-2 bg-muted/50 rounded-md"
+                          className="bg-muted/50 flex items-center gap-2 rounded-md p-2"
                         >
                           <Loader2Icon className="size-(--text-sm) animate-spin" />
                           <div className="flex-1">
                             <div className="font-medium">{step.step.name}</div>
-                            <div className="text-xs text-muted-foreground">
+                            <div className="text-muted-foreground text-xs">
                               {step.step.functionType} • Started{" "}
                               {format(step._creationTime, "PPPPpppp")}
                             </div>
@@ -195,12 +195,12 @@ export const WorkflowDetailsTableRow = ({
                   <Separator />
 
                   <div>
-                    <h4 className="font-semibold mb-2 text-destructive">
+                    <h4 className="text-destructive mb-2 font-semibold">
                       Error
                     </h4>
                     <div className="text-sm">
-                      <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
-                        <p className="whitespace-pre-wrap text-destructive">
+                      <div className="bg-destructive/10 border-destructive/20 rounded-md border p-3">
+                        <p className="text-destructive whitespace-pre-wrap">
                           {detail.errorMessage}
                         </p>
                       </div>

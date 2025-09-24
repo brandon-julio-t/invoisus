@@ -124,7 +124,7 @@ const HomePage = () => {
   });
 
   return (
-    <main className="container py-8 space-y-6">
+    <main className="container space-y-6 py-8">
       <section>
         <Button variant="outline" asChild>
           <Link href="/workflows">View Workflows</Link>
@@ -206,7 +206,7 @@ function DropzoneCustomContent({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">File Preview</h2>
+      <h2 className="mb-4 text-lg font-semibold">File Preview</h2>
 
       <Table>
         <TableHeader>
@@ -263,7 +263,7 @@ function TableRowFile({
         ) : fileItem.status === "error" ? (
           <XIcon className="text-destructive size-(--text-sm)" />
         ) : fileItem.status === "uploading" ? (
-          <Loader2Icon className="animate-spin size-(--text-sm)" />
+          <Loader2Icon className="size-(--text-sm) animate-spin" />
         ) : null}
       </TableCell>
       <TableCell className="font-medium">{file.name}</TableCell>
