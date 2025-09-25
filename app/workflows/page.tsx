@@ -20,7 +20,7 @@ import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format } from "date-fns";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/link";
 
 const ITEMS_PER_PAGE = 10;
 
