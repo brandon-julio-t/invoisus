@@ -1,14 +1,13 @@
 "use node";
 
-import { openai, OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { vWorkflowId } from "@convex-dev/workflow";
-import { withTracing } from "@posthog/ai";
 import { generateObject, generateText } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internalAction } from "../../_generated/server";
-import { createPosthogClient } from "../../libs/posthog";
 import { r2 } from "../../r2";
+import { createModel } from "./aiModelFactory";
+import { vModelPreset } from "./validators";
 
 const systemPrompt = `
 You are a professional invoice audit expert. And your mission includes:
@@ -65,43 +64,11 @@ Reminder:
 Please use computer technology to open and analyze the image file, and provide a detailed detection report.
 `.trim();
 
-const createModel = ({
-  userId,
-  traceId,
-  metadata,
-}: {
-  userId: string | undefined;
-  traceId: string | undefined;
-  metadata: Record<string, string | number> & {
-    functionName: string;
-  };
-}) => {
-  const phClient = createPosthogClient();
-
-  const baseModel = openai("gpt-5");
-
-  return {
-    model: withTracing(baseModel, phClient, {
-      posthogDistinctId: userId,
-      posthogTraceId: traceId,
-      posthogProperties: metadata,
-      posthogGroups: metadata,
-    }),
-
-    phClient,
-  };
-};
-
-const providerOptions = {
-  openai: {
-    // reasoningEffort: "minimal", // can uncomment for maximum speed
-  } satisfies OpenAIResponsesProviderOptions,
-};
-
 export const analyzeInvoiceWithAi = internalAction({
   args: {
     userId: v.id("users"),
     workflowId: vWorkflowId,
+    modelPreset: vModelPreset,
     fileName: v.string(),
     fileSize: v.number(),
     fileType: v.string(),
@@ -113,7 +80,8 @@ export const analyzeInvoiceWithAi = internalAction({
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
 
-    const { model, phClient } = createModel({
+    const { phClient, model, providerOptions } = createModel({
+      modelPreset: args.modelPreset,
       userId: args.userId,
       traceId: args.workflowId,
       metadata: {
@@ -159,6 +127,7 @@ export const extractDataFromInvoiceWithAi = internalAction({
   args: {
     userId: v.id("users"),
     workflowId: vWorkflowId,
+    modelPreset: vModelPreset,
     supplementaryAnalysisResult: v.string(),
     fileName: v.string(),
     fileSize: v.number(),
@@ -171,7 +140,8 @@ export const extractDataFromInvoiceWithAi = internalAction({
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
 
-    const { model, phClient } = createModel({
+    const { phClient, model, providerOptions } = createModel({
+      modelPreset: args.modelPreset,
       userId: args.userId,
       traceId: args.workflowId,
       metadata: {

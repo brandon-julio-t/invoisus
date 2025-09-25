@@ -9,11 +9,13 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as domains_analyzeInvoice_internalActions from "../domains/analyzeInvoice/internalActions.js";
+import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_internalMutations from "../domains/analyzeInvoice/internalMutations.js";
+import type * as domains_analyzeInvoice_internalNodeActions from "../domains/analyzeInvoice/internalNodeActions.js";
 import type * as domains_analyzeInvoice_internalQueries from "../domains/analyzeInvoice/internalQueries.js";
 import type * as domains_analyzeInvoice_mutations from "../domains/analyzeInvoice/mutations.js";
 import type * as domains_analyzeInvoice_queries from "../domains/analyzeInvoice/queries.js";
+import type * as domains_analyzeInvoice_validators from "../domains/analyzeInvoice/validators.js";
 import type * as domains_analyzeInvoice_workflows from "../domains/analyzeInvoice/workflows.js";
 import type * as http from "../http.js";
 import type * as index from "../index.js";
@@ -36,11 +38,13 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  "domains/analyzeInvoice/internalActions": typeof domains_analyzeInvoice_internalActions;
+  "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/internalMutations": typeof domains_analyzeInvoice_internalMutations;
+  "domains/analyzeInvoice/internalNodeActions": typeof domains_analyzeInvoice_internalNodeActions;
   "domains/analyzeInvoice/internalQueries": typeof domains_analyzeInvoice_internalQueries;
   "domains/analyzeInvoice/mutations": typeof domains_analyzeInvoice_mutations;
   "domains/analyzeInvoice/queries": typeof domains_analyzeInvoice_queries;
+  "domains/analyzeInvoice/validators": typeof domains_analyzeInvoice_validators;
   "domains/analyzeInvoice/workflows": typeof domains_analyzeInvoice_workflows;
   http: typeof http;
   index: typeof index;

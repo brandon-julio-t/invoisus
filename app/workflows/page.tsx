@@ -54,6 +54,7 @@ const WorkflowListPage = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Created</TableHead>
+                    <TableHead>Model Preset</TableHead>
                     <TableHead>Workflow ID</TableHead>
                     <TableHead>Files Count</TableHead>
                     <TableHead className="w-1">Actions</TableHead>
@@ -65,6 +66,7 @@ const WorkflowListPage = () => {
                       <TableCell className="font-medium">
                         {format(workflow._creationTime, "PPPPpppp")}
                       </TableCell>
+                      <TableCell>{workflow.modelPreset}</TableCell>
                       <TableCell className="font-mono text-sm">
                         {workflow._id}
                       </TableCell>

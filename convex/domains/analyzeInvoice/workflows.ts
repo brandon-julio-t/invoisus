@@ -2,11 +2,13 @@ import { WorkflowId } from "@convex-dev/workflow";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
+import { vModelPreset } from "./validators";
 
 export const aiInvoiceAnalysisWorkflow = workflow.define({
   args: {
     userId: v.id("users"),
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
+    modelPreset: vModelPreset,
     fileKey: v.string(),
   },
   handler: async (step, args) => {
@@ -44,10 +46,11 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     console.log("Analyzing invoice with AI");
 
     const aiAnalysisResult = await step.runAction(
-      internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi,
+      internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi,
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
+        modelPreset: args.modelPreset,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,
@@ -67,11 +70,12 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     );
 
     const aiDataExtractionResult = await step.runAction(
-      internal.domains.analyzeInvoice.internalActions
+      internal.domains.analyzeInvoice.internalNodeActions
         .extractDataFromInvoiceWithAi,
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
+        modelPreset: args.modelPreset,
         supplementaryAnalysisResult: aiAnalysisResult,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,

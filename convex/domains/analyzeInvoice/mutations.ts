@@ -3,9 +3,11 @@ import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
 import { mutation } from "../../_generated/server";
+import { vModelPreset } from "./validators";
 
 export const handleEnqueueAiInvoiceAnalysis = mutation({
   args: {
+    modelPreset: vModelPreset,
     files: v.array(
       v.object({
         name: v.string(),
@@ -28,6 +30,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
       "analysisWorkflowHeaders",
       {
         filesCount: args.files.length,
+        modelPreset: args.modelPreset,
       },
     );
 
@@ -38,6 +41,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         {
           userId: userId,
           analysisWorkflowHeaderId,
+          modelPreset: args.modelPreset,
           fileKey: file.fileKey,
         },
         {

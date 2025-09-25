@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { vWorkflowId } from "@convex-dev/workflow";
 import { authTables } from "@convex-dev/auth/server";
+import { vModelPreset } from "./domains/analyzeInvoice/validators";
 
 // The schema is entirely optional.
 // You can delete this file (schema.ts) and the
@@ -12,6 +13,7 @@ export default defineSchema({
 
   analysisWorkflowHeaders: defineTable({
     filesCount: v.number(),
+    modelPreset: v.optional(vModelPreset),
   }),
 
   analysisWorkflowDetails: defineTable({

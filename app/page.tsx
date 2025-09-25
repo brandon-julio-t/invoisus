@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,34 +25,26 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
-import { CheckIcon, Loader2Icon, SendIcon, XIcon } from "lucide-react";
+import { Loader2Icon, SendIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useForm, UseFormReturn } from "react-hook-form";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-
-const fileUploadSchema = z.object({
-  files: z.array(
-    z.object({
-      rawFile: z.instanceof(File),
-      status: z.enum(["pending", "uploading", "success", "error"]),
-    }),
-  ),
-});
-
-type FileUploadForm = z.infer<typeof fileUploadSchema>;
+import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
+import { FormModelSelectorSection } from "./_components/form-model-selector-section";
+import { allModelPresets, FileUploadForm, fileUploadSchema } from "./form";
 
 const HomePage = () => {
   const router = useRouter();
@@ -50,6 +53,8 @@ const HomePage = () => {
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
+      modelPreset: "gpt-5-medium", // default by openai
+      benchmark: false,
     },
   });
 
@@ -59,68 +64,108 @@ const HomePage = () => {
     api.domains.analyzeInvoice.mutations.handleEnqueueAiInvoiceAnalysis,
   );
 
-  const onSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
 
-    if (data.files.length <= 0) {
-      toast.error("No files uploaded", {
-        description: "Please upload at least one file",
-      });
-      return;
-    }
+  const onSubmit = form.handleSubmit(
+    async (data) => {
+      setOpenConfirm(false);
 
-    const uploadedFiles: Array<{
-      name: string;
-      size: number;
-      type: string;
-      fileKey: string;
-    }> = [];
+      console.log(data);
 
-    await Promise.all(
-      data.files.map(async (fileItem, index) => {
-        const file = fileItem.rawFile;
+      if (data.files.length <= 0) {
+        toast.error("No files uploaded", {
+          description: "Please upload at least one file",
+        });
+        return;
+      }
 
-        try {
-          form.setValue(`files.${index}.status`, "uploading");
+      const uploadedFiles: Array<{
+        name: string;
+        size: number;
+        type: string;
+        fileKey: string;
+      }> = [];
 
-          const uploadedFileKey = await toast
-            .promise(uploadFile(file), {
-              loading: `Uploading "${file.name}"...`,
-              success: `"${file.name}" uploaded successfully`,
-              error: `Failed to upload "${file.name}"`,
-            })
-            .unwrap();
+      await Promise.all(
+        data.files.map(async (fileItem, index) => {
+          const file = fileItem.rawFile;
 
-          uploadedFiles.push({
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            fileKey: uploadedFileKey,
-          });
+          try {
+            form.setValue(`files.${index}.status`, "uploading");
 
-          form.setValue(`files.${index}.status`, "success");
-        } catch (error) {
-          console.error(error);
-          form.setValue(`files.${index}.status`, "error");
-        }
-      }),
-    );
+            const uploadedFileKey = await toast
+              .promise(uploadFile(file), {
+                loading: `Uploading "${file.name}"...`,
+                success: `"${file.name}" uploaded successfully`,
+                error: `Failed to upload "${file.name}"`,
+              })
+              .unwrap();
 
-    const analysisWorkflowHeaderId = await toast
-      .promise(
-        handleEnqueueAiInvoiceAnalysis({
-          files: uploadedFiles,
+            uploadedFiles.push({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              fileKey: uploadedFileKey,
+            });
+
+            form.setValue(`files.${index}.status`, "success");
+          } catch (error) {
+            console.error(error);
+            form.setValue(`files.${index}.status`, "error");
+          }
         }),
-        {
-          loading: "Submitting invoice analysis request...",
-          success: "Invoice analysis request submitted successfully",
-          error: "Failed to submit invoice analysis request",
-        },
-      )
-      .unwrap();
+      );
 
-    router.push(`/workflows/${analysisWorkflowHeaderId}`);
-  });
+      if (!data.benchmark) {
+        const analysisWorkflowHeaderId = await toast
+          .promise(
+            handleEnqueueAiInvoiceAnalysis({
+              files: uploadedFiles,
+              modelPreset: data.modelPreset,
+            }),
+            {
+              loading: "Submitting invoice analysis request...",
+              success: "Invoice analysis request submitted successfully",
+              error: "Failed to submit invoice analysis request",
+            },
+          )
+          .unwrap();
+
+        router.push(`/workflows/${analysisWorkflowHeaderId}`);
+
+        return;
+      }
+
+      await Promise.all(
+        allModelPresets.map(async (modelPreset) => {
+          await toast
+            .promise(
+              handleEnqueueAiInvoiceAnalysis({
+                files: uploadedFiles,
+                modelPreset: data.modelPreset,
+              }),
+              {
+                loading: `Submitting invoice analysis request with model preset "${modelPreset}"...`,
+                success: `Invoice analysis request submitted successfully with model preset "${modelPreset}"`,
+                error: `Failed to submit invoice analysis request with model preset "${modelPreset}"`,
+              },
+            )
+            .unwrap();
+        }),
+      );
+
+      router.push(`/workflows`);
+    },
+    (err) => {
+      setOpenConfirm(false);
+
+      console.error(err);
+
+      toast.error("Failed to submit form", {
+        description: "Please check the form and try again",
+      });
+    },
+  );
 
   return (
     <main className="container flex flex-col gap-6">
@@ -138,12 +183,12 @@ const HomePage = () => {
                     maxFiles={1_000}
                     accept={{ "application/pdf": [] }}
                     onDrop={(files: File[]) => {
-                      form.reset({
-                        files: files.map((file) => ({
+                      field.onChange(
+                        files.map((file) => ({
                           rawFile: file,
                           status: "pending",
                         })),
-                      });
+                      );
                     }}
                     onError={(err) => {
                       console.error(err);
@@ -168,118 +213,95 @@ const HomePage = () => {
             )}
           />
 
-          <DropzoneCustomContent form={form} />
+          <FormFilesPreviewSection form={form} />
+
+          <FormField
+            control={form.control}
+            name="benchmark"
+            render={({ field }) => (
+              <>
+                <FormItem className="justify-end">
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+
+                    <FormLabel>Benchmark</FormLabel>
+                  </div>
+
+                  <FormMessage />
+                </FormItem>
+
+                {!field.value && <FormModelSelectorSection form={form} />}
+              </>
+            )}
+          />
 
           <section className="flex justify-end">
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? (
-                <Loader2Icon className="animate-spin" />
-              ) : (
-                <SendIcon />
-              )}
-              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
+            <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
+              <AlertDialogTrigger asChild>
+                <Button type="button" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    <SendIcon />
+                  )}
+                  {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Submit Invoice Analysis</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to submit with the following settings?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableHead>Files</TableHead>
+                      <TableCell>{form.getValues("files").length}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead>Benchmark</TableHead>
+                      <TableCell>
+                        {form.getValues("benchmark") ? "Yes" : "No"}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableHead>Model Preset</TableHead>
+                      <TableCell>
+                        {form.getValues("benchmark") ? (
+                          <ul className="list-inside list-disc">
+                            {allModelPresets.map((modelPreset) => (
+                              <li key={modelPreset}>{modelPreset}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          form.getValues("modelPreset")
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={onSubmit}>
+                    Submit
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </section>
         </form>
       </Form>
     </main>
   );
 };
-
-function DropzoneCustomContent({
-  form,
-}: {
-  form: UseFormReturn<FileUploadForm>;
-}) {
-  const files = form.watch("files");
-
-  if (files.length === 0) {
-    return null;
-  }
-
-  return (
-    <div>
-      <h2 className="mb-4 text-lg font-semibold">File Preview</h2>
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-1">{/* status */}</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Size</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead className="w-1">{/* actions */}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {files.map((file, index) => (
-            <TableRowFile key={index} form={form} index={index} />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-
-function TableRowFile({
-  form,
-  index,
-}: {
-  form: UseFormReturn<FileUploadForm>;
-  index: number;
-}) {
-  const fileItem = form.watch(`files.${index}`);
-  const file = fileItem.rawFile;
-
-  // Format file size in human readable format
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (
-      Number(
-        (bytes / Math.pow(k, i)).toLocaleString(undefined, {
-          maximumFractionDigits: 2,
-        }),
-      ) +
-      " " +
-      sizes[i]
-    );
-  };
-
-  return (
-    <TableRow>
-      <TableCell className="w-1">
-        {fileItem.status === "success" ? (
-          <CheckIcon className="text-success size-(--text-sm)" />
-        ) : fileItem.status === "error" ? (
-          <XIcon className="text-destructive size-(--text-sm)" />
-        ) : fileItem.status === "uploading" ? (
-          <Loader2Icon className="size-(--text-sm) animate-spin" />
-        ) : null}
-      </TableCell>
-      <TableCell className="font-medium">{file.name}</TableCell>
-      <TableCell>{formatFileSize(file.size)}</TableCell>
-      <TableCell>{file.type || "Unknown"}</TableCell>
-      <TableCell className="w-1">
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            const newFiles = form.getValues("files");
-            newFiles.splice(index, 1);
-            form.setValue("files", newFiles);
-
-            toast.success(`File "${file.name}" removed successfully`);
-          }}
-        >
-          <XIcon />
-        </Button>
-      </TableCell>
-    </TableRow>
-  );
-}
 
 export default HomePage;

@@ -84,6 +84,8 @@ const WorkflowDetailPage = () => {
         <CardHeader>
           <CardTitle>Workflow Overview</CardTitle>
 
+          <CardDescription>Model Preset: {header.modelPreset}</CardDescription>
+
           <CardDescription>
             Created on {format(header._creationTime, "PPPPpppp")}
           </CardDescription>
