@@ -1,35 +1,32 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { useQuery } from "convex-helpers/react/cache/hooks";
-import { format } from "date-fns";
-import { DownloadIcon, FolderArchiveIcon, Loader2Icon } from "lucide-react";
-import { useParams } from "next/navigation";
-import React from "react";
-import { toast } from "sonner";
-import { WorkflowDetailsTable } from "./_components/workflow-details-table";
-import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
-import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
 import {
   Data,
   DataItem,
   DataItemLabel,
   DataItemValue,
 } from "@/components/data";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
+import { useQuery } from "convex-helpers/react/cache/hooks";
+import { format } from "date-fns";
+import { DownloadIcon, FileIcon, Loader2Icon } from "lucide-react";
+import { useParams } from "next/navigation";
+import React from "react";
+import { toast } from "sonner";
+import { WorkflowDetailsTable } from "./_components/workflow-details-table";
+import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
+import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -106,7 +103,7 @@ const WorkflowDetailPage = () => {
                 onClick={onExportExcel}
                 disabled={details.length === 0 || isProcessing}
               >
-                <DownloadIcon />
+                <FileIcon />
                 Export to Excel
               </Button>
 
@@ -118,9 +115,9 @@ const WorkflowDetailPage = () => {
                 {isDownloading ? (
                   <Loader2Icon className="animate-spin" />
                 ) : (
-                  <FolderArchiveIcon />
+                  <DownloadIcon />
                 )}
-                Download Files
+                Download all Files
               </Button>
             </div>
           </div>
