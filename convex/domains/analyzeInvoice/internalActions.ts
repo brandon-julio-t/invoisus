@@ -72,7 +72,7 @@ const createModel = ({
 }: {
   userId: string | undefined;
   traceId: string | undefined;
-  metadata: Record<string, string> & {
+  metadata: Record<string, string | number> & {
     functionName: string;
   };
 }) => {
@@ -118,6 +118,10 @@ export const analyzeInvoiceWithAi = internalAction({
       traceId: args.workflowId,
       metadata: {
         functionName: "analyzeInvoiceWithAi",
+        fileName: args.fileName,
+        fileSize: args.fileSize,
+        fileType: args.fileType,
+        fileKey: args.fileKey,
       },
     });
 
@@ -172,6 +176,10 @@ export const extractDataFromInvoiceWithAi = internalAction({
       traceId: args.workflowId,
       metadata: {
         functionName: "extractDataFromInvoiceWithAi",
+        fileName: args.fileName,
+        fileSize: args.fileSize,
+        fileType: args.fileType,
+        fileKey: args.fileKey,
       },
     });
 
