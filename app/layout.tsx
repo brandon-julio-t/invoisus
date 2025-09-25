@@ -1,5 +1,5 @@
-import "./globals.css";
 import "nprogress/nprogress.css";
+import "./globals.css";
 
 import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
@@ -8,19 +8,10 @@ import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -42,7 +33,7 @@ export default async function RootLayout({
     <ConvexAuthNextjsServerProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
         >
           <ThemeProvider
             attribute="class"
