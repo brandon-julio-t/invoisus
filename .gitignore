@@ -43,3 +43,5 @@ next-env.d.ts
 # cache files
 .eslintcache
 .prettiercache
+
+.env.local

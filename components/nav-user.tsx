@@ -24,6 +24,7 @@ import { useQuery } from "convex-helpers/react/cache/hooks";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
+import { usePostHog } from "posthog-js/react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -31,6 +32,7 @@ export function NavUser() {
   const user = useQuery(api.auth.getAuthUser);
   const initials = user?.email?.slice(0, 2).toUpperCase() || "CN";
 
+  const posthog = usePostHog();
   const router = useRouter();
   const { signOut } = useAuthActions();
   const [isSigningOut, startSigningOut] = React.useTransition();
@@ -43,6 +45,8 @@ export function NavUser() {
           error: "Failed to sign out",
         })
         .unwrap();
+
+      posthog.reset();
 
       router.push("/login");
     });

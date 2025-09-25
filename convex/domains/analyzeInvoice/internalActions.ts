@@ -1,8 +1,13 @@
+"use node";
+
 import { openai, OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
+import { vWorkflowId } from "@convex-dev/workflow";
+import { withTracing } from "@posthog/ai";
 import { generateObject, generateText } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internalAction } from "../../_generated/server";
+import { createPosthogClient } from "../../libs/posthog";
 import { r2 } from "../../r2";
 
 const systemPrompt = `
@@ -60,7 +65,32 @@ Reminder:
 Please use computer technology to open and analyze the image file, and provide a detailed detection report.
 `.trim();
 
-const model = openai("gpt-5");
+const createModel = ({
+  userId,
+  traceId,
+  metadata,
+}: {
+  userId: string | undefined;
+  traceId: string | undefined;
+  metadata: Record<string, string> & {
+    functionName: string;
+  };
+}) => {
+  const phClient = createPosthogClient();
+
+  const baseModel = openai("gpt-5");
+
+  return {
+    model: withTracing(baseModel, phClient, {
+      posthogDistinctId: userId,
+      posthogTraceId: traceId,
+      posthogProperties: metadata,
+      posthogGroups: metadata,
+    }),
+
+    phClient,
+  };
+};
 
 const providerOptions = {
   openai: {
@@ -70,6 +100,8 @@ const providerOptions = {
 
 export const analyzeInvoiceWithAi = internalAction({
   args: {
+    userId: v.id("users"),
+    workflowId: vWorkflowId,
     fileName: v.string(),
     fileSize: v.number(),
     fileType: v.string(),
@@ -80,6 +112,14 @@ export const analyzeInvoiceWithAi = internalAction({
 
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
+
+    const { model, phClient } = createModel({
+      userId: args.userId,
+      traceId: args.workflowId,
+      metadata: {
+        functionName: "analyzeInvoiceWithAi",
+      },
+    });
 
     const analysisResult = await generateText({
       model,
@@ -105,12 +145,16 @@ export const analyzeInvoiceWithAi = internalAction({
 
     console.log("analysisResult", analysisResult);
 
+    await phClient.shutdown();
+
     return analysisResult.text;
   },
 });
 
 export const extractDataFromInvoiceWithAi = internalAction({
   args: {
+    userId: v.id("users"),
+    workflowId: vWorkflowId,
     supplementaryAnalysisResult: v.string(),
     fileName: v.string(),
     fileSize: v.number(),
@@ -122,6 +166,14 @@ export const extractDataFromInvoiceWithAi = internalAction({
 
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
+
+    const { model, phClient } = createModel({
+      userId: args.userId,
+      traceId: args.workflowId,
+      metadata: {
+        functionName: "extractDataFromInvoiceWithAi",
+      },
+    });
 
     const dataExtractionResult = await generateObject({
       model,
@@ -169,6 +221,8 @@ export const extractDataFromInvoiceWithAi = internalAction({
     });
 
     console.log("dataExtractionResult", dataExtractionResult);
+
+    await phClient.shutdown();
 
     return dataExtractionResult.object;
   },

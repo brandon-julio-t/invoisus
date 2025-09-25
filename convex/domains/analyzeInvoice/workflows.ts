@@ -5,6 +5,7 @@ import { internal } from "../../_generated/api";
 
 export const aiInvoiceAnalysisWorkflow = workflow.define({
   args: {
+    userId: v.id("users"),
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
     fileKey: v.string(),
   },
@@ -45,6 +46,8 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     const aiAnalysisResult = await step.runAction(
       internal.domains.analyzeInvoice.internalActions.analyzeInvoiceWithAi,
       {
+        userId: args.userId,
+        workflowId: step.workflowId as WorkflowId,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,
@@ -67,6 +70,8 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       internal.domains.analyzeInvoice.internalActions
         .extractDataFromInvoiceWithAi,
       {
+        userId: args.userId,
+        workflowId: step.workflowId as WorkflowId,
         supplementaryAnalysisResult: aiAnalysisResult,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,

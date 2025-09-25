@@ -8,6 +8,7 @@ import { AppLayout } from "@/components/app-layout";
 import { NProgress } from "@/components/nprogress";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cookies } from "next/headers";
+import { PostHogProvider } from "@/components/posthog-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +53,9 @@ export default async function RootLayout({
 
               <NProgress />
 
-              <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
+              <PostHogProvider>
+                <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
+              </PostHogProvider>
             </ConvexClientProvider>
           </ThemeProvider>
         </body>

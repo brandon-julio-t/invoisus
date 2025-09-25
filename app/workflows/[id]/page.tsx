@@ -72,6 +72,7 @@ const WorkflowDetailPage = () => {
   }
 
   const { header, details } = workflowData;
+  const isProcessing = details.some((detail) => detail.status === "processing");
 
   const problemExistances = Array.from(
     new Set(details.map((detail) => detail.problemExistanceType)),
@@ -103,7 +104,7 @@ const WorkflowDetailPage = () => {
           <Button
             variant="outline"
             onClick={onExportExcel}
-            disabled={details.length === 0}
+            disabled={details.length === 0 || isProcessing}
           >
             <DownloadIcon />
             Export to Excel
@@ -112,7 +113,7 @@ const WorkflowDetailPage = () => {
           <Button
             variant="outline"
             onClick={onDownloadFiles}
-            disabled={details.length === 0 || isDownloading}
+            disabled={details.length === 0 || isDownloading || isProcessing}
           >
             {isDownloading ? (
               <Loader2Icon className="animate-spin" />

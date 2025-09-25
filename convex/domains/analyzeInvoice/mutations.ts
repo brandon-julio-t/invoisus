@@ -1,3 +1,4 @@
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
@@ -17,6 +18,12 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
   handler: async (ctx, args) => {
     console.log(args);
 
+    const userId = await getAuthUserId(ctx);
+    console.log("userId", userId);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
     const analysisWorkflowHeaderId = await ctx.db.insert(
       "analysisWorkflowHeaders",
       {
@@ -29,6 +36,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         ctx,
         internal.domains.analyzeInvoice.workflows.aiInvoiceAnalysisWorkflow,
         {
+          userId: userId,
           analysisWorkflowHeaderId,
           fileKey: file.fileKey,
         },

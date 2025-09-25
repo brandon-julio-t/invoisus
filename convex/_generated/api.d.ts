@@ -17,6 +17,7 @@ import type * as domains_analyzeInvoice_queries from "../domains/analyzeInvoice/
 import type * as domains_analyzeInvoice_workflows from "../domains/analyzeInvoice/workflows.js";
 import type * as http from "../http.js";
 import type * as index from "../index.js";
+import type * as libs_posthog from "../libs/posthog.js";
 import type * as r2 from "../r2.js";
 
 import type {
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   "domains/analyzeInvoice/workflows": typeof domains_analyzeInvoice_workflows;
   http: typeof http;
   index: typeof index;
+  "libs/posthog": typeof libs_posthog;
   r2: typeof r2;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
