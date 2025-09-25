@@ -14,13 +14,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { format } from "date-fns";
-import {
-  ChevronLeftIcon,
-  DownloadIcon,
-  FolderArchiveIcon,
-  Loader2Icon,
-} from "lucide-react";
-import Link from "next/link";
+import { DownloadIcon, FolderArchiveIcon, Loader2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -71,7 +65,7 @@ const WorkflowDetailPage = () => {
 
   if (!workflowData) {
     return (
-      <div className="container py-8">
+      <div className="container">
         <div className="text-center">Loading workflow details...</div>
       </div>
     );
@@ -84,18 +78,7 @@ const WorkflowDetailPage = () => {
   ).toSorted();
 
   return (
-    <div className="container space-y-6 py-8">
-      <section>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/workflows">
-              <ChevronLeftIcon />
-              Back to Workflows
-            </Link>
-          </Button>
-        </div>
-      </section>
-
+    <div className="container flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Workflow Overview</CardTitle>

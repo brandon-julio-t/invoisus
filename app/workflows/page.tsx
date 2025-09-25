@@ -19,9 +19,8 @@ import {
 import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 import { format } from "date-fns";
-import { ArrowRightIcon, ChevronLeftIcon, Loader2Icon } from "lucide-react";
+import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -36,16 +35,7 @@ const WorkflowListPage = () => {
   const canLoadMore = status === "CanLoadMore";
 
   return (
-    <div className="container space-y-6 py-8">
-      <section>
-        <Button variant="outline" asChild>
-          <Link href="/">
-            <ChevronLeftIcon />
-            Back to Home
-          </Link>
-        </Button>
-      </section>
-
+    <div className="container flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Analysis Workflows</CardTitle>
