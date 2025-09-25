@@ -9,18 +9,18 @@
     "predev": "convex dev --until-success && convex dashboard",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --cache --cache-location .eslintcache",
+    "format": "prettier --write . --cache --cache-location .prettiercache",
+    "typecheck": "tsc --noEmit --tsBuildInfoFile .tsbuildinfo",
     "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "eslint --fix --cache --cache-location .eslintcache",
+      "prettier --write --cache --cache-location .prettiercache"
     ],
     "*.{json,css,md,html}": [
-      "prettier --write"
+      "prettier --write --cache --cache-location .prettiercache"
     ]
   },
   "dependencies": {
