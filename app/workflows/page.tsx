@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
-import { usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format } from "date-fns";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";

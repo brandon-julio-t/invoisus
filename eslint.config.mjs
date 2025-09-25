@@ -21,6 +21,29 @@ const eslintConfig = [
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "convex/react",
+              importNames: ["useQuery"],
+              message:
+                "Prefer importing useQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
+            },
+            {
+              name: "convex/react",
+              importNames: ["usePaginatedQuery"],
+              message:
+                "Prefer importing usePaginatedQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

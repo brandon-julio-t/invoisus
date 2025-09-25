@@ -12,7 +12,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache/hooks";
 import { format } from "date-fns";
 import { DownloadIcon, FolderArchiveIcon, Loader2Icon } from "lucide-react";
 import { useParams } from "next/navigation";

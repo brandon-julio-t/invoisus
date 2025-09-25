@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache/hooks";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
