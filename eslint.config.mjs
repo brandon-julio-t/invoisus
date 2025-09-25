@@ -41,6 +41,30 @@ const eslintConfig = [
               message:
                 "Prefer importing usePaginatedQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
             },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    ignores: ["components/link.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "convex/react",
+              importNames: ["useQuery"],
+              message:
+                "Prefer importing useQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
+            },
+            {
+              name: "convex/react",
+              importNames: ["usePaginatedQuery"],
+              message:
+                "Prefer importing usePaginatedQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
+            },
 
             {
               name: "next/link",

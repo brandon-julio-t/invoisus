@@ -4,7 +4,6 @@
  * @see https://github.com/vercel/next.js/pull/82814
  */
 // @ts-expect-error - useLinkStatus is there, but somehow not in next/link's type definitions
-// eslint-disable-next-line no-restricted-imports
 import NextLink, { useLinkStatus } from "next/link";
 
 import { usePathname, useRouter } from "next/navigation";
