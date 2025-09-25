@@ -141,7 +141,7 @@ const WorkflowDetailPage = () => {
             ].map((item) => (
               <DataItem key={item.label}>
                 <DataItemLabel>{item.label}</DataItemLabel>
-                <DataItemValue>{item.value}</DataItemValue>
+                <DataItemValue className="truncate">{item.value}</DataItemValue>
               </DataItem>
             ))}
           </Data>
