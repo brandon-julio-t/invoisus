@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,12 @@ import {
 import React from "react";
 import { toast } from "sonner";
 import { WorkflowDetailsType } from "./types";
+import {
+  Data,
+  DataItem,
+  DataItemLabel,
+  DataItemValue,
+} from "@/components/data";
 
 export const WorkflowDetailsTableRow = ({
   detail,
@@ -66,24 +72,7 @@ export const WorkflowDetailsTableRow = ({
           </Button>
         </TableCell>
         <TableCell>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onDownloadFile}
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <Loader2Icon className="animate-spin" />
-              ) : (
-                <DownloadIcon />
-              )}
-            </Button>
-
-            <div className="max-w-xs truncate font-medium">
-              {detail.fileName}
-            </div>
-          </div>
+          <div className="max-w-xs truncate font-medium">{detail.fileName}</div>
         </TableCell>
         <TableCell>{detail.fileType}</TableCell>
         <TableCell>{formatFileSize(detail.fileSize)}</TableCell>
@@ -105,6 +94,20 @@ export const WorkflowDetailsTableRow = ({
             {detail.status}
           </Badge>
         </TableCell>
+        <TableCell>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDownloadFile}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <DownloadIcon />
+            )}
+          </Button>
+        </TableCell>
       </TableRow>
 
       {isExpanded && (
@@ -112,28 +115,23 @@ export const WorkflowDetailsTableRow = ({
           <TableCell colSpan={6}>
             <div className="flex flex-col gap-4">
               <div>
-                <h4 className="mb-2 font-semibold">Data Extraction Result</h4>
+                <h4 className="mb-2 text-base font-semibold">
+                  Data Extraction Result
+                </h4>
                 <div className="text-sm">
                   {detail.dataExtractionResult ? (
-                    <div className="bg-background overflow-hidden rounded-md border">
-                      <Table>
-                        <TableBody>
-                          {Object.entries(detail.dataExtractionResult).map(
-                            ([key, value]) => (
-                              <TableRow
-                                key={key}
-                                className="*:border-border hover:bg-background [&>:not(:last-child)]:border-r"
-                              >
-                                <TableCell className="bg-muted/50 w-1/3 py-2 font-medium">
-                                  {formatCamelCaseToHuman(key)}
-                                </TableCell>
-                                <TableCell className="py-2">{value}</TableCell>
-                              </TableRow>
-                            ),
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
+                    <Data>
+                      {Object.entries(detail.dataExtractionResult).map(
+                        ([key, value]) => (
+                          <DataItem key={key}>
+                            <DataItemLabel>
+                              {formatCamelCaseToHuman(key)}
+                            </DataItemLabel>
+                            <DataItemValue>{value}</DataItemValue>
+                          </DataItem>
+                        ),
+                      )}
+                    </Data>
                   ) : (
                     <p className="text-muted-foreground">
                       No data extraction result available
@@ -145,7 +143,9 @@ export const WorkflowDetailsTableRow = ({
               <Separator />
 
               <div>
-                <h4 className="mb-2 font-semibold">Analysis Result</h4>
+                <h4 className="mb-2 text-base font-semibold">
+                  Analysis Result
+                </h4>
                 <div className="text-sm">
                   {detail.analysisResult ? (
                     <p className="whitespace-pre-wrap">
@@ -162,7 +162,9 @@ export const WorkflowDetailsTableRow = ({
               <Separator />
 
               <div>
-                <h4 className="mb-2 font-semibold">Currently Running</h4>
+                <h4 className="mb-2 text-base font-semibold">
+                  Currently Running
+                </h4>
                 <div className="text-sm">
                   {inProgress.length > 0 ? (
                     <div className="space-y-2">
@@ -195,7 +197,7 @@ export const WorkflowDetailsTableRow = ({
                   <Separator />
 
                   <div>
-                    <h4 className="text-destructive mb-2 font-semibold">
+                    <h4 className="text-destructive mb-2 text-base font-semibold">
                       Error
                     </h4>
                     <div className="text-sm">
@@ -219,13 +221,13 @@ export const WorkflowDetailsTableRow = ({
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
     case "success":
-      return "default";
+      return "success";
     case "failed":
       return "destructive";
     case "processing":
-      return "secondary";
+      return "warning";
     case "queued":
-      return "outline";
+      return "warning";
     default:
       return "outline";
   }

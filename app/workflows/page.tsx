@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,63 +37,63 @@ const WorkflowListPage = () => {
 
   return (
     <div className="container flex flex-col gap-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Analysis Workflows</CardTitle>
-          <CardDescription>
-            View and manage your previous invoice analysis workflows
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {results.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">No workflows found</p>
-            </div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Model Preset</TableHead>
-                    <TableHead>Workflow ID</TableHead>
-                    <TableHead>Files Count</TableHead>
-                    <TableHead className="w-1">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {results.map((workflow) => (
-                    <TableRow key={workflow._id}>
-                      <TableCell className="font-medium">
-                        {format(workflow._creationTime, "PPPPpppp")}
-                      </TableCell>
-                      <TableCell>{workflow.modelPreset}</TableCell>
-                      <TableCell className="font-mono text-sm">
-                        {workflow._id}
-                      </TableCell>
-                      <TableCell>{workflow.filesCount}</TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link
-                            href={`/workflows/${workflow._id}`}
-                            className="flex items-center gap-2"
-                          >
-                            View Details
-                            <ArrowRightIcon className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+      <header>
+        <h1 className="text-lg font-semibold">Invoice Analysis History</h1>
+      </header>
 
-              {canLoadMore && (
-                <div className="mt-6 flex justify-center">
-                  <Button
-                    onClick={() => loadMore(ITEMS_PER_PAGE)}
-                    disabled={isLoadingMore}
-                    variant="outline"
+      <section>
+        {results.length === 0 ? (
+          <div className="py-8 text-center">
+            <p className="text-muted-foreground">No workflows found</p>
+          </div>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Model Preset</TableHead>
+                  <TableHead>Workflow ID</TableHead>
+                  <TableHead>Files Count</TableHead>
+                  <TableHead className="w-1">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {results.map((workflow) => (
+                  <TableRow key={workflow._id}>
+                    <TableCell className="font-medium">
+                      {format(workflow._creationTime, "PPPPpppp")}
+                    </TableCell>
+                    <TableCell>{workflow.modelPreset}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {workflow._id}
+                    </TableCell>
+                    <TableCell>
+                      {Number(workflow.filesCount).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" asChild>
+                        <Link href={`/workflows/${workflow._id}`}>
+                          View Details
+                          <ArrowRightIcon />
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {canLoadMore && (
+              <div className="mt-6 flex justify-center">
+                <Button
+                  onClick={() => loadMore(ITEMS_PER_PAGE)}
+                  disabled={isLoadingMore}
+                  variant="outline"
+                  asChild
+                >
+                  <motion.button
+                    onViewportEnter={() => loadMore(ITEMS_PER_PAGE)}
                   >
                     {isLoadingMore ? (
                       <>
@@ -102,13 +103,13 @@ const WorkflowListPage = () => {
                     ) : (
                       "Load More"
                     )}
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+                  </motion.button>
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </section>
     </div>
   );
 };

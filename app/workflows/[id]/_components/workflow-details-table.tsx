@@ -25,6 +25,7 @@ export const WorkflowDetailsTable = ({
           <TableHead>Type</TableHead>
           <TableHead>Size</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead className="w-1">{/* download file */}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

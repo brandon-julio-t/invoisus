@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  Data,
+  DataItem,
+  DataItemLabel,
+  DataItemValue,
+} from "@/components/data";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -26,13 +32,6 @@ import {
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
 import { Switch } from "@/components/ui/switch";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -169,6 +168,10 @@ const HomePage = () => {
 
   return (
     <main className="container flex flex-col gap-6">
+      <header>
+        <h1 className="text-lg font-semibold">Analyze Invoice</h1>
+      </header>
+
       <Form {...form}>
         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
           <FormField
@@ -260,34 +263,32 @@ const HomePage = () => {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableHead>Files</TableHead>
-                      <TableCell>{form.getValues("files").length}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableHead>Benchmark</TableHead>
-                      <TableCell>
-                        {form.getValues("benchmark") ? "Yes" : "No"}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableHead>Model Preset</TableHead>
-                      <TableCell>
-                        {form.getValues("benchmark") ? (
-                          <ul className="list-inside list-disc">
-                            {allModelPresets.map((modelPreset) => (
-                              <li key={modelPreset}>{modelPreset}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          form.getValues("modelPreset")
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                <Data>
+                  {[
+                    { label: "Files", value: form.getValues("files").length },
+                    {
+                      label: "Benchmark",
+                      value: form.getValues("benchmark") ? "Yes" : "No",
+                    },
+                    {
+                      label: "Model Preset",
+                      value: form.getValues("benchmark") ? (
+                        <ul className="list-inside list-disc">
+                          {allModelPresets.map((modelPreset) => (
+                            <li key={modelPreset}>{modelPreset}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        form.getValues("modelPreset")
+                      ),
+                    },
+                  ].map(({ label, value }) => (
+                    <DataItem key={label}>
+                      <DataItemLabel>{label}</DataItemLabel>
+                      <DataItemValue>{value}</DataItemValue>
+                    </DataItem>
+                  ))}
+                </Data>
 
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
