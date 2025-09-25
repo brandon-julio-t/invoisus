@@ -1,14 +1,16 @@
+import "./globals.css";
+import "nprogress/nprogress.css";
+
+import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
+import { HijackRouterNavigationForNProgress } from "@/components/link";
+import { PostHogProvider } from "@/components/posthog-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { AppLayout } from "@/components/app-layout";
-import { NProgress } from "@/components/nprogress";
-import { ThemeProvider } from "@/components/theme-provider";
 import { cookies } from "next/headers";
-import { PostHogProvider } from "@/components/posthog-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,7 +53,7 @@ export default async function RootLayout({
             <ConvexClientProvider>
               <Toaster closeButton richColors position="bottom-right" />
 
-              <NProgress />
+              <HijackRouterNavigationForNProgress />
 
               <PostHogProvider>
                 <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>

@@ -7,28 +7,70 @@
 // eslint-disable-next-line no-restricted-imports
 import NextLink, { useLinkStatus } from "next/link";
 
-import { atom, useSetAtom } from "jotai";
+import { usePathname, useRouter } from "next/navigation";
+import NProgress from "nprogress";
 import React from "react";
-
-export const linkStatusAtom = atom({ pending: false });
 
 const Link: typeof NextLink = ({ children, ...props }) => {
   return (
     <NextLink {...props}>
       {children}
-      <LinkStatus />
+      <LinkStatusHijacker />
     </NextLink>
   );
 };
 
-function LinkStatus() {
+function LinkStatusHijacker() {
   const { pending } = useLinkStatus();
 
-  const setLinkStatus = useSetAtom(linkStatusAtom);
-
   React.useEffect(() => {
-    setLinkStatus({ pending });
-  }, [pending, setLinkStatus]);
+    if (pending) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+  }, [pending]);
+
+  return null;
+}
+
+export function HijackRouterNavigationForNProgress() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [isHijacked, setIsHijacked] = React.useState(false);
+
+  React.useEffect(
+    function hijackRouterPush() {
+      if (isHijacked) {
+        console.debug("router.push already hijacked");
+        return;
+      }
+
+      const originalPush = router.push;
+
+      router.push = function (...args) {
+        NProgress.start();
+        return originalPush(...args);
+      };
+
+      setIsHijacked(true);
+
+      console.debug("router.push hijacked");
+    },
+    [isHijacked, router],
+  );
+
+  React.useEffect(
+    function resetNProgressOnNavigation() {
+      NProgress.done();
+
+      console.debug(
+        "navigation event detected, should set link status `pending` to `false`",
+      );
+    },
+    [pathname],
+  );
 
   return null;
 }
