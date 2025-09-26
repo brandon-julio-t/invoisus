@@ -26,7 +26,7 @@ export function AppLayout({
           <AppSidebar collapsible="icon" />
 
           <SidebarInset className="min-w-0">
-            <header className="bg-background sticky top-0 flex h-(--header-height) shrink-0 items-center gap-2 border-b px-4">
+            <header className="bg-background sticky top-0 z-10 flex h-(--header-height) shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-1" />
               <ModeToggle size="icon" variant="ghost" className="ml-auto" />
             </header>
