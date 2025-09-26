@@ -13,6 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   CommandIcon,
@@ -44,6 +45,7 @@ const navLinks: Array<{
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
 
   return (
     <Sidebar {...props}>
@@ -75,6 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                       isActive={isActive}
                       tooltip={link.label}
+                      onClick={() => setOpenMobile(false)}
                     >
                       <Link href={link.href}>
                         <link.icon />
