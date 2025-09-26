@@ -1,14 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -21,7 +14,7 @@ import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format } from "date-fns";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
-import Link from "@/components/link";
+import { motion } from "motion/react";
 
 const ITEMS_PER_PAGE = 10;
 
