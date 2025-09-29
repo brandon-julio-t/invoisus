@@ -54,19 +54,6 @@ const eslintConfig = [
         {
           paths: [
             {
-              name: "convex/react",
-              importNames: ["useQuery"],
-              message:
-                "Prefer importing useQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
-            },
-            {
-              name: "convex/react",
-              importNames: ["usePaginatedQuery"],
-              message:
-                "Prefer importing usePaginatedQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
-            },
-
-            {
               name: "next/link",
               message:
                 'Please import Link from "@/components/link" instead of "next/link" to use the custom Link component with navigation status tracking.',
