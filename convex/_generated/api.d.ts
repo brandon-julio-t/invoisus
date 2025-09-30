@@ -17,6 +17,8 @@ import type * as domains_analyzeInvoice_mutations from "../domains/analyzeInvoic
 import type * as domains_analyzeInvoice_queries from "../domains/analyzeInvoice/queries.js";
 import type * as domains_analyzeInvoice_validators from "../domains/analyzeInvoice/validators.js";
 import type * as domains_analyzeInvoice_workflows from "../domains/analyzeInvoice/workflows.js";
+import type * as domains_customers_mutations from "../domains/customers/mutations.js";
+import type * as domains_customers_queries from "../domains/customers/queries.js";
 import type * as http from "../http.js";
 import type * as index from "../index.js";
 import type * as libs_posthog from "../libs/posthog.js";
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   "domains/analyzeInvoice/queries": typeof domains_analyzeInvoice_queries;
   "domains/analyzeInvoice/validators": typeof domains_analyzeInvoice_validators;
   "domains/analyzeInvoice/workflows": typeof domains_analyzeInvoice_workflows;
+  "domains/customers/mutations": typeof domains_customers_mutations;
+  "domains/customers/queries": typeof domains_customers_queries;
   http: typeof http;
   index: typeof index;
   "libs/posthog": typeof libs_posthog;

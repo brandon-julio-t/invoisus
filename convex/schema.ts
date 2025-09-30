@@ -11,6 +11,14 @@ import { vModelPreset } from "./domains/analyzeInvoice/validators";
 export default defineSchema({
   ...authTables,
 
+  customers: defineTable({
+    /** alternative ID from S&F */
+    number: v.string(),
+    name: v.string(),
+    group: v.string(),
+    problemType: v.string(),
+  }).index("by_number", ["number"]),
+
   analysisWorkflowHeaders: defineTable({
     filesCount: v.number(),
     modelPreset: v.optional(vModelPreset),

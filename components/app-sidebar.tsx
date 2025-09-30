@@ -19,6 +19,7 @@ import {
   CommandIcon,
   FileCode2Icon,
   LucideIcon,
+  UsersIcon,
   WorkflowIcon,
 } from "lucide-react";
 import Link from "@/components/link";
@@ -40,6 +41,11 @@ const navLinks: Array<{
     href: "/workflows",
     icon: WorkflowIcon,
     label: "Analysis History",
+  },
+  {
+    href: "/customers/list",
+    icon: UsersIcon,
+    label: "Customers",
   },
 ];
 
