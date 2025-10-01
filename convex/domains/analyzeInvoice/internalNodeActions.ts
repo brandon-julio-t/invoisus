@@ -2,7 +2,7 @@
 
 import { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { vWorkflowId } from "@convex-dev/workflow";
-import { generateObject, generateText, stepCountIs } from "ai";
+import { generateObject, generateText, stepCountIs, UserContent } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internalAction } from "../../_generated/server";
@@ -135,6 +135,29 @@ export const analyzeInvoiceWithAi = internalAction({
   },
 });
 
+const outputSchema = z.object({
+  invoiceDate: z.iso.date(),
+  customerNumber: z.string(),
+  customerName: z.string(),
+  customerGroup: z.string(),
+  customerProblemType: z.string(),
+
+  invoiceNumber: z.string().describe(
+    `
+The invoice number as the identifier of the invoice.
+the format is generally like YYYY-XXXXX, for example: 1970-12345.
+But do not take it for granted, as the last few digits may vary, so please read the labels carefully.
+This data is required, so please read the invoice and labels carefully.
+`.trim(),
+  ),
+  issueCategory: z.string().describe(
+    `
+分類為“數量問題”或者“價錢問題”或者“貨號或貨品名稱問題“/“不符合回單簽收要求”，不要寫入劃單/無劃單
+`.trim(),
+  ),
+  problemExistanceType: z.enum(["certainly has problem", "not certain"]),
+});
+
 export const extractDataFromInvoiceWithAi = internalAction({
   args: {
     userId: v.id("users"),
@@ -166,71 +189,84 @@ export const extractDataFromInvoiceWithAi = internalAction({
       },
     });
 
-    const dataExtractionResult = await generateObject({
-      model,
+    const maxAttempts = 5;
+    let attempt = 0;
+    let previousResponseId = args.previousResponseId;
 
-      providerOptions: {
-        ...providerOptions,
-        openai: {
-          ...providerOptions.openai,
-          previousResponseId: args.previousResponseId,
-        } satisfies OpenAIResponsesProviderOptions,
-      },
+    let result: z.infer<typeof outputSchema> | null = null;
+    let errors = [] as string[];
 
-      schema: z.object({
-        invoiceDate: z.iso.date(),
-        customerNumber: z.string(),
-        customerName: z.string(),
-        customerGroup: z.string(),
-        customerProblemType: z.string(),
+    while (true) {
+      attempt++;
 
-        invoiceNumber: z.string().describe(
-          `
-The invoice number as the identifier of the invoice.
-the format is generally like YYYY-XXXXX, for example: 1970-12345.
-But do not take it for granted, as the last few digits may vary, so please read the labels carefully.
-This data is required, so please read the invoice and labels carefully.
-`.trim(),
-        ),
-        issueCategory: z.string().describe(
-          `
-分類為“數量問題”或者“價錢問題”或者“貨號或貨品名稱問題“/“不符合回單簽收要求”，不要寫入劃單/無劃單
-`.trim(),
-        ),
-        problemExistanceType: z.enum(["certainly has problem", "not certain"]),
-      }),
+      console.log("attempt", attempt);
 
-      system: systemPrompt,
+      const dataExtractionResult = await generateObject({
+        model,
 
-      prompt: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "file",
-              data: fileUrl,
-              mediaType: args.fileType,
-              filename: args.fileName,
-            },
-            {
-              type: "text",
-              text: `
-<supplementary_analysis_result>${args.supplementaryAnalysisResult}</supplementary_analysis_result>
-              `.trim(),
-            },
-          ],
+        providerOptions: {
+          ...providerOptions,
+          openai: {
+            ...providerOptions.openai,
+            previousResponseId,
+          } satisfies OpenAIResponsesProviderOptions,
         },
-      ],
-    });
 
-    console.log("dataExtractionResult", dataExtractionResult);
+        schema: outputSchema,
 
-    await phClient.shutdown();
+        system: systemPrompt,
 
-    const result = dataExtractionResult.object;
+        prompt: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "file",
+                data: fileUrl,
+                mediaType: args.fileType,
+                filename: args.fileName,
+              },
+              {
+                type: "text",
+                text: `
+<supplementary_analysis_result>${args.supplementaryAnalysisResult}</supplementary_analysis_result>
+<max_attempts>${maxAttempts}</max_attempts>
+<attempts>${attempt}</attempts>
+<previous_output>${result ? JSON.stringify(result) : "`null`"}</previous_output>
+<errors>${errors.map((error, i) => `${i + 1}. ${error}`).join("\n")}</errors>
+`.trim(),
+              },
+            ],
+          },
+        ],
+      });
 
-    console.log("result", result);
+      console.log("dataExtractionResult", dataExtractionResult);
 
-    return result;
+      await phClient.shutdown();
+
+      previousResponseId = dataExtractionResult.response.id;
+
+      result = dataExtractionResult.object as z.infer<typeof outputSchema>;
+
+      console.log("result", result);
+
+      errors = [];
+      Object.entries(result).forEach(([field, value]) => {
+        if (!value) {
+          errors.push(
+            `The field \`${field}\` is required and cannot be empty. You gave: \`${value}\``,
+          );
+        }
+      });
+
+      console.log("errors", errors);
+
+      const shouldReturn = errors.length <= 0 || attempt >= maxAttempts;
+      console.log("shouldReturn", shouldReturn);
+      if (shouldReturn) {
+        return result;
+      }
+    }
   },
 });
