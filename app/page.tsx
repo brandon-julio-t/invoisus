@@ -43,7 +43,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorSection } from "./_components/form-model-selector-section";
-import { allModelPresets, FileUploadForm, fileUploadSchema } from "./form";
+import { FileUploadForm, fileUploadSchema } from "./form";
+import { allModelPresets } from "@/convex/libs/ai";
 
 const HomePage = () => {
   const router = useRouter();

@@ -25,6 +25,7 @@ import type * as domains_customers_queries from "../domains/customers/queries.js
 import type * as domains_customers_validators from "../domains/customers/validators.js";
 import type * as http from "../http.js";
 import type * as index from "../index.js";
+import type * as libs_ai from "../libs/ai.js";
 import type * as libs_posthog from "../libs/posthog.js";
 import type * as r2 from "../r2.js";
 
@@ -60,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   "domains/customers/validators": typeof domains_customers_validators;
   http: typeof http;
   index: typeof index;
+  "libs/ai": typeof libs_ai;
   "libs/posthog": typeof libs_posthog;
   r2: typeof r2;
 }>;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
-import { FileUploadForm, allModelPresets } from "../form";
+import { FileUploadForm } from "../form";
 import {
   FormControl,
   FormField,
@@ -18,6 +18,7 @@ import {
   SelectContent,
   SelectSeparator,
 } from "@/components/ui/select";
+import { allModelPresets } from "@/convex/libs/ai";
 
 // Group models by their base model for better organization
 const groupModelsByBase = (models: string[]) => {
