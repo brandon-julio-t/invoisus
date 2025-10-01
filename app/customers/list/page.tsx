@@ -1,6 +1,24 @@
 "use client";
 
+import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -9,12 +27,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
-import { Loader2Icon, UploadIcon } from "lucide-react";
-import Link from "@/components/link";
+import { useMutation } from "convex/react";
+import {
+  ChevronDownIcon,
+  Loader2Icon,
+  PlusIcon,
+  UploadIcon,
+  UserPlusIcon,
+} from "lucide-react";
 import { motion } from "motion/react";
+import React from "react";
+import { toast } from "sonner";
+import { CustomerForm, CustomerFormProps } from "../_components/customer-form";
+import { CustomerTableRow } from "./_components/customer-table-row";
 
 const ITEMS_PER_PAGE = 50;
 
@@ -35,16 +62,78 @@ const CustomersListPage = () => {
     }
   };
 
+  const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
+  const [isLoading, startLoading] = React.useTransition();
+  const createCustomer = useMutation(
+    api.domains.customers.mutations.createCustomer,
+  );
+  const onCreateCustomer: CustomerFormProps["onSubmit"] = async (data) => {
+    startLoading(async () => {
+      await toast
+        .promise(createCustomer(data), {
+          loading: "Creating customer...",
+          success: "Customer created successfully",
+          error: "Failed to create customer",
+        })
+        .unwrap();
+
+      setOpenCreateDialog(false);
+    });
+  };
+
   return (
     <div className="container flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-lg font-semibold">Customers</h1>
-        <Button variant="outline" asChild>
-          <Link href="/customers/import">
-            <UploadIcon />
-            Import Customers
-          </Link>
-        </Button>
+
+        <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="group">
+                <PlusIcon />
+                Add Customer
+                <ChevronDownIcon className="transition-transform duration-200 group-data-[state=open]:rotate-180" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DialogTrigger asChild>
+                <DropdownMenuItem>
+                  <UserPlusIcon /> Single Customer
+                </DropdownMenuItem>
+              </DialogTrigger>
+
+              <DropdownMenuItem asChild>
+                <Link href="/customers/import">
+                  <UploadIcon /> Import Bulk
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Single Customer</DialogTitle>
+              <DialogDescription>
+                Add a single customer to the database.
+              </DialogDescription>
+            </DialogHeader>
+
+            <CustomerForm onSubmit={onCreateCustomer}>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" disabled={isLoading}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && <Loader2Icon className="animate-spin" />}
+                  {isLoading ? "Submitting..." : "Submit"}
+                </Button>
+              </DialogFooter>
+            </CustomerForm>
+          </DialogContent>
+        </Dialog>
       </header>
 
       <section>
@@ -55,6 +144,7 @@ const CustomersListPage = () => {
               <TableHead>Name</TableHead>
               <TableHead>Group</TableHead>
               <TableHead>Problem Type</TableHead>
+              <TableHead className="w-1">{/* actions */}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,14 +164,7 @@ const CustomersListPage = () => {
               </TableRow>
             ) : (
               results.map((customer) => (
-                <TableRow key={customer._id}>
-                  <TableCell className="font-mono text-sm">
-                    {customer.number}
-                  </TableCell>
-                  <TableCell className="font-medium">{customer.name}</TableCell>
-                  <TableCell>{customer.group}</TableCell>
-                  <TableCell>{customer.problemType}</TableCell>
-                </TableRow>
+                <CustomerTableRow key={customer._id} customer={customer} />
               ))
             )}
           </TableBody>
@@ -115,6 +198,9 @@ const CustomersListPage = () => {
 
 const TableSkeletonRow = () => (
   <TableRow>
+    <TableCell className="w-1">
+      <Skeleton className="h-4 w-4" />
+    </TableCell>
     <TableCell>
       <Skeleton className="h-4 w-16" />
     </TableCell>
@@ -126,6 +212,9 @@ const TableSkeletonRow = () => (
     </TableCell>
     <TableCell>
       <Skeleton className="h-4 w-24" />
+    </TableCell>
+    <TableCell className="w-1">
+      <Skeleton className="h-4 w-4" />
     </TableCell>
   </TableRow>
 );
