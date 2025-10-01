@@ -2,7 +2,7 @@
 
 import { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { vWorkflowId } from "@convex-dev/workflow";
-import { generateObject, generateText, stepCountIs, UserContent } from "ai";
+import { generateObject, generateText, stepCountIs } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internalAction } from "../../_generated/server";
@@ -89,13 +89,7 @@ export const analyzeInvoiceWithAi = internalAction({
     const analysisResult = await generateText({
       model,
 
-      providerOptions: {
-        ...providerOptions,
-        openai: {
-          ...providerOptions.openai,
-          textVerbosity: "high", // invoice analyst should be "talkative"
-        } satisfies OpenAIResponsesProviderOptions,
-      },
+      providerOptions,
 
       stopWhen: stepCountIs(20),
 
@@ -204,13 +198,15 @@ export const extractDataFromInvoiceWithAi = internalAction({
       const dataExtractionResult = await generateObject({
         model,
 
-        providerOptions: {
-          ...providerOptions,
-          openai: {
-            ...providerOptions.openai,
-            previousResponseId,
-          } satisfies OpenAIResponsesProviderOptions,
-        },
+        providerOptions: providerOptions
+          ? {
+              ...providerOptions,
+              openai: {
+                ...providerOptions.openai,
+                previousResponseId,
+              } satisfies OpenAIResponsesProviderOptions,
+            }
+          : undefined,
 
         schema: outputSchema,
 
