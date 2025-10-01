@@ -25,12 +25,14 @@ The most important data is the problem type, which you MUST identify first befor
 
       let message = "";
       if (!data) {
-        message =
-          "Customer not found, please try again with a different and corrected customer number.";
+        message = `
+Customer not found, please read the labels and values again carefully, then try again with a different and corrected customer number.
+You MUST keep doing this until you find the correct customer number.
+`.trim();
       } else {
         message = `
 Customer found, please triple-check the customer data with your invoice.
-Should the data differ, you must try again with a different and corrected customer number.
+Should the data differ, you MUST try again with a different and corrected customer number.
 `.trim();
       }
 
