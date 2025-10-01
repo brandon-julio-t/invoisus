@@ -77,6 +77,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
         workflowId: step.workflowId as WorkflowId,
         modelPreset: args.modelPreset,
         supplementaryAnalysisResult: aiAnalysisResult.text,
+        previousResponseId: aiAnalysisResult.previousResponseId,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,

@@ -1,5 +1,6 @@
 "use node";
 
+import { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { vWorkflowId } from "@convex-dev/workflow";
 import { generateObject, generateText, stepCountIs } from "ai";
 import { v } from "convex/values";
@@ -7,9 +8,8 @@ import { z } from "zod";
 import { internalAction } from "../../_generated/server";
 import { r2 } from "../../r2";
 import { createModel } from "./aiModelFactory";
-import { vModelPreset } from "./validators";
 import { getCustomerByNumber } from "./aiTools";
-import { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
+import { vModelPreset } from "./validators";
 
 const systemPrompt = `
 - Goal: 
@@ -124,9 +124,14 @@ export const analyzeInvoiceWithAi = internalAction({
 
     await phClient.shutdown();
 
-    return {
+    const result = {
       text: analysisResult.text,
+      previousResponseId: analysisResult.response.id,
     };
+
+    console.log("result", result);
+
+    return result;
   },
 });
 
@@ -136,6 +141,7 @@ export const extractDataFromInvoiceWithAi = internalAction({
     workflowId: vWorkflowId,
     modelPreset: vModelPreset,
     supplementaryAnalysisResult: v.string(),
+    previousResponseId: v.string(),
     fileName: v.string(),
     fileSize: v.number(),
     fileType: v.string(),
@@ -163,11 +169,20 @@ export const extractDataFromInvoiceWithAi = internalAction({
     const dataExtractionResult = await generateObject({
       model,
 
-      providerOptions,
+      providerOptions: {
+        ...providerOptions,
+        openai: {
+          ...providerOptions.openai,
+          previousResponseId: args.previousResponseId,
+        } satisfies OpenAIResponsesProviderOptions,
+      },
 
       schema: z.object({
         invoiceDate: z.iso.date(),
         customerNumber: z.string(),
+        customerName: z.string(),
+        customerGroup: z.string(),
+        customerProblemType: z.string(),
 
         invoiceNumber: z.string().describe(
           `
@@ -212,6 +227,10 @@ This data is required, so please read the invoice and labels carefully.
 
     await phClient.shutdown();
 
-    return dataExtractionResult.object;
+    const result = dataExtractionResult.object;
+
+    console.log("result", result);
+
+    return result;
   },
 });
