@@ -7,7 +7,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -178,7 +178,10 @@ export const WorkflowDetailsTableRow = ({
                             <div className="font-medium">{step.step.name}</div>
                             <div className="text-muted-foreground text-xs">
                               {step.step.functionType} • Started{" "}
-                              {format(step._creationTime, "PPPPpppp")}
+                              {format(step._creationTime, "PPPPpppp")} •{" "}
+                              {formatDistanceToNow(step._creationTime, {
+                                addSuffix: true,
+                              })}
                             </div>
                           </div>
                         </div>
