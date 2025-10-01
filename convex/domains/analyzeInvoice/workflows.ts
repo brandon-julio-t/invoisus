@@ -65,7 +65,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
         .updateAnalysisWorkflowDetail,
       {
         id: analysisWorkflowDetail._id,
-        data: { analysisResult: aiAnalysisResult },
+        data: { analysisResult: aiAnalysisResult.text },
       },
     );
 
@@ -76,7 +76,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
         modelPreset: args.modelPreset,
-        supplementaryAnalysisResult: aiAnalysisResult,
+        supplementaryAnalysisResult: aiAnalysisResult.text,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,
