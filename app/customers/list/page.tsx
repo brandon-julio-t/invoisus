@@ -16,28 +16,11 @@ import { Loader2Icon, UploadIcon } from "lucide-react";
 import Link from "@/components/link";
 import { motion } from "motion/react";
 
-const ITEMS_PER_PAGE = 20;
-
-const TableSkeletonRow = () => (
-  <TableRow>
-    <TableCell>
-      <Skeleton className="h-4 w-16" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-32" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-20" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-24" />
-    </TableCell>
-  </TableRow>
-);
+const ITEMS_PER_PAGE = 50;
 
 const CustomersListPage = () => {
   const { results, status, loadMore } = usePaginatedQuery(
-    api.domains.customers.queries.listCustomers,
+    api.domains.customers.queries.getCustomersListPaginated,
     {},
     { initialNumItems: ITEMS_PER_PAGE },
   );
@@ -48,7 +31,7 @@ const CustomersListPage = () => {
 
   const onLoadMore = () => {
     if (canLoadMore) {
-      loadMore(ITEMS_PER_PAGE);
+      loadMore(ITEMS_PER_PAGE / 2);
     }
   };
 
@@ -58,7 +41,7 @@ const CustomersListPage = () => {
         <h1 className="text-lg font-semibold">Customers</h1>
         <Button variant="outline" asChild>
           <Link href="/customers/import">
-            <UploadIcon className="mr-2 h-4 w-4" />
+            <UploadIcon />
             Import Customers
           </Link>
         </Button>
@@ -129,5 +112,22 @@ const CustomersListPage = () => {
     </div>
   );
 };
+
+const TableSkeletonRow = () => (
+  <TableRow>
+    <TableCell>
+      <Skeleton className="h-4 w-16" />
+    </TableCell>
+    <TableCell>
+      <Skeleton className="h-4 w-32" />
+    </TableCell>
+    <TableCell>
+      <Skeleton className="h-4 w-20" />
+    </TableCell>
+    <TableCell>
+      <Skeleton className="h-4 w-24" />
+    </TableCell>
+  </TableRow>
+);
 
 export default CustomersListPage;

@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { query } from "../../_generated/server";
 import { paginationOptsValidator } from "convex/server";
 
-export const listCustomers = query({
+export const getCustomersListPaginated = query({
   args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
     console.log("args", args);
