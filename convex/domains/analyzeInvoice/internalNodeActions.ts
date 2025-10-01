@@ -185,7 +185,9 @@ export const extractDataFromInvoiceWithAi = internalAction({
 
         invoiceNumber: z.string().describe(
           `
-The invoice number, the format is generally like YYYY-...
+The invoice number as the identifier of the invoice.
+the format is generally like YYYY-XXXXX, for example: 1970-12345.
+But do not take it for granted, as the last few digits may vary, so please read the labels carefully.
 This data is required, so please read the invoice and labels carefully.
 `.trim(),
         ),
