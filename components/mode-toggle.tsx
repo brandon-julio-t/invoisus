@@ -11,20 +11,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function ModeToggle({ ...props }: React.ComponentProps<typeof Button>) {
   const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" {...props}>
-          {theme === "light" && <SunIcon />}
-          {theme === "dark" && <MoonIcon />}
-          {theme === "system" && <MonitorIcon />}
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" {...props}>
+              {theme === "light" && <SunIcon />}
+              {theme === "dark" && <MoonIcon />}
+              {theme === "system" && <MonitorIcon />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Toggle theme</TooltipContent>
+      </Tooltip>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           <SunIcon />

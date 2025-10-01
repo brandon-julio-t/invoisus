@@ -22,6 +22,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
@@ -90,11 +95,16 @@ export const CustomerTableRow = ({
       <TableCell className="w-1">
         <div>
           <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <PencilIcon />
-              </Button>
-            </DialogTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <PencilIcon />
+                  </Button>
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Edit customer</TooltipContent>
+            </Tooltip>
 
             <DialogContent>
               <DialogHeader>
@@ -128,11 +138,16 @@ export const CustomerTableRow = ({
           </Dialog>
 
           <AlertDialog open={openDelete} onOpenChange={setOpenDelete}>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <XIcon />
-              </Button>
-            </AlertDialogTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <XIcon />
+                  </Button>
+                </AlertDialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Delete customer</TooltipContent>
+            </Tooltip>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Customer</AlertDialogTitle>

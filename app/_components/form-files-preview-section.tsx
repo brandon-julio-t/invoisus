@@ -9,6 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { formatFileSize } from "@/lib/strings";
 import { CheckIcon, Loader2Icon, XIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
@@ -75,20 +80,25 @@ function TableRowFile({
       <TableCell>{formatFileSize(file.size)}</TableCell>
       <TableCell>{file.type || "Unknown"}</TableCell>
       <TableCell className="w-1">
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            const newFiles = form.getValues("files");
-            newFiles.splice(index, 1);
-            form.setValue("files", newFiles);
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={() => {
+                const newFiles = form.getValues("files");
+                newFiles.splice(index, 1);
+                form.setValue("files", newFiles);
 
-            toast.success(`File "${file.name}" removed successfully`);
-          }}
-        >
-          <XIcon />
-        </Button>
+                toast.success(`File "${file.name}" removed successfully`);
+              }}
+            >
+              <XIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Remove file</TooltipContent>
+        </Tooltip>
       </TableCell>
     </TableRow>
   );

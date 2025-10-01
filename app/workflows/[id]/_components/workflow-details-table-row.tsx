@@ -20,6 +20,11 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { TableCell, TableRow } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
@@ -71,18 +76,25 @@ export const WorkflowDetailsTableRow = ({
     <React.Fragment>
       <TableRow>
         <TableCell>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            <ChevronDownIcon
-              className={cn(
-                "transition-transform duration-200",
-                isExpanded && "rotate-180",
-              )}
-            />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                <ChevronDownIcon
+                  className={cn(
+                    "transition-transform duration-200",
+                    isExpanded && "rotate-180",
+                  )}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isExpanded ? "Collapse details" : "Expand details"}
+            </TooltipContent>
+          </Tooltip>
         </TableCell>
         <TableCell>
           <div className="max-w-xs truncate font-medium">{detail.fileName}</div>
@@ -109,11 +121,16 @@ export const WorkflowDetailsTableRow = ({
         </TableCell>
         <TableCell>
           <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <EyeIcon />
-              </Button>
-            </DialogTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <EyeIcon />
+                  </Button>
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>View file</TooltipContent>
+            </Tooltip>
 
             <DialogContent className="h-svh w-full max-w-none sm:max-w-none">
               <div className="flex size-full flex-1 flex-col gap-6">
@@ -153,18 +170,23 @@ export const WorkflowDetailsTableRow = ({
             </DialogContent>
           </Dialog>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onDownloadFile}
-            disabled={isDownloading}
-          >
-            {isDownloading ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              <DownloadIcon />
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onDownloadFile}
+                disabled={isDownloading}
+              >
+                {isDownloading ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <DownloadIcon />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Download file</TooltipContent>
+          </Tooltip>
         </TableCell>
       </TableRow>
 
