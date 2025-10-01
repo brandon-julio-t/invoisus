@@ -141,12 +141,12 @@ export const WorkflowDetailsTableRow = ({
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className="size-full flex-1">
-                  <iframe
-                    src={detail.fileDownloadUrl}
-                    className="size-full flex-1"
-                  />
-                </div>
+                <iframe
+                  src={detail.fileDownloadUrl}
+                  className="bg-muted size-full flex-1 overflow-hidden rounded-xl border"
+                  tabIndex={-1}
+                  title={`Preview of ${detail.fileName}`}
+                />
 
                 <DialogFooter>
                   <DialogClose asChild>
