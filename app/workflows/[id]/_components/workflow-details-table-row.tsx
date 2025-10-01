@@ -1,7 +1,23 @@
 "use client";
 
+import {
+  Data,
+  DataItem,
+  DataItemLabel,
+  DataItemValue,
+} from "@/components/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
@@ -12,6 +28,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   DownloadIcon,
+  EyeIcon,
   HourglassIcon,
   Loader2Icon,
   XIcon,
@@ -19,12 +36,6 @@ import {
 import React from "react";
 import { toast } from "sonner";
 import { WorkflowDetailsType } from "./types";
-import {
-  Data,
-  DataItem,
-  DataItemLabel,
-  DataItemValue,
-} from "@/components/data";
 
 export const WorkflowDetailsTableRow = ({
   detail,
@@ -36,24 +47,26 @@ export const WorkflowDetailsTableRow = ({
   const internalWorkflowStatus = detail.internalWorkflowStatus;
   const inProgress = internalWorkflowStatus?.inProgress ?? [];
 
-  const [isDownloading, startDownloading] = React.useTransition();
-  const onDownloadFile = () => {
-    startDownloading(async () => {
-      await toast
-        .promise(
-          triggerBrowserDownloadFileFromUrl({
-            url: detail.fileDownloadUrl,
-            filename: detail.fileName,
-          }),
-          {
-            loading: `Downloading file ${detail.fileName}...`,
-            success: `File ${detail.fileName} downloaded successfully`,
-            error: `Failed to download file ${detail.fileName}`,
-          },
-        )
-        .unwrap();
-    });
+  // const [isDownloading, startDownloading] = React.useTransition();
+  const isDownloading = false;
+  const onDownloadFile = async () => {
+    // startDownloading(async () => {
+    await toast
+      .promise(
+        triggerBrowserDownloadFileFromUrl({
+          url: detail.fileDownloadUrl,
+          filename: detail.fileName,
+        }),
+        {
+          loading: `Downloading file ${detail.fileName}...`,
+          success: `File ${detail.fileName} downloaded successfully`,
+          error: `Failed to download file ${detail.fileName}`,
+        },
+      )
+      .unwrap();
+    // });
   };
+
   return (
     <React.Fragment>
       <TableRow>
@@ -95,6 +108,51 @@ export const WorkflowDetailsTableRow = ({
           </Badge>
         </TableCell>
         <TableCell>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <EyeIcon />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="h-svh w-full max-w-none sm:max-w-none">
+              <div className="flex size-full flex-1 flex-col gap-6">
+                <DialogHeader>
+                  <DialogTitle>View File</DialogTitle>
+                  <DialogDescription>
+                    Viewing &quot;{detail.fileName}&quot;
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="size-full flex-1">
+                  <iframe
+                    src={detail.fileDownloadUrl}
+                    className="size-full flex-1"
+                  />
+                </div>
+
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Close</Button>
+                  </DialogClose>
+
+                  <Button
+                    variant="outline"
+                    onClick={onDownloadFile}
+                    disabled={isDownloading}
+                  >
+                    {isDownloading ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <DownloadIcon />
+                    )}
+                    Download
+                  </Button>
+                </DialogFooter>
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <Button
             variant="ghost"
             size="icon"
