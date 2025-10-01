@@ -247,6 +247,8 @@ export const extractDataFromInvoiceWithAi = internalAction({
 
       previousResponseId = dataExtractionResult.response.id;
 
+      console.log("previousResponseId", previousResponseId);
+
       result = dataExtractionResult.object as z.infer<typeof outputSchema>;
 
       console.log("result", result);
