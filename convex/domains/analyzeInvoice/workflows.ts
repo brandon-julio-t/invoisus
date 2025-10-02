@@ -94,7 +94,9 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
         id: analysisWorkflowDetail._id,
         data: {
           dataExtractionResult: aiDataExtractionResult,
-          problemExistanceType: aiDataExtractionResult.problemExistanceType,
+          problemExistanceType: aiDataExtractionResult.problemExistanceType as
+            | "certainly has problem"
+            | "not certain",
         },
       },
     );

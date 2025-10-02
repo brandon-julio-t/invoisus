@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
 import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
 import type * as domains_analyzeInvoice_internalMutations from "../domains/analyzeInvoice/internalMutations.js";
@@ -45,6 +46,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
   "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;
   "domains/analyzeInvoice/internalMutations": typeof domains_analyzeInvoice_internalMutations;

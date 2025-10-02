@@ -19,6 +19,11 @@ export default defineSchema({
     problemType: v.string(),
   }).index("by_number", ["number"]),
 
+  analysisConfigurations: defineTable({
+    systemPrompt: v.string(),
+    dataExtractionPrompt: v.string(),
+  }),
+
   analysisWorkflowHeaders: defineTable({
     filesCount: v.number(),
     modelPreset: v.optional(vModelPreset),
