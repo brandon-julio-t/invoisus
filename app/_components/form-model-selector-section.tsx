@@ -20,18 +20,42 @@ import {
 } from "@/components/ui/select";
 import { allModelPresets } from "@/convex/libs/ai";
 
-// Group models by their base model for better organization
+// Group models by their LLM model family for better organization
 const groupModelsByBase = (models: string[]) => {
   const groups: { [key: string]: string[] } = {};
 
   models.forEach((model) => {
-    const base =
-      model.split("-")[0] +
-      (model.includes("mini")
-        ? "-mini"
-        : model.includes("nano")
-          ? "-nano"
-          : "");
+    // Extract model family (e.g., "gpt-5", "gpt-4.1", "gpt-4")
+    let base = model;
+    if (model.startsWith("gpt-")) {
+      // For GPT models, extract the family like gpt-5, gpt-4.1, etc.
+      const parts = model.split("-");
+      if (parts.length >= 2) {
+        const versionPart = parts[1];
+        // Check if version has a dot (like 4.1) or is just a number
+        if (versionPart.includes(".")) {
+          // Extract major.minor version
+          const versionMatch = versionPart.match(/^(\d+\.\d+)/);
+          if (versionMatch) {
+            base = `gpt-${versionMatch[1]}`;
+          } else {
+            base = `gpt-${versionPart.split(".")[0]}`;
+          }
+        } else {
+          // Extract just the major version number
+          const versionMatch = versionPart.match(/^(\d+)/);
+          if (versionMatch) {
+            base = `gpt-${versionMatch[1]}`;
+          } else {
+            base = parts[0];
+          }
+        }
+      }
+    } else {
+      // For non-GPT models, use the first part
+      base = model.split("-")[0];
+    }
+
     if (!groups[base]) {
       groups[base] = [];
     }
