@@ -56,10 +56,16 @@ const rowSchema = z.object({
   group: z.string(),
 });
 
+type RowSchemaType = z.infer<typeof rowSchema>;
+
+type ParsedDataType = Array<
+  z.ZodSafeParseResult<RowSchemaType> & {
+    originalData: Partial<RowSchemaType> | null | undefined;
+  }
+>;
+
 const CustomersImportPage = () => {
-  const [parsedData, setParsedData] = useState<
-    z.ZodSafeParseResult<z.infer<typeof rowSchema>>[]
-  >([]);
+  const [parsedData, setParsedData] = useState<ParsedDataType>([]);
 
   const validRows = React.useMemo(() => {
     return parsedData.filter((row) => row.success);
@@ -90,7 +96,11 @@ const CustomersImportPage = () => {
       .promise(
         Promise.all(
           rows.map(async (row) => {
-            return await rowSchema.safeParseAsync(row);
+            const parsed = await rowSchema.safeParseAsync(row);
+            return {
+              ...parsed,
+              originalData: row as ParsedDataType[number]["originalData"],
+            } satisfies ParsedDataType[number];
           }),
         ),
         {
@@ -295,23 +305,32 @@ const CustomersImportPage = () => {
                     <TableRow
                       key={index}
                       className={cn(
-                        !row.success && "bg-destructive/10 text-destructive",
+                        !row.success &&
+                          "bg-destructive/5 hover:bg-destructive/10 text-destructive",
                       )}
                     >
                       <TableCell className="text-right font-medium">
                         {index + 1}.
                       </TableCell>
                       <TableCell>
-                        {row.success ? row.data.number : "Invalid"}
+                        {row.success
+                          ? row.data.number
+                          : (row.originalData?.number ?? "Invalid")}
                       </TableCell>
                       <TableCell>
-                        {row.success ? row.data.type : "Invalid"}
+                        {row.success
+                          ? row.data.type
+                          : (row.originalData?.type ?? "Invalid")}
                       </TableCell>
                       <TableCell>
-                        {row.success ? row.data.name : "Invalid"}
+                        {row.success
+                          ? row.data.name
+                          : (row.originalData?.name ?? "Invalid")}
                       </TableCell>
                       <TableCell>
-                        {row.success ? row.data.group : "Invalid"}
+                        {row.success
+                          ? row.data.group
+                          : (row.originalData?.group ?? "Invalid")}
                       </TableCell>
                       <TableCell className="text-xs">
                         {row.success ? (
