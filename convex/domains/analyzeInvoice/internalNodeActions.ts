@@ -121,6 +121,18 @@ export const analyzeInvoiceWithAi = internalAction({
               mediaType: args.fileType,
               filename: args.fileName,
             },
+            {
+              type: "text",
+              text: `
+<file_name>
+${args.fileName}
+</file_name>
+
+<file_type>
+${args.fileType}
+</file_type>
+`.trim(),
+            },
           ],
         },
       ],
@@ -255,6 +267,14 @@ export const extractDataFromInvoiceWithAi = internalAction({
 <mandatory_fields>
 ${analysisConfiguration.dataExtractionPrompt}
 </mandatory_fields>
+
+<file_name>
+${args.fileName}
+</file_name>
+
+<file_type>
+${args.fileType}
+</file_type>
 
 <supplementary_analysis_result>
 ${args.supplementaryAnalysisResult}
