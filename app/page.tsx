@@ -53,7 +53,7 @@ const HomePage = () => {
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
-      modelPreset: "gpt-5-medium", // default by openai
+      modelPreset: "gemini-2.5-pro", // our favorite
       benchmark: false,
     },
   });
