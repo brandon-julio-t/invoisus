@@ -198,7 +198,8 @@ export const WorkflowDetailsTableRow = ({
                 <h4 className="mb-2 text-base font-semibold">
                   Data Extraction Result
                 </h4>
-                <div className="text-sm">
+
+                <div>
                   {detail.dataExtractionResult ? (
                     <Data>
                       {Object.entries(detail.dataExtractionResult).map(
@@ -207,7 +208,9 @@ export const WorkflowDetailsTableRow = ({
                             <DataItemLabel>
                               {formatCamelCaseToHuman(key)}
                             </DataItemLabel>
-                            <DataItemValue>{value}</DataItemValue>
+                            <DataItemValue className="whitespace-pre-wrap">
+                              {value}
+                            </DataItemValue>
                           </DataItem>
                         ),
                       )}
