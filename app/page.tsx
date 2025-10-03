@@ -31,7 +31,6 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
-import { Switch } from "@/components/ui/switch";
 import { api } from "@/convex/_generated/api";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,9 +41,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
-import { FormModelSelectorSection } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
-import { allModelPresets } from "@/convex/libs/ai";
 
 const HomePage = () => {
   const router = useRouter();
@@ -54,7 +51,6 @@ const HomePage = () => {
     defaultValues: {
       files: [],
       modelPreset: "gemini-2.5-pro", // our favorite
-      benchmark: false,
     },
   });
 
@@ -86,9 +82,21 @@ const HomePage = () => {
         fileKey: string;
       }> = [];
 
+      let hasError = false;
+
       await Promise.all(
         data.files.map(async (fileItem, index) => {
           const file = fileItem.rawFile;
+
+          if (fileItem.status === "uploading") {
+            console.log(`File is already uploading, skipping ${file.name}`);
+            return;
+          }
+
+          if (fileItem.status === "success") {
+            console.log(`File is already uploaded, skipping ${file.name}`);
+            return;
+          }
 
           try {
             form.setValue(`files.${index}.status`, "uploading");
@@ -112,49 +120,33 @@ const HomePage = () => {
           } catch (error) {
             console.error(error);
             form.setValue(`files.${index}.status`, "error");
+            hasError = true;
           }
         }),
       );
 
-      if (!data.benchmark) {
-        const analysisWorkflowHeaderId = await toast
-          .promise(
-            handleEnqueueAiInvoiceAnalysis({
-              files: uploadedFiles,
-              modelPreset: data.modelPreset,
-            }),
-            {
-              loading: "Submitting invoice analysis request...",
-              success: "Invoice analysis request submitted successfully",
-              error: "Failed to submit invoice analysis request",
-            },
-          )
-          .unwrap();
-
-        router.push(`/workflows/${analysisWorkflowHeaderId}`);
-
+      if (hasError) {
+        toast.error("Failed to upload some files", {
+          description: "Please check the files and try to submit again",
+        });
         return;
       }
 
-      await Promise.all(
-        allModelPresets.map(async (modelPreset) => {
-          await toast
-            .promise(
-              handleEnqueueAiInvoiceAnalysis({
-                files: uploadedFiles,
-                modelPreset: data.modelPreset,
-              }),
-              {
-                loading: `Submitting invoice analysis request with model preset "${modelPreset}"...`,
-                success: `Invoice analysis request submitted successfully with model preset "${modelPreset}"`,
-                error: `Failed to submit invoice analysis request with model preset "${modelPreset}"`,
-              },
-            )
-            .unwrap();
-        }),
-      );
+      const analysisWorkflowHeaderId = await toast
+        .promise(
+          handleEnqueueAiInvoiceAnalysis({
+            files: uploadedFiles,
+            modelPreset: data.modelPreset,
+          }),
+          {
+            loading: "Submitting invoice analysis request...",
+            success: "Invoice analysis request submitted successfully",
+            error: "Failed to submit invoice analysis request",
+          },
+        )
+        .unwrap();
 
-      router.push(`/workflows`);
+      router.push(`/workflows/${analysisWorkflowHeaderId}`);
     },
     (err) => {
       setOpenConfirm(false);
@@ -219,31 +211,6 @@ const HomePage = () => {
 
           <FormFilesPreviewSection form={form} />
 
-          <FormField
-            control={form.control}
-            name="benchmark"
-            render={({ field }) => (
-              <>
-                <FormItem className="justify-end">
-                  <div className="flex items-center gap-2">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-
-                    <FormLabel>Benchmark</FormLabel>
-                  </div>
-
-                  <FormMessage />
-                </FormItem>
-
-                {!field.value && <FormModelSelectorSection form={form} />}
-              </>
-            )}
-          />
-
           <section className="flex justify-end">
             <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
               <AlertDialogTrigger asChild>
@@ -268,20 +235,8 @@ const HomePage = () => {
                   {[
                     { label: "Files", value: form.getValues("files").length },
                     {
-                      label: "Benchmark",
-                      value: form.getValues("benchmark") ? "Yes" : "No",
-                    },
-                    {
                       label: "Model Preset",
-                      value: form.getValues("benchmark") ? (
-                        <ul className="list-inside list-disc">
-                          {allModelPresets.map((modelPreset) => (
-                            <li key={modelPreset}>{modelPreset}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        form.getValues("modelPreset")
-                      ),
+                      value: form.getValues("modelPreset"),
                     },
                   ].map(({ label, value }) => (
                     <DataItem key={label}>

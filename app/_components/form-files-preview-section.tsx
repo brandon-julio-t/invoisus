@@ -46,7 +46,7 @@ export const FormFilesPreviewSection = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {files.map((file, index) => (
+          {files.map((_file, index) => (
             <TableRowFile key={index} form={form} index={index} />
           ))}
         </TableBody>

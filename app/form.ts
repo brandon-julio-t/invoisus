@@ -11,7 +11,6 @@ export const fileUploadSchema = z.object({
     )
     .min(1),
   modelPreset: z.string<ModelPreset>(),
-  benchmark: z.boolean(),
 });
 
 export type FileUploadForm = z.infer<typeof fileUploadSchema>;
