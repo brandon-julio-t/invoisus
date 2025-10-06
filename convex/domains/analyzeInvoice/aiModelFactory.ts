@@ -1,6 +1,5 @@
 "use node";
 
-import { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
 import { openrouter } from "@openrouter/ai-sdk-provider";
 import { withTracing } from "@posthog/ai";
 import { createPosthogClient } from "../../libs/posthog";
@@ -43,13 +42,10 @@ export function createModel({
 }) {
   const phClient = createPosthogClient();
 
-  const { model, providerOptions } =
-    makeModelAndProviderOptionsFromModelPreset(modelPreset);
+  const { model } = makeModelAndProviderOptionsFromModelPreset(modelPreset);
 
   return {
     phClient,
-
-    providerOptions,
 
     model: withTracing(model, phClient, {
       posthogDistinctId: userId,
@@ -78,112 +74,52 @@ function makeModelAndProviderOptionsFromModelPreset(modelPreset: ModelPreset) {
     case "gpt-5-minimal":
       return {
         model: openrouter("openai/gpt-5"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "minimal",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-low":
       return {
         model: openrouter("openai/gpt-5"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "low",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-medium":
       return {
         model: openrouter("openai/gpt-5"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "medium",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-high":
       return {
         model: openrouter("openai/gpt-5"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "high",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
 
     case "gpt-5-mini-minimal":
       return {
         model: openrouter("openai/gpt-5-mini"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "minimal",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-mini-low":
       return {
         model: openrouter("openai/gpt-5-mini"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "low",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-mini-medium":
       return {
         model: openrouter("openai/gpt-5-mini"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "medium",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-mini-high":
       return {
         model: openrouter("openai/gpt-5-mini"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "high",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
 
     case "gpt-5-nano-minimal":
       return {
         model: openrouter("openai/gpt-5-nano"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "minimal",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-nano-low":
       return {
         model: openrouter("openai/gpt-5-nano"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "low",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-nano-medium":
       return {
         model: openrouter("openai/gpt-5-nano"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "medium",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
     case "gpt-5-nano-high":
       return {
         model: openrouter("openai/gpt-5-nano"),
-        providerOptions: {
-          openai: {
-            reasoningEffort: "high",
-          } satisfies OpenAIResponsesProviderOptions,
-        },
       };
 
     case "o4-mini":

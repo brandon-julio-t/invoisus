@@ -25,7 +25,10 @@ export default defineSchema({
 
   analysisWorkflowHeaders: defineTable({
     filesCount: v.number(),
+    /** @deprecated replaced by pdfAnalysisModelPreset and dataExtractionModelPreset */
     modelPreset: v.optional(v.string()),
+    pdfAnalysisModelPreset: v.optional(v.string()),
+    dataExtractionModelPreset: v.optional(v.string()),
   }),
 
   analysisWorkflowDetails: defineTable({

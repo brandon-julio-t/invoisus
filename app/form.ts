@@ -10,7 +10,8 @@ export const fileUploadSchema = z.object({
       }),
     )
     .min(1),
-  modelPreset: z.string<ModelPreset>(),
+  pdfAnalysisModelPreset: z.string<ModelPreset>(),
+  dataExtractionModelPreset: z.string<ModelPreset>(),
 });
 
 export type FileUploadForm = z.infer<typeof fileUploadSchema>;

@@ -1,24 +1,76 @@
 "use client";
 
-import React from "react";
-import { UseFormReturn } from "react-hook-form";
-import { FileUploadForm } from "../form";
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
 import {
-  Select,
-  SelectValue,
-  SelectTrigger,
-  SelectItem,
-  SelectContent,
-  SelectSeparator,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { allModelPresets } from "@/convex/libs/ai";
+import { cn } from "@/lib/utils";
+import { CheckIcon } from "lucide-react";
+import React from "react";
+import { ControllerRenderProps } from "react-hook-form";
+import { FileUploadForm } from "../form";
+
+export const FormModelSelectorCombobox = ({
+  children,
+  value,
+  onChange,
+  align,
+}: {
+  children: React.ReactNode;
+} & ControllerRenderProps<
+  FileUploadForm,
+  "pdfAnalysisModelPreset" | "dataExtractionModelPreset"
+> &
+  Pick<React.ComponentProps<typeof PopoverContent>, "align">) => {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align={align}>
+        <Command>
+          <CommandInput />
+          <CommandList>
+            <CommandEmpty />
+            <CommandGroup>
+              {Object.entries(groupModelsByBase(allModelPresets)).map(
+                ([group, models], groupIndex, groups) => (
+                  <React.Fragment key={group}>
+                    {models.map((model) => (
+                      <CommandItem
+                        key={model}
+                        value={model}
+                        onSelect={() => onChange(model)}
+                      >
+                        <span>{model}</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            value === model ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                    {groupIndex < groups.length - 1 && <CommandSeparator />}
+                  </React.Fragment>
+                ),
+              )}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 // Group models by their LLM model family for better organization
 const groupModelsByBase = (models: string[]) => {
@@ -63,47 +115,4 @@ const groupModelsByBase = (models: string[]) => {
   });
 
   return groups;
-};
-
-export const FormModelSelectorSection = ({
-  form,
-}: {
-  form: UseFormReturn<FileUploadForm>;
-}) => {
-  return (
-    <FormField
-      control={form.control}
-      name="modelPreset"
-      render={({ field }) => (
-        <FormItem className="justify-end">
-          <FormLabel>Model Preset</FormLabel>
-
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a model preset" />
-              </SelectTrigger>
-            </FormControl>
-
-            <SelectContent>
-              {Object.entries(groupModelsByBase(allModelPresets)).map(
-                ([group, models], groupIndex, groups) => (
-                  <React.Fragment key={group}>
-                    {models.map((model) => (
-                      <SelectItem key={model} value={model}>
-                        {model}
-                      </SelectItem>
-                    ))}
-                    {groupIndex < groups.length - 1 && <SelectSeparator />}
-                  </React.Fragment>
-                ),
-              )}
-            </SelectContent>
-          </Select>
-
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  );
 };

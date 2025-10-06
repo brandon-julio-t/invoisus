@@ -7,7 +7,8 @@ import { vModelPreset } from "./validators";
 
 export const handleEnqueueAiInvoiceAnalysis = mutation({
   args: {
-    modelPreset: vModelPreset,
+    pdfAnalysisModelPreset: vModelPreset,
+    dataExtractionModelPreset: vModelPreset,
     files: v.array(
       v.object({
         name: v.string(),
@@ -30,7 +31,8 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
       "analysisWorkflowHeaders",
       {
         filesCount: args.files.length,
-        modelPreset: args.modelPreset,
+        pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
+        dataExtractionModelPreset: args.dataExtractionModelPreset,
       },
     );
 
@@ -41,7 +43,8 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         {
           userId: userId,
           analysisWorkflowHeaderId,
-          modelPreset: args.modelPreset,
+          pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
+          dataExtractionModelPreset: args.dataExtractionModelPreset,
           fileKey: file.fileKey,
         },
         {

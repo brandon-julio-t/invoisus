@@ -8,7 +8,8 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
   args: {
     userId: v.id("users"),
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
-    modelPreset: vModelPreset,
+    pdfAnalysisModelPreset: vModelPreset,
+    dataExtractionModelPreset: vModelPreset,
     fileKey: v.string(),
   },
   handler: async (step, args) => {
@@ -50,7 +51,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
-        modelPreset: args.modelPreset,
+        modelPreset: args.pdfAnalysisModelPreset,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,
@@ -75,9 +76,8 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
-        modelPreset: args.modelPreset,
+        modelPreset: args.dataExtractionModelPreset,
         supplementaryAnalysisResult: aiAnalysisResult.text,
-        previousResponseId: aiAnalysisResult.previousResponseId,
         fileName: analysisWorkflowDetail.fileName,
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,

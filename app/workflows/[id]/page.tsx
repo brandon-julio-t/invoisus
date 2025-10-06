@@ -127,8 +127,12 @@ const WorkflowDetailPage = () => {
           <Data>
             {[
               {
-                label: "Model Preset:",
-                value: header.modelPreset,
+                label: "PDF Analysis Model Preset:",
+                value: header.pdfAnalysisModelPreset,
+              },
+              {
+                label: "Data Extraction Model Preset:",
+                value: header.dataExtractionModelPreset,
               },
               {
                 label: "Files Count:",

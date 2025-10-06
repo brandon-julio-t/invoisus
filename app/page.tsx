@@ -35,13 +35,14 @@ import { api } from "@/convex/_generated/api";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
-import { Loader2Icon, SendIcon } from "lucide-react";
+import { ChevronsUpDownIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
+import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 
 const HomePage = () => {
   const router = useRouter();
@@ -50,7 +51,8 @@ const HomePage = () => {
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
-      modelPreset: "gemini-2.5-pro", // our favorite
+      pdfAnalysisModelPreset: "gemini-2.5-pro",
+      dataExtractionModelPreset: "gpt-5-mini-medium",
     },
   });
 
@@ -136,7 +138,8 @@ const HomePage = () => {
         .promise(
           handleEnqueueAiInvoiceAnalysis({
             files: uploadedFiles,
-            modelPreset: data.modelPreset,
+            pdfAnalysisModelPreset: data.pdfAnalysisModelPreset,
+            dataExtractionModelPreset: data.dataExtractionModelPreset,
           }),
           {
             loading: "Submitting invoice analysis request...",
@@ -211,6 +214,44 @@ const HomePage = () => {
 
           <FormFilesPreviewSection form={form} />
 
+          <FormField
+            control={form.control}
+            name="pdfAnalysisModelPreset"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>PDF Analysis Model</FormLabel>
+                <FormModelSelectorCombobox {...field} align="start">
+                  <FormControl>
+                    <Button variant="outline" className="w-fit">
+                      <span>{field.value}</span>
+                      <ChevronsUpDownIcon />
+                    </Button>
+                  </FormControl>
+                </FormModelSelectorCombobox>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="dataExtractionModelPreset"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Data Extraction Model</FormLabel>
+                <FormModelSelectorCombobox {...field} align="start">
+                  <FormControl>
+                    <Button variant="outline" className="w-fit">
+                      <span>{field.value}</span>
+                      <ChevronsUpDownIcon />
+                    </Button>
+                  </FormControl>
+                </FormModelSelectorCombobox>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <section className="flex justify-end">
             <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
               <AlertDialogTrigger asChild>
@@ -235,8 +276,12 @@ const HomePage = () => {
                   {[
                     { label: "Files", value: form.getValues("files").length },
                     {
-                      label: "Model Preset",
-                      value: form.getValues("modelPreset"),
+                      label: "PDF Analysis Model Preset",
+                      value: form.getValues("pdfAnalysisModelPreset"),
+                    },
+                    {
+                      label: "Data Extraction Model Preset",
+                      value: form.getValues("dataExtractionModelPreset"),
                     },
                   ].map(({ label, value }) => (
                     <DataItem key={label}>
