@@ -151,7 +151,7 @@ export const extractDataFromInvoiceWithAi = internalAction({
       },
     });
 
-    const maxAttempts = 1;
+    const maxAttempts = 3;
     let attempt = 0;
 
     let result = {} as Record<string, string>;
