@@ -37,7 +37,9 @@ export const analyzeInvoiceWithAi = internalAction({
     }
 
     const systemPrompt: string =
-      analysisConfiguration.systemPrompt || analysisConfiguration.systemPrompt;
+      analysisConfiguration.systemPrompt ||
+      analysisConfiguration.systemPrompt ||
+      "";
 
     const { phClient, model } = createModel({
       modelPreset: args.modelPreset,

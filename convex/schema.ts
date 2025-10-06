@@ -20,7 +20,7 @@ export default defineSchema({
 
   analysisConfigurations: defineTable({
     /** @deprecated replaced by pdfAnalysisPrompt and dataExtractionPrompt */
-    systemPrompt: v.string(),
+    systemPrompt: v.optional(v.string()),
     pdfAnalysisPrompt: v.optional(v.string()),
     dataExtractionPrompt: v.string(),
   }),
