@@ -32,27 +32,47 @@ import {
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
 import { api } from "@/convex/_generated/api";
+import { ModelPreset } from "@/convex/domains/analyzeInvoice/aiModelFactory";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
+import { useAtom } from "jotai/react";
+import { atomWithStorage } from "jotai/utils";
 import { ChevronsUpDownIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
-import { FileUploadForm, fileUploadSchema } from "./form";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
+import { FileUploadForm, fileUploadSchema } from "./form";
+
+const pdfAnalysisModelPresetAtom = atomWithStorage<ModelPreset>(
+  "pdfAnalysisModelPreset",
+  "gemini-2.5-pro",
+);
+const dataExtractionModelPresetAtom = atomWithStorage<ModelPreset>(
+  "dataExtractionModelPreset",
+  "gpt-5-nano-medium",
+);
 
 const HomePage = () => {
   const router = useRouter();
+
+  const [pdfAnalysisModelPreset, setPdfAnalysisModelPreset] = useAtom(
+    pdfAnalysisModelPresetAtom,
+  );
+  const [dataExtractionModelPreset, setDataExtractionModelPreset] = useAtom(
+    dataExtractionModelPresetAtom,
+  );
+  useAtom(dataExtractionModelPresetAtom);
 
   const form = useForm<FileUploadForm>({
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
-      pdfAnalysisModelPreset: "gemini-2.5-pro",
-      dataExtractionModelPreset: "gpt-5-mini-medium",
+      pdfAnalysisModelPreset: pdfAnalysisModelPreset,
+      dataExtractionModelPreset: dataExtractionModelPreset,
     },
   });
 
@@ -220,7 +240,14 @@ const HomePage = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>PDF Analysis Model</FormLabel>
-                <FormModelSelectorCombobox {...field} align="start">
+                <FormModelSelectorCombobox
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setPdfAnalysisModelPreset(value);
+                  }}
+                  align="start"
+                >
                   <FormControl>
                     <Button variant="outline" className="w-fit">
                       <span>{field.value}</span>
@@ -239,7 +266,14 @@ const HomePage = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Data Extraction Model</FormLabel>
-                <FormModelSelectorCombobox {...field} align="start">
+                <FormModelSelectorCombobox
+                  {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setDataExtractionModelPreset(value);
+                  }}
+                  align="start"
+                >
                   <FormControl>
                     <Button variant="outline" className="w-fit">
                       <span>{field.value}</span>
