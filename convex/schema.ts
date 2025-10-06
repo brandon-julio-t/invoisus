@@ -19,9 +19,7 @@ export default defineSchema({
   }).index("by_number", ["number"]),
 
   analysisConfigurations: defineTable({
-    /** @deprecated replaced by pdfAnalysisPrompt and dataExtractionPrompt */
-    systemPrompt: v.optional(v.string()),
-    pdfAnalysisPrompt: v.optional(v.string()),
+    pdfAnalysisPrompt: v.string(),
     dataExtractionPrompt: v.string(),
   }),
 

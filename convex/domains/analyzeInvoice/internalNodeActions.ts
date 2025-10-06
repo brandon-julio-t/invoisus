@@ -36,10 +36,7 @@ export const analyzeInvoiceWithAi = internalAction({
       throw new Error("Analysis configuration not found");
     }
 
-    const systemPrompt: string =
-      analysisConfiguration.systemPrompt ||
-      analysisConfiguration.systemPrompt ||
-      "";
+    const systemPrompt: string = analysisConfiguration.pdfAnalysisPrompt;
 
     const { phClient, model } = createModel({
       modelPreset: args.modelPreset,
