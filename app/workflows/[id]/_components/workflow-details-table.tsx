@@ -29,15 +29,6 @@ export const WorkflowDetailsTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow className="hidden">
-          <TableCell colSpan={5}>
-            <p className="text-muted-foreground">
-              {details.length} file{details.length !== 1 ? "s" : ""} in this
-              workflow
-            </p>
-          </TableCell>
-        </TableRow>
-
         {details.map((detail) => (
           <WorkflowDetailsTableRow key={detail._id} detail={detail} />
         ))}
