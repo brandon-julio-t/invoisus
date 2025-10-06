@@ -277,14 +277,6 @@ const HomePage = () => {
                 <Data>
                   {[
                     { label: "Files", value: form.getValues("files").length },
-                    {
-                      label: "PDF Analysis Model Preset",
-                      value: form.getValues("pdfAnalysisModelPreset"),
-                    },
-                    {
-                      label: "Data Extraction Model Preset",
-                      value: form.getValues("dataExtractionModelPreset"),
-                    },
                   ].map(({ label, value }) => (
                     <DataItem key={label}>
                       <DataItemLabel>{label}</DataItemLabel>
