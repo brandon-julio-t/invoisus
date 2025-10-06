@@ -26,7 +26,47 @@ export const exportWorkflowDetailsToExcel = ({
   });
 
   // Convert to sorted array for consistent column ordering
-  const sortedDataExtractionKeys = Array.from(allDataExtractionKeys).sort();
+  const sortedDataExtractionKeys = Array.from(allDataExtractionKeys).toSorted(
+    (a, b) => {
+      // Invoice Date
+      if (a === "invoiceDate") return -1;
+      if (b === "invoiceDate") return 1;
+
+      // Customer Number
+      if (a === "customerNumber") return -1;
+      if (b === "customerNumber") return 1;
+
+      // Customer Name
+      if (a === "customerName") return -1;
+      if (b === "customerName") return 1;
+
+      // Customer Group
+      if (a === "customerGroup") return -1;
+      if (b === "customerGroup") return 1;
+
+      // Invoice Number
+      if (a === "invoiceNumber") return -1;
+      if (b === "invoiceNumber") return 1;
+
+      // Issue Category
+      if (a === "issueCategory") return -1;
+      if (b === "issueCategory") return 1;
+
+      // Customer Type
+      if (a === "customerType") return -1;
+      if (b === "customerType") return 1;
+
+      // Customer Problem Type
+      if (a === "customerProblemType") return -1;
+      if (b === "customerProblemType") return 1;
+
+      // Problem Existance Type
+      if (a === "problemExistanceType") return -1;
+      if (b === "problemExistanceType") return 1;
+
+      return a.localeCompare(b);
+    },
+  );
 
   // Prepare data for Excel export
   const excelData = details.map((detail, index) => {
