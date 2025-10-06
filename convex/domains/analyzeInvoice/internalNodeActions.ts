@@ -36,7 +36,8 @@ export const analyzeInvoiceWithAi = internalAction({
       throw new Error("Analysis configuration not found");
     }
 
-    const systemPrompt: string = analysisConfiguration.systemPrompt;
+    const systemPrompt: string =
+      analysisConfiguration.systemPrompt || analysisConfiguration.systemPrompt;
 
     const { phClient, model } = createModel({
       modelPreset: args.modelPreset,
@@ -104,15 +105,12 @@ ${args.fileType}
 });
 
 const outputSchema = z.object({
-  invoiceDate: z.iso.date(),
-  customerNumber: z.string(),
-  customerName: z.string(),
-  customerGroup: z.string(),
-  customerType: z.string(),
-  invoiceNumber: z.string(),
-  issueCategory: z.string(),
-  customerProblemType: z.string(),
-  problemExistanceType: z.enum(["certainly has problem", "not certain"]),
+  data: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
 });
 
 export const extractDataFromInvoiceWithAi = internalAction({
@@ -126,11 +124,20 @@ export const extractDataFromInvoiceWithAi = internalAction({
     fileType: v.string(),
     fileKey: v.string(),
   },
-  handler: async (_ctx, args) => {
+  handler: async (ctx, args) => {
     console.log("args", args);
 
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
+
+    const analysisConfiguration = await ctx.runQuery(
+      internal.domains.analysisConfigurations.internalQueries
+        .getAnalysisConfiguration,
+    );
+    console.log("analysisConfiguration", analysisConfiguration);
+    if (!analysisConfiguration) {
+      throw new Error("Analysis configuration not found");
+    }
 
     const { phClient, model } = createModel({
       modelPreset: args.modelPreset,
@@ -148,7 +155,7 @@ export const extractDataFromInvoiceWithAi = internalAction({
     const maxAttempts = 1;
     let attempt = 0;
 
-    let result: z.infer<typeof outputSchema> | null = null;
+    let result = {} as Record<string, string>;
     let errors = [] as string[];
 
     while (true) {
@@ -160,6 +167,8 @@ export const extractDataFromInvoiceWithAi = internalAction({
         model,
 
         schema: outputSchema,
+
+        system: analysisConfiguration.dataExtractionPrompt,
 
         prompt: [
           {
@@ -206,8 +215,18 @@ ${errors.map((error, i) => `${i + 1}. ${error}`).join("\n")}
 
       await phClient.shutdown();
 
-      result = dataExtractionResult.object as z.infer<typeof outputSchema>;
+      const object = dataExtractionResult.object as z.infer<
+        typeof outputSchema
+      >;
+      console.log("object", object);
 
+      result = object.data.reduce(
+        (acc, { key, value }) => {
+          acc[key] = value;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
       console.log("result", result);
 
       errors = [];
