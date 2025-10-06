@@ -7,6 +7,8 @@ import { createPosthogClient } from "../../libs/posthog";
 type ReasoningEffort = "minimal" | "low" | "medium" | "high";
 
 export type ModelPreset =
+  | "auto"
+  //
   | "gemini-2.5-pro"
   | "gemini-2.5-flash"
   | "gemini-2.5-flash-lite"
@@ -58,6 +60,11 @@ export function createModel({
 
 function makeModelAndProviderOptionsFromModelPreset(modelPreset: ModelPreset) {
   switch (modelPreset) {
+    case "auto":
+      return {
+        model: openrouter("openrouter/auto"),
+      };
+
     case "gemini-2.5-pro":
       return {
         model: openrouter("google/gemini-2.5-pro"),
