@@ -41,9 +41,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
-import { FileUploadForm, fileUploadSchema } from "./form";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
-import { cn } from "@/lib/utils";
+import { FileUploadForm, fileUploadSchema } from "./form";
 
 const HomePage = () => {
   const router = useRouter();
