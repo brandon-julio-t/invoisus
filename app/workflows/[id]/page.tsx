@@ -6,6 +6,7 @@ import {
   DataItemLabel,
   DataItemValue,
 } from "@/components/data";
+import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +21,12 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { format } from "date-fns";
-import { DownloadIcon, FileIcon, Loader2Icon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  DownloadIcon,
+  FileIcon,
+  Loader2Icon,
+} from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -86,6 +92,15 @@ const WorkflowDetailPage = () => {
 
   return (
     <div className="container flex flex-col gap-6">
+      <section>
+        <Button variant="ghost" className="-mx-4" asChild>
+          <Link href="/workflows">
+            <ArrowLeftIcon />
+            Back to workflows
+          </Link>
+        </Button>
+      </section>
+
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-2 @md:flex-row">
@@ -126,14 +141,6 @@ const WorkflowDetailPage = () => {
         <CardContent>
           <Data>
             {[
-              {
-                label: "PDF Analysis Model Preset:",
-                value: header.pdfAnalysisModelPreset,
-              },
-              {
-                label: "Data Extraction Model Preset:",
-                value: header.dataExtractionModelPreset,
-              },
               {
                 label: "Files Count:",
                 value: header.filesCount,

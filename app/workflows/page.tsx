@@ -3,6 +3,12 @@
 import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@/components/ui/item";
+import {
   Table,
   TableBody,
   TableCell,
@@ -12,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -45,23 +51,26 @@ const WorkflowListPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Created</TableHead>
-                  <TableHead>PDF Analysis Model Preset</TableHead>
-                  <TableHead>Data Extraction Model Preset</TableHead>
-                  <TableHead>Workflow ID</TableHead>
                   <TableHead>Files Count</TableHead>
-                  <TableHead className="w-1">Actions</TableHead>
+                  <TableHead className="w-1">{/*  */}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {results.map((workflow) => (
                   <TableRow key={workflow._id}>
                     <TableCell className="font-medium">
-                      {format(workflow._creationTime, "PPPPpppp")}
-                    </TableCell>
-                    <TableCell>{workflow.pdfAnalysisModelPreset}</TableCell>
-                    <TableCell>{workflow.dataExtractionModelPreset}</TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {workflow._id}
+                      <Item className="-mx-4">
+                        <ItemContent>
+                          <ItemTitle>
+                            {format(workflow._creationTime, "PPPPpppp")}
+                          </ItemTitle>
+                          <ItemDescription>
+                            {formatDistanceToNow(workflow._creationTime, {
+                              addSuffix: true,
+                            })}
+                          </ItemDescription>
+                        </ItemContent>
+                      </Item>
                     </TableCell>
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
