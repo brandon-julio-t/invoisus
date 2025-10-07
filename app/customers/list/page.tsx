@@ -15,10 +15,17 @@ import {
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -29,36 +36,65 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
+import { useDebounce } from "@uidotdev/usehooks";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
 import {
   ChevronDownIcon,
   Loader2Icon,
   PlusIcon,
+  SearchIcon,
   UploadIcon,
+  XIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
 import { CustomerForm, CustomerFormProps } from "../_components/customer-form";
 import { CustomerTableRow } from "./_components/customer-table-row";
+import { Spinner } from "@/components/ui/spinner";
 
 const ITEMS_PER_PAGE = 50;
 
+const searchFields = [
+  { label: "Number", value: "number" },
+  { label: "Name", value: "name" },
+  { label: "Group", value: "group" },
+  { label: "Problem Type", value: "problemType" },
+] as const;
+
 const CustomersListPage = () => {
-  const { results, status, loadMore } = usePaginatedQuery(
+  const [search, setSearch] = useQueryState(
+    "search",
+    parseAsString.withDefault(""),
+  );
+
+  const [searchField, setSearchField] = useQueryState(
+    "searchField",
+    parseAsStringLiteral(searchFields.map((field) => field.value)).withDefault(
+      "name",
+    ),
+  );
+
+  const debouncedSearch = useDebounce(search, 200);
+
+  const paginatedQuery = usePaginatedQuery(
     api.domains.customers.queries.getCustomersListPaginated,
-    {},
+    {
+      search: debouncedSearch,
+      searchField,
+    },
     { initialNumItems: ITEMS_PER_PAGE },
   );
 
-  const isLoadingMore = status === "LoadingMore";
-  const canLoadMore = status === "CanLoadMore";
-  const isLoadingFirstPage = status === "LoadingFirstPage";
+  const isLoadingMore = paginatedQuery.status === "LoadingMore";
+  const canLoadMore = paginatedQuery.status === "CanLoadMore";
+  const isLoadingFirstPage = paginatedQuery.status === "LoadingFirstPage";
 
   const onLoadMore = () => {
     if (canLoadMore) {
-      loadMore(ITEMS_PER_PAGE / 2);
+      paginatedQuery.loadMore(ITEMS_PER_PAGE / 2);
     }
   };
 
@@ -137,6 +173,56 @@ const CustomersListPage = () => {
         </Dialog>
       </header>
 
+      <FieldSet>
+        <FieldGroup>
+          <Field>
+            <ButtonGroup>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="group capitalize">
+                    {
+                      searchFields.find((field) => field.value === searchField)
+                        ?.label
+                    }
+                    <ChevronDownIcon className="transition-transform duration-200 group-data-[open=true]:rotate-180" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {searchFields.map((field) => (
+                    <DropdownMenuCheckboxItem
+                      key={field.value}
+                      checked={searchField === field.value}
+                      onCheckedChange={() => setSearchField(field.value)}
+                    >
+                      {field.label}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <InputGroup>
+                <InputGroupAddon>
+                  {paginatedQuery.isLoading ? <Spinner /> : <SearchIcon />}
+                </InputGroupAddon>
+
+                <InputGroupInput
+                  placeholder="Search customers"
+                  disabled={paginatedQuery.isLoading}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+
+                {search && (
+                  <InputGroupAddon align="inline-end">
+                    <XIcon onClick={() => setSearch("")} />
+                  </InputGroupAddon>
+                )}
+              </InputGroup>
+            </ButtonGroup>
+          </Field>
+        </FieldGroup>
+      </FieldSet>
+
       <section>
         <Table>
           <TableHeader>
@@ -157,14 +243,14 @@ const CustomersListPage = () => {
                 <TableSkeletonRow />
                 <TableSkeletonRow />
               </>
-            ) : results.length === 0 ? (
+            ) : paginatedQuery.results.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-8 text-center">
                   <p className="text-muted-foreground">No customers found</p>
                 </TableCell>
               </TableRow>
             ) : (
-              results.map((customer) => (
+              paginatedQuery.results.map((customer) => (
                 <CustomerTableRow key={customer._id} customer={customer} />
               ))
             )}
