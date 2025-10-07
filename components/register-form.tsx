@@ -52,7 +52,25 @@ export function RegisterForm() {
       .promise(signIn("password", formData), {
         loading: "Signing up...",
         success: "Signed up successfully",
-        error: "Failed to sign up",
+        error: (error) => {
+          console.error(error);
+
+          const isPasswordTooWeak =
+            error instanceof Error &&
+            error.message.includes("Invalid password") &&
+            error.message.includes("validateDefaultPasswordRequirements");
+
+          console.log({ "error.message": error.message, isPasswordTooWeak });
+
+          return {
+            message: isPasswordTooWeak
+              ? "Password is too weak"
+              : "Failed to sign up",
+            description: isPasswordTooWeak
+              ? "Please use a stronger password or contact support if the problem persists"
+              : "Please check your email and password or contact support if the problem persists",
+          };
+        },
       })
       .unwrap();
 
