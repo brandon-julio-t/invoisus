@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "@/components/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +39,7 @@ import { parseFileWithXlsx } from "@/lib/excel";
 import { cn } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import {
+  ArrowLeftIcon,
   CheckIcon,
   FileSpreadsheetIcon,
   Loader2Icon,
@@ -156,6 +158,15 @@ const CustomersImportPage = () => {
 
   return (
     <div className="container mx-auto space-y-6 py-8">
+      <div>
+        <Button variant="ghost" className="-mx-4" asChild>
+          <Link href="/customers/list">
+            <ArrowLeftIcon />
+            Back to Customers
+          </Link>
+        </Button>
+      </div>
+
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Import Customers</h1>
         <p className="text-muted-foreground">
