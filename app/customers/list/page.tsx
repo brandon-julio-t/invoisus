@@ -2,6 +2,7 @@
 
 import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   Dialog,
   DialogClose,
@@ -35,7 +36,6 @@ import {
   Loader2Icon,
   PlusIcon,
   UploadIcon,
-  UserPlusIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
 import React from "react";
@@ -88,21 +88,22 @@ const CustomersListPage = () => {
 
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="group">
-                <PlusIcon />
-                Add Customer
-                <ChevronDownIcon className="transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
+            <ButtonGroup>
               <DialogTrigger asChild>
-                <DropdownMenuItem>
-                  <UserPlusIcon /> Single Customer
-                </DropdownMenuItem>
+                <Button variant="outline">
+                  <PlusIcon />
+                  Add Customer
+                </Button>
               </DialogTrigger>
 
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <ChevronDownIcon />
+                </Button>
+              </DropdownMenuTrigger>
+            </ButtonGroup>
+
+            <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link href="/customers/import">
                   <UploadIcon /> Import Bulk
