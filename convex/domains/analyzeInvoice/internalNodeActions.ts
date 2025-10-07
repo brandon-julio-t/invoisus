@@ -36,7 +36,9 @@ export const analyzeInvoiceWithAi = internalAction({
       throw new Error("Analysis configuration not found");
     }
 
-    const systemPrompt: string = analysisConfiguration.pdfAnalysisPrompt;
+    const pdfAnalysisPrompt: string = analysisConfiguration.pdfAnalysisPrompt;
+    const dataExtractionPrompt: string =
+      analysisConfiguration.dataExtractionPrompt;
 
     const { phClient, model } = createModel({
       modelPreset: args.modelPreset,
@@ -60,21 +62,19 @@ export const analyzeInvoiceWithAi = internalAction({
         getCustomerByNumber: getCustomerByNumber(ctx),
       },
 
-      system: systemPrompt,
+      system: pdfAnalysisPrompt,
 
       prompt: [
         {
           role: "user",
           content: [
             {
-              type: "file",
-              data: fileUrl,
-              mediaType: args.fileType,
-              filename: args.fileName,
-            },
-            {
               type: "text",
               text: `
+<mandatory_fields_to_be_analyzed>
+${dataExtractionPrompt}
+</mandatory_fields_to_be_analyzed>
+
 <file_name>
 ${args.fileName}
 </file_name>
@@ -83,6 +83,12 @@ ${args.fileName}
 ${args.fileType}
 </file_type>
 `.trim(),
+            },
+            {
+              type: "file",
+              data: fileUrl,
+              mediaType: args.fileType,
+              filename: args.fileName,
             },
           ],
         },
@@ -176,18 +182,6 @@ export const extractDataFromInvoiceWithAi = internalAction({
               {
                 type: "text",
                 text: `
-<file_name>
-${args.fileName}
-</file_name>
-
-<file_type>
-${args.fileType}
-</file_type>
-
-<supplementary_analysis_result>
-${args.supplementaryAnalysisResult}
-</supplementary_analysis_result>
-
 <max_attempts>
 ${maxAttempts}
 </max_attempts>
@@ -203,7 +197,25 @@ ${result ? JSON.stringify(result) : "`null`"}
 <errors>
 ${errors.map((error, i) => `${i + 1}. ${error}`).join("\n")}
 </errors>
+
+<supplementary_analysis_result>
+${args.supplementaryAnalysisResult}
+</supplementary_analysis_result>
+
+<file_name>
+${args.fileName}
+</file_name>
+
+<file_type>
+${args.fileType}
+</file_type>
 `.trim(),
+              },
+              {
+                type: "file",
+                data: fileUrl,
+                mediaType: args.fileType,
+                filename: args.fileName,
               },
             ],
           },
