@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
+import { cn } from "@/lib/utils";
 
 const HomePage = () => {
   const router = useRouter();
@@ -218,8 +219,11 @@ const HomePage = () => {
             control={form.control}
             name="pdfAnalysisModelPreset"
             render={({ field }) => (
-              // hidden only for dev convenience in the future
-              <FormItem className="hidden">
+              <FormItem
+                className={cn(
+                  process.env.NODE_ENV === "production" && "hidden",
+                )}
+              >
                 <FormLabel>PDF Analysis Model</FormLabel>
                 <FormModelSelectorCombobox {...field} align="start">
                   <FormControl>
@@ -238,8 +242,11 @@ const HomePage = () => {
             control={form.control}
             name="dataExtractionModelPreset"
             render={({ field }) => (
-              // hidden only for dev convenience in the future
-              <FormItem className="hidden">
+              <FormItem
+                className={cn(
+                  process.env.NODE_ENV === "production" && "hidden",
+                )}
+              >
                 <FormLabel>Data Extraction Model</FormLabel>
                 <FormModelSelectorCombobox {...field} align="start">
                   <FormControl>
