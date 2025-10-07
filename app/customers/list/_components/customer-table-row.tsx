@@ -38,6 +38,7 @@ import {
   CustomerForm,
   CustomerFormProps,
 } from "../../_components/customer-form";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 export const CustomerTableRow = ({
   customer,
@@ -93,7 +94,7 @@ export const CustomerTableRow = ({
       <TableCell>{customer.problemType}</TableCell>
 
       <TableCell className="w-1">
-        <div>
+        <ButtonGroup>
           <Dialog open={openEdit} onOpenChange={setOpenEdit}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -170,7 +171,7 @@ export const CustomerTableRow = ({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
+        </ButtonGroup>
       </TableCell>
     </TableRow>
   );

@@ -50,38 +50,43 @@ const WorkflowListPage = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Workflow ID</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Files Count</TableHead>
-                  <TableHead className="w-1">{/*  */}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {results.map((workflow) => (
                   <TableRow key={workflow._id}>
-                    <TableCell className="font-medium">
-                      <Item className="-mx-4">
-                        <ItemContent>
-                          <ItemTitle>
-                            {format(workflow._creationTime, "PPPPpppp")}
-                          </ItemTitle>
-                          <ItemDescription>
-                            {formatDistanceToNow(workflow._creationTime, {
-                              addSuffix: true,
-                            })}
-                          </ItemDescription>
-                        </ItemContent>
+                    <TableCell>
+                      <Item className="-mx-4" asChild>
+                        <Link href={`/workflows/${workflow._id}`}>
+                          <ItemContent>
+                            <ItemTitle className="font-mono">
+                              {workflow._id}
+                            </ItemTitle>
+                          </ItemContent>
+                        </Link>
+                      </Item>
+                    </TableCell>
+                    <TableCell>
+                      <Item className="-mx-4" asChild>
+                        <Link href={`/workflows/${workflow._id}`}>
+                          <ItemContent>
+                            <ItemTitle>
+                              {format(workflow._creationTime, "PPPPpppp")}
+                            </ItemTitle>
+                            <ItemDescription>
+                              {formatDistanceToNow(workflow._creationTime, {
+                                addSuffix: true,
+                              })}
+                            </ItemDescription>
+                          </ItemContent>
+                        </Link>
                       </Item>
                     </TableCell>
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="ghost" asChild>
-                        <Link href={`/workflows/${workflow._id}`}>
-                          View Details
-                          <ArrowRightIcon />
-                        </Link>
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
