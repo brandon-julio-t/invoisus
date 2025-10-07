@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { HijackRouterNavigationForNProgress } from "@/components/link";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -42,13 +43,15 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <ConvexClientProvider>
-              <Toaster closeButton richColors position="bottom-right" />
+              <NuqsAdapter>
+                <Toaster closeButton richColors position="bottom-right" />
 
-              <HijackRouterNavigationForNProgress />
+                <HijackRouterNavigationForNProgress />
 
-              <PostHogProvider>
-                <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
-              </PostHogProvider>
+                <PostHogProvider>
+                  <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
+                </PostHogProvider>
+              </NuqsAdapter>
             </ConvexClientProvider>
           </ThemeProvider>
         </body>
