@@ -19,7 +19,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
-import { ArrowRightIcon, Loader2Icon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
 
 const ITEMS_PER_PAGE = 10;
