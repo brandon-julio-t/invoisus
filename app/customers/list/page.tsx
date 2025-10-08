@@ -24,6 +24,7 @@ import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -214,7 +215,12 @@ const CustomersListPage = () => {
 
                 {search && (
                   <InputGroupAddon align="inline-end">
-                    <XIcon onClick={() => setSearch("")} />
+                    <InputGroupButton
+                      size="icon-xs"
+                      onClick={() => setSearch("")}
+                    >
+                      <XIcon />
+                    </InputGroupButton>
                   </InputGroupAddon>
                 )}
               </InputGroup>
