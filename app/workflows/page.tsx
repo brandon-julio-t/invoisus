@@ -86,7 +86,10 @@ const WorkflowListPage = () => {
                         </Link>
                       </Item>
                     </TableCell>
-                    <TableCell>{workflow.createdByUser?.name}</TableCell>
+                    <TableCell>
+                      {workflow.createdByUser?.name ??
+                        workflow.createdByUser?.email}
+                    </TableCell>
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
                     </TableCell>

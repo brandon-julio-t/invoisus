@@ -143,7 +143,8 @@ const WorkflowDetailPage = () => {
             {[
               {
                 label: "Created By:",
-                value: header.createdByUser?.name,
+                value:
+                  header.createdByUser?.name ?? header.createdByUser?.email,
               },
               {
                 label: "Files Count:",
