@@ -32,6 +32,7 @@ export default defineSchema({
     filesCount: v.number(),
     pdfAnalysisModelPreset: v.string(),
     dataExtractionModelPreset: v.string(),
+    createdByUserId: v.optional(v.id("users")),
   }),
 
   analysisWorkflowDetails: defineTable({

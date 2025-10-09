@@ -142,6 +142,10 @@ const WorkflowDetailPage = () => {
           <Data>
             {[
               {
+                label: "Created By:",
+                value: header.createdByUser?.name,
+              },
+              {
                 label: "Files Count:",
                 value: header.filesCount,
               },

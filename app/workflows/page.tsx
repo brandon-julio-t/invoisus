@@ -51,7 +51,8 @@ const WorkflowListPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Workflow ID</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>Created At</TableHead>
+                  <TableHead>Created By</TableHead>
                   <TableHead>Files Count</TableHead>
                 </TableRow>
               </TableHeader>
@@ -85,6 +86,7 @@ const WorkflowListPage = () => {
                         </Link>
                       </Item>
                     </TableCell>
+                    <TableCell>{workflow.createdByUser?.name}</TableCell>
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
                     </TableCell>

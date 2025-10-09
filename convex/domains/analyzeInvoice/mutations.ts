@@ -33,6 +33,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         filesCount: args.files.length,
         pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
         dataExtractionModelPreset: args.dataExtractionModelPreset,
+        createdByUserId: userId,
       },
     );
 

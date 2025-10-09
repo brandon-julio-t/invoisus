@@ -9,10 +9,25 @@ export const getPaginatedAnalysisWorkflowHeaders = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const paginated = await ctx.db
       .query("analysisWorkflowHeaders")
       .order("desc")
       .paginate(args.paginationOpts);
+
+    return {
+      ...paginated,
+
+      page: await Promise.all(
+        paginated.page.map(async (item) => {
+          return {
+            ...item,
+            createdByUser: item?.createdByUserId
+              ? await ctx.db.get(item?.createdByUserId)
+              : null,
+          };
+        }),
+      ),
+    };
   },
 });
 
@@ -35,7 +50,13 @@ export const getAnalysisWorkflowDetail = query({
       .collect();
 
     return {
-      header,
+      header: {
+        ...header,
+        createdByUser: header?.createdByUserId
+          ? await ctx.db.get(header?.createdByUserId)
+          : null,
+      },
+
       details: await Promise.all(
         details.map(async (detail) => {
           return {
