@@ -208,7 +208,6 @@ const CustomersListPage = () => {
 
                 <InputGroupInput
                   placeholder="Search customers"
-                  disabled={paginatedQuery.isLoading}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
