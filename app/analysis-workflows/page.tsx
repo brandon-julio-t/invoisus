@@ -73,7 +73,7 @@ const WorkflowListPage = () => {
                   <TableRow key={workflow._id}>
                     <TableCell>
                       <Item className="-mx-4" asChild>
-                        <Link href={`/workflows/${workflow._id}`}>
+                        <Link href={`/analysis-workflows/${workflow._id}`}>
                           <ItemContent>
                             <ItemTitle className="font-mono">
                               {workflow._id}
@@ -84,7 +84,7 @@ const WorkflowListPage = () => {
                     </TableCell>
                     <TableCell>
                       <Item className="-mx-4" asChild>
-                        <Link href={`/workflows/${workflow._id}`}>
+                        <Link href={`/analysis-workflows/${workflow._id}`}>
                           <ItemContent>
                             <ItemTitle>
                               {format(workflow._creationTime, "PPPp")}

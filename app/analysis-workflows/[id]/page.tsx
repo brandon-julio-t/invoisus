@@ -141,9 +141,9 @@ const WorkflowDetailPage = () => {
     <div className="container flex flex-col gap-6">
       <section>
         <Button variant="ghost" className="-mx-4" asChild>
-          <Link href="/workflows">
+          <Link href="/analysis-workflows">
             <ArrowLeftIcon />
-            Back to workflows
+            Back to analysis workflows
           </Link>
         </Button>
       </section>

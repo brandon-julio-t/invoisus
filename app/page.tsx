@@ -164,7 +164,7 @@ const HomePage = () => {
         )
         .unwrap();
 
-      router.push(`/workflows/${analysisWorkflowHeaderId}`);
+      router.push(`/analysis-workflows/${analysisWorkflowHeaderId}`);
     },
     (err) => {
       setOpenConfirm(false);
