@@ -156,17 +156,14 @@ export const generateResponse = internalAction({
 
 const BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 
-async function startStream({
-  channelId,
-  threadTs,
-  userId,
-  teamId,
-}: {
+async function startStream(args: {
   channelId: string;
   threadTs: string;
   userId: string;
   teamId: string;
 }) {
+  console.log("startStream", "args", args);
+
   const response = await fetch("https://slack.com/api/chat.startStream", {
     method: "POST",
     headers: {
@@ -174,29 +171,31 @@ async function startStream({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      channel: channelId,
-      thread_ts: threadTs,
-      recipient_user_id: userId,
-      recipient_team_id: teamId,
+      channel: args.channelId,
+      thread_ts: args.threadTs,
+      recipient_user_id: args.userId,
+      recipient_team_id: args.teamId,
     }),
   });
 
+  console.log("startStream", "response", response);
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`chat.startStream error! status: ${response.status}`, {
+      cause: response,
+    });
   }
 
   return await response.json();
 }
 
-async function appendStream({
-  channelId,
-  ts,
-  text,
-}: {
+async function appendStream(args: {
   channelId: string;
   ts: string;
   text: string;
 }) {
+  console.log("appendStream", "args", args);
+
   const response = await fetch("https://slack.com/api/chat.appendStream", {
     method: "POST",
     headers: {
@@ -204,28 +203,30 @@ async function appendStream({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      channel: channelId,
-      ts: ts,
-      markdown_text: text,
+      channel: args.channelId,
+      ts: args.ts,
+      markdown_text: args.text,
     }),
   });
 
+  console.log("appendStream", "response", response);
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`chat.appendStream error! status: ${response.status}`, {
+      cause: response,
+    });
   }
 
-  return response.json();
+  return await response.json();
 }
 
-async function endStream({
-  channelId,
-  ts,
-  finalText,
-}: {
+async function endStream(args: {
   channelId: string;
   ts: string;
   finalText?: string;
 }) {
+  console.log("endStream", "args", args);
+
   const response = await fetch("https://slack.com/api/chat.stopStream", {
     method: "POST",
     headers: {
@@ -233,15 +234,19 @@ async function endStream({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      channel: channelId,
-      ts: ts,
-      markdown_text: finalText,
+      channel: args.channelId,
+      ts: args.ts,
+      markdown_text: args.finalText,
     }),
   });
 
+  console.log("endStream", "response", response);
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error(`chat.stopStream error! status: ${response.status}`, {
+      cause: response,
+    });
   }
 
-  return response.json();
+  return await response.json();
 }
