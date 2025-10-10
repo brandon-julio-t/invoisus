@@ -181,9 +181,7 @@ async function startStream(args: {
   console.log("startStream", "response", response);
 
   if (!response.ok) {
-    throw new Error(`chat.startStream error! status: ${response.status}`, {
-      cause: response,
-    });
+    throw new Error(`chat.startStream error! status: ${response.status}`);
   }
 
   return await response.json();
@@ -212,9 +210,7 @@ async function appendStream(args: {
   console.log("appendStream", "response", response);
 
   if (!response.ok) {
-    throw new Error(`chat.appendStream error! status: ${response.status}`, {
-      cause: response,
-    });
+    throw new Error(`chat.appendStream error! status: ${response.status}`);
   }
 
   return await response.json();
@@ -243,9 +239,7 @@ async function endStream(args: {
   console.log("endStream", "response", response);
 
   if (!response.ok) {
-    throw new Error(`chat.stopStream error! status: ${response.status}`, {
-      cause: response,
-    });
+    throw new Error(`chat.stopStream error! status: ${response.status}`);
   }
 
   return await response.json();
