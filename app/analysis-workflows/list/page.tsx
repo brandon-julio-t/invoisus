@@ -202,7 +202,7 @@ const StatsCell = ({
       {[
         {
           label: "Queued",
-          value: Number(detailsQuery?.stats.successCount ?? 0).toLocaleString(),
+          value: Number(detailsQuery?.stats.queuedCount ?? 0).toLocaleString(),
           icon: HourglassIcon,
         },
         {
