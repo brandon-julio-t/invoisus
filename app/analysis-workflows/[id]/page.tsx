@@ -167,7 +167,9 @@ const WorkflowDetailPage = () => {
     new Set(
       workflowDetailsQuery.data.map((detail) => detail.problemExistanceType),
     ),
-  ).toSorted();
+  )
+    .map((x) => (x === undefined ? "uncategorized" : x))
+    .toSorted();
 
   return (
     <div className="container flex flex-col gap-6">
@@ -309,6 +311,10 @@ const WorkflowDetailPage = () => {
               const details = workflowDetailsQuery.data.filter(
                 (detail) => detail.problemExistanceType === problemExistance,
               );
+
+              if (details.length === 0) {
+                return null;
+              }
 
               return (
                 <React.Fragment key={`${problemExistance}-${index}`}>
