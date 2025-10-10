@@ -36,8 +36,6 @@ export const generateDownloadUrl = mutation({
       throw new Error("User not found");
     }
 
-    console.log("generateDownloadUrl", args);
-
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });
   },
 });
@@ -55,8 +53,6 @@ export const queryDownloadUrl = query({
     if (!userId) {
       throw new Error("User not found");
     }
-
-    console.log("generateDownloadUrl", args);
 
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });
   },
