@@ -183,7 +183,11 @@ const StatsCell = ({
           icon: XIcon,
         },
       ].map((item) => (
-        <Item key={item.label} size="sm">
+        <Item
+          key={item.label}
+          variant={isLoading ? "muted" : "default"}
+          size="sm"
+        >
           <ItemMedia variant="icon">
             {isLoading ? <Spinner /> : <item.icon />}
           </ItemMedia>
