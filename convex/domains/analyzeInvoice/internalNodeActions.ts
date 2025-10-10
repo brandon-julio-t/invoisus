@@ -129,7 +129,7 @@ export const extractDataFromInvoiceWithAi = internalAction({
     fileType: v.string(),
     fileKey: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<Record<string, string>> => {
     console.log("args", args);
 
     const fileUrl = await r2.getUrl(args.fileKey);
@@ -226,9 +226,7 @@ ${args.fileType}
 
       await phClient.shutdown();
 
-      const object = dataExtractionResult.object as z.infer<
-        typeof outputSchema
-      >;
+      const object = dataExtractionResult.object;
       console.log("object", object);
 
       result = object.data.reduce(
@@ -254,6 +252,24 @@ ${args.fileType}
       const shouldReturn = errors.length <= 0 || attempt >= maxAttempts;
       console.log("shouldReturn", shouldReturn);
       if (shouldReturn) {
+        if (result.customerNumber) {
+          const customer = await ctx.runQuery(
+            internal.domains.customers.internalQueries.getCustomerByNumber,
+            { number: result.customerNumber },
+          );
+
+          console.log("override customer", customer);
+
+          if (customer) {
+            return {
+              ...result,
+              customerName: customer.name,
+              customerGroup: customer.group,
+              customerProblemType: customer.problemType,
+            };
+          }
+        }
+
         return result;
       }
     }
