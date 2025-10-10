@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -41,6 +42,7 @@ import { useMutation } from "convex/react";
 import {
   ArrowLeftIcon,
   CheckIcon,
+  DownloadIcon,
   FileSpreadsheetIcon,
   Loader2Icon,
   UploadIcon,
@@ -185,6 +187,17 @@ const CustomersImportPage = () => {
             Select an Excel (.xlsx, .xls) or CSV file containing your customer
             data with columns: number, type, name, and group.
           </CardDescription>
+          <CardAction>
+            <Button variant="outline" asChild>
+              <a
+                href="/customers-import-bulk-template.xlsx"
+                download="customers-import-template.xlsx"
+              >
+                <DownloadIcon />
+                Download Template
+              </a>
+            </Button>
+          </CardAction>
         </CardHeader>
 
         <CardContent>
