@@ -160,7 +160,7 @@ export const generateResponse = internalAction({
     userId: v.string(),
     teamId: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     console.log("args", args);
 
     let slackStreamId = "";
@@ -209,7 +209,7 @@ You will receive message from Slack, which may contain quotes of other messages 
 <output_format>
 You are replying directly to Slack, so just output the message you want to send like how you talk to a human naturally.
 </output_format>
-              `.trim(),
+        `.trim(),
 
         messages: [
           {
@@ -221,37 +221,44 @@ You are replying directly to Slack, so just output the message you want to send 
 
       const stringBuilder = [] as string[];
 
-      let lastAppendTimeMs = 0;
+      let isAppending = false;
 
       for await (const chunk of aiStream.textStream) {
         stringBuilder.push(chunk);
 
-        const nowMs = Date.now();
-        const elapsedMs = nowMs - lastAppendTimeMs;
-        if (elapsedMs >= 200) {
+        if (!isAppending) {
           const text = stringBuilder.join("");
 
           stringBuilder.length = 0;
+
+          isAppending = true;
 
           void appendStream({
             channelId: channel,
             ts: slackStreamId,
             text: text,
+          }).then(() => {
+            isAppending = false;
           });
-
-          lastAppendTimeMs = nowMs;
         }
       }
 
-      const finalText = await aiStream.text;
+      if (stringBuilder.length > 0) {
+        const text = stringBuilder.join("");
+
+        await appendStream({
+          channelId: channel,
+          ts: slackStreamId,
+          text: text,
+        });
+      }
 
       await endStream({
         channelId: channel,
         ts: slackStreamId,
-        finalText: finalText,
       });
 
-      console.log("ended stream...", finalText);
+      console.log("ended stream...");
     } catch (error) {
       console.error("Error:", error);
 
@@ -337,7 +344,7 @@ async function endStream({
 }: {
   channelId: string;
   ts: string;
-  finalText: string;
+  finalText?: string;
 }) {
   const response = await fetch("https://slack.com/api/chat.stopStream", {
     method: "POST",
