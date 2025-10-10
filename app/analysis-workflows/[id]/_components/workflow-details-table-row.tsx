@@ -154,7 +154,7 @@ export const WorkflowDetailsTableRow = ({
                 </h4>
                 <div className="text-sm">
                   {detail.analysisResult ? (
-                    <Response className="[&_p]:whitespace-pre-line">
+                    <Response className="[&_p]:whitespace-break-spaces">
                       {detail.analysisResult}
                     </Response>
                   ) : (
