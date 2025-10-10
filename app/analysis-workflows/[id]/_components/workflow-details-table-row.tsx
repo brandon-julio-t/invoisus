@@ -31,6 +31,7 @@ import React from "react";
 import { DownloadFileButton } from "./download-file-button";
 import { WorkflowDetailsType } from "./types";
 import { ViewFileDialog } from "./view-file-dialog";
+import { Response } from "@/components/ai-elements/response";
 
 export const WorkflowDetailsTableRow = ({
   detail,
@@ -153,9 +154,9 @@ export const WorkflowDetailsTableRow = ({
                 </h4>
                 <div className="text-sm">
                   {detail.analysisResult ? (
-                    <p className="whitespace-pre-wrap">
+                    <Response className="[&_p]:whitespace-pre-line">
                       {detail.analysisResult}
-                    </p>
+                    </Response>
                   ) : (
                     <p className="text-muted-foreground">
                       No analysis result available
