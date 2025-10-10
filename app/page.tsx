@@ -41,17 +41,13 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
-import {
-  ChevronsUpDownIcon,
-  IterationCcwIcon,
-  Loader2Icon,
-  SendIcon,
-} from "lucide-react";
+import { ChevronsUpDownIcon, IterationCcwIcon, SendIcon } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -244,11 +240,7 @@ const HomePage = () => {
                       type="button"
                       disabled={form.formState.isSubmitting}
                     >
-                      {form.formState.isSubmitting ? (
-                        <Loader2Icon className="animate-spin" />
-                      ) : (
-                        <SendIcon />
-                      )}
+                      {form.formState.isSubmitting ? <Spinner /> : <SendIcon />}
                       {form.formState.isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
                   </AlertDialogTrigger>

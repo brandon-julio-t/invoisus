@@ -25,7 +25,6 @@ import {
   DownloadIcon,
   EyeIcon,
   HourglassIcon,
-  Loader2Icon,
   XIcon,
 } from "lucide-react";
 import React from "react";
@@ -79,9 +78,7 @@ export const WorkflowDetailsTableRow = ({
           >
             {detail.status === "queued" && <HourglassIcon />}
 
-            {detail.status === "processing" && (
-              <Loader2Icon className="animate-spin" />
-            )}
+            {detail.status === "processing" && <Spinner />}
 
             {detail.status === "success" && <CheckIcon />}
 
@@ -181,7 +178,7 @@ export const WorkflowDetailsTableRow = ({
                           key={step._id}
                           className="bg-muted/50 flex items-center gap-2 rounded-md p-2"
                         >
-                          <Loader2Icon className="size-(--text-sm) animate-spin" />
+                          <Spinner className="size-(--text-sm)" />
                           <div className="flex-1">
                             <div className="font-medium">{step.step.name}</div>
                             <div className="text-muted-foreground text-xs">

@@ -28,10 +28,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
-import { Loader2Icon, PencilIcon, XIcon } from "lucide-react";
+import { PencilIcon, XIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 import {
@@ -130,7 +131,7 @@ export const CustomerTableRow = ({
                     </Button>
                   </DialogClose>
                   <Button type="submit" disabled={isLoading}>
-                    {isLoading && <Loader2Icon className="animate-spin" />}
+                    {isLoading && <Spinner />}
                     {isLoading ? "Submitting..." : "Submit"}
                   </Button>
                 </DialogFooter>
@@ -165,7 +166,7 @@ export const CustomerTableRow = ({
                   onClick={onDeleteCustomer}
                   disabled={isDeleting}
                 >
-                  {isDeleting && <Loader2Icon className="animate-spin" />}
+                  {isDeleting && <Spinner />}
                   {isDeleting ? "Deleting..." : "Delete Customer"}
                 </AlertDialogAction>
               </AlertDialogFooter>

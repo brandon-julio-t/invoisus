@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, Loader2Icon, LogOut } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,6 +18,7 @@ import {
   SidebarMenuSkeleton,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex-helpers/react/cache/hooks";
@@ -101,11 +102,7 @@ export function NavUser() {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem onClick={onSignOut} disabled={isSigningOut}>
-                {isSigningOut ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <LogOut />
-                )}
+                {isSigningOut ? <Spinner /> : <LogOut />}
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>

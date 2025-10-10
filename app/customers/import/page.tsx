@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { parseFileWithXlsx } from "@/lib/excel";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,6 @@ import {
   CheckIcon,
   DownloadIcon,
   FileSpreadsheetIcon,
-  Loader2Icon,
   UploadIcon,
   XIcon,
 } from "lucide-react";
@@ -232,11 +232,7 @@ const CustomersImportPage = () => {
             >
               <AlertDialogTrigger asChild>
                 <Button disabled={validRows.length === 0 || isImporting}>
-                  {isImporting ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    <UploadIcon />
-                  )}
+                  {isImporting ? <Spinner /> : <UploadIcon />}
                   Import Valid Customers ({validRows.length})
                 </Button>
               </AlertDialogTrigger>

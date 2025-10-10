@@ -45,7 +45,6 @@ import {
   DownloadIcon,
   FileIcon,
   HourglassIcon,
-  Loader2Icon,
   LoaderIcon,
   TelescopeIcon,
   XIcon,
@@ -212,11 +211,7 @@ const WorkflowDetailPage = () => {
                   workflowDetailsQuery.data.length === 0 || isDownloading
                 }
               >
-                {isDownloading ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <DownloadIcon />
-                )}
+                {isDownloading ? <Spinner /> : <DownloadIcon />}
                 Download all Files
               </Button>
             </div>

@@ -14,8 +14,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Spinner } from "@/components/ui/spinner";
 import { formatFileSize } from "@/lib/strings";
-import { CheckIcon, Loader2Icon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { FileUploadForm } from "../form";
@@ -74,7 +75,7 @@ function TableRowFile({
         ) : fileItem.status === "error" ? (
           <XIcon className="text-destructive size-(--text-sm)" />
         ) : fileItem.status === "uploading" ? (
-          <Loader2Icon className="size-(--text-sm) animate-spin" />
+          <Spinner className="size-(--text-sm)" />
         ) : null}
       </TableCell>
       <TableCell className="font-medium">{file.name}</TableCell>

@@ -42,7 +42,6 @@ import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
 import {
   ChevronDownIcon,
-  Loader2Icon,
   PlusIcon,
   SearchIcon,
   UploadIcon,
@@ -165,7 +164,7 @@ const CustomersListPage = () => {
                   </Button>
                 </DialogClose>
                 <Button type="submit" disabled={isLoading}>
-                  {isLoading && <Loader2Icon className="animate-spin" />}
+                  {isLoading && <Spinner />}
                   {isLoading ? "Submitting..." : "Submit"}
                 </Button>
               </DialogFooter>
@@ -272,7 +271,7 @@ const CustomersListPage = () => {
             <motion.button onViewportEnter={onLoadMore}>
               {isLoadingMore ? (
                 <>
-                  <Loader2Icon className="animate-spin" />
+                  <Spinner />
                   Loading...
                 </>
               ) : !canLoadMore ? (
