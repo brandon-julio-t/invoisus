@@ -2,12 +2,21 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { components } from "../../_generated/api";
 import { query } from "../../_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getPaginatedAnalysisWorkflowHeaders = query({
   args: {
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
+    console.log("args", args);
+
+    const userId = await getAuthUserId(ctx);
+    console.log("userId", userId);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
     const paginated = await ctx.db
       .query("analysisWorkflowHeaders")
       .order("desc")
@@ -35,6 +44,14 @@ export const getAnalysisWorkflowHeaderById = query({
     id: v.id("analysisWorkflowHeaders"),
   },
   handler: async (ctx, args) => {
+    console.log("args", args);
+
+    const userId = await getAuthUserId(ctx);
+    console.log("userId", userId);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
     const header = await ctx.db.get(args.id);
     return {
       ...header,
@@ -50,6 +67,14 @@ export const getAnalysisWorkflowDetailsByHeaderId = query({
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
   },
   handler: async (ctx, args) => {
+    console.log("args", args);
+
+    const userId = await getAuthUserId(ctx);
+    console.log("userId", userId);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
     const details = await ctx.db
       .query("analysisWorkflowDetails")
       .withIndex("by_analysis_workflow_header_id_and_workflow_id", (q) =>
