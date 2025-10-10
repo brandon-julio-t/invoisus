@@ -5,16 +5,17 @@ import { triggerBrowserDownloadFileFromBlob } from "@/lib/file-download";
 import { FunctionReturnType } from "convex/server";
 import JSZip from "jszip";
 import { toast } from "sonner";
+import { WorkflowDetailsType } from "../_components/types";
 
 export const downloadWorkflowDetailsFile = async ({
-  workflowData,
+  header,
+  details,
 }: {
-  workflowData: FunctionReturnType<
-    typeof api.domains.analyzeInvoice.queries.getAnalysisWorkflowDetail
+  header: FunctionReturnType<
+    typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
   >;
+  details: WorkflowDetailsType;
 }) => {
-  const { header, details } = workflowData;
-
   // Group details by problem existence type
   const groupedDetails = details.reduce(
     (groups, detail) => {

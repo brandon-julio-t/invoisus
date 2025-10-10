@@ -10,13 +10,13 @@
 
 import type * as auth from "../auth.js";
 import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
+import type * as domains_analysisWorkflows_queries from "../domains/analysisWorkflows/queries.js";
 import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
 import type * as domains_analyzeInvoice_internalMutations from "../domains/analyzeInvoice/internalMutations.js";
 import type * as domains_analyzeInvoice_internalNodeActions from "../domains/analyzeInvoice/internalNodeActions.js";
 import type * as domains_analyzeInvoice_internalQueries from "../domains/analyzeInvoice/internalQueries.js";
 import type * as domains_analyzeInvoice_mutations from "../domains/analyzeInvoice/mutations.js";
-import type * as domains_analyzeInvoice_queries from "../domains/analyzeInvoice/queries.js";
 import type * as domains_analyzeInvoice_validators from "../domains/analyzeInvoice/validators.js";
 import type * as domains_analyzeInvoice_workflows from "../domains/analyzeInvoice/workflows.js";
 import type * as domains_customers_internalQueries from "../domains/customers/internalQueries.js";
@@ -48,13 +48,13 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
+  "domains/analysisWorkflows/queries": typeof domains_analysisWorkflows_queries;
   "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;
   "domains/analyzeInvoice/internalMutations": typeof domains_analyzeInvoice_internalMutations;
   "domains/analyzeInvoice/internalNodeActions": typeof domains_analyzeInvoice_internalNodeActions;
   "domains/analyzeInvoice/internalQueries": typeof domains_analyzeInvoice_internalQueries;
   "domains/analyzeInvoice/mutations": typeof domains_analyzeInvoice_mutations;
-  "domains/analyzeInvoice/queries": typeof domains_analyzeInvoice_queries;
   "domains/analyzeInvoice/validators": typeof domains_analyzeInvoice_validators;
   "domains/analyzeInvoice/workflows": typeof domains_analyzeInvoice_workflows;
   "domains/customers/internalQueries": typeof domains_customers_internalQueries;

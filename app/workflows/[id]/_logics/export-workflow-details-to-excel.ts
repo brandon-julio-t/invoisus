@@ -5,16 +5,17 @@ import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { FunctionReturnType } from "convex/server";
 import { format } from "date-fns";
 import * as XLSX from "xlsx";
+import { WorkflowDetailsType } from "../_components/types";
 
 export const exportWorkflowDetailsToExcel = ({
-  workflowData,
+  header,
+  details,
 }: {
-  workflowData: FunctionReturnType<
-    typeof api.domains.analyzeInvoice.queries.getAnalysisWorkflowDetail
+  header: FunctionReturnType<
+    typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
   >;
+  details: WorkflowDetailsType;
 }) => {
-  const { header, details } = workflowData;
-
   // Collect all unique data extraction keys across all details
   const allDataExtractionKeys = new Set<string>();
   details.forEach((detail) => {
@@ -103,7 +104,10 @@ export const exportWorkflowDetailsToExcel = ({
   XLSX.utils.book_append_sheet(workbook, worksheet);
 
   // Generate filename with workflow ID and date
-  const formattedDate = format(header._creationTime, "yyyy-MM-dd");
+  const formattedDate = format(
+    header._creationTime ?? new Date(),
+    "yyyy-MM-dd",
+  );
   const filename = `workflow-details-${header._id}-${formattedDate}.xlsx`;
 
   // Write file
