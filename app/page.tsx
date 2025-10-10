@@ -19,6 +19,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
   Form,
   FormControl,
   FormField,
@@ -32,10 +39,16 @@ import {
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
 import { api } from "@/convex/_generated/api";
+import { cn } from "@/lib/utils";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
-import { ChevronsUpDownIcon, Loader2Icon, SendIcon } from "lucide-react";
+import {
+  ChevronsUpDownIcon,
+  IterationCcwIcon,
+  Loader2Icon,
+  SendIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -43,7 +56,6 @@ import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
-import { cn } from "@/lib/utils";
 
 const HomePage = () => {
   const router = useRouter();
@@ -183,12 +195,12 @@ const HomePage = () => {
                     maxFiles={1_000}
                     accept={{ "application/pdf": [] }}
                     onDrop={(files: File[]) => {
-                      field.onChange(
-                        files.map((file) => ({
-                          rawFile: file,
-                          status: "pending",
-                        })),
-                      );
+                      const newFiles = files.map((file) => ({
+                        rawFile: file,
+                        status: "pending",
+                      }));
+
+                      field.onChange([...field.value, ...newFiles]);
                     }}
                     onError={(err) => {
                       console.error(err);
@@ -211,6 +223,95 @@ const HomePage = () => {
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <Field orientation="horizontal" className="justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={form.formState.isSubmitting}
+              onClick={() => form.reset()}
+            >
+              <IterationCcwIcon />
+              Reset
+            </Button>
+
+            <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
+              <AlertDialogTrigger asChild>
+                <Button type="button" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    <SendIcon />
+                  )}
+                  {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Submit Invoice Analysis</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to submit with the following settings?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <Data>
+                  {[
+                    { label: "Files", value: form.getValues("files").length },
+                  ].map(({ label, value }) => (
+                    <DataItem key={label}>
+                      <DataItemLabel>{label}</DataItemLabel>
+                      <DataItemValue>{value}</DataItemValue>
+                    </DataItem>
+                  ))}
+                </Data>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={onSubmit}>
+                    Submit
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </Field>
+
+          <FormField
+            control={form.control}
+            name="files"
+            render={({ field }) => {
+              const pendingCount = field.value.filter(
+                (f) => f.status === "pending",
+              ).length;
+              const successCount = field.value.filter(
+                (f) => f.status === "success",
+              ).length;
+              const errorCount = field.value.filter(
+                (f) => f.status === "error",
+              ).length;
+
+              if (pendingCount + successCount + errorCount === 0) {
+                return <></>;
+              }
+
+              return (
+                <FieldGroup>
+                  <Field>
+                    {pendingCount > 0 && (
+                      <FieldDescription>
+                        Upload pending: {pendingCount}
+                      </FieldDescription>
+                    )}
+                    {successCount > 0 && (
+                      <FieldLabel>Upload success: {successCount}</FieldLabel>
+                    )}
+                    {errorCount > 0 && (
+                      <FieldError>Upload failed: {errorCount}</FieldError>
+                    )}
+                  </Field>
+                </FieldGroup>
+              );
+            }}
           />
 
           <FormFilesPreviewSection form={form} />
@@ -260,47 +361,6 @@ const HomePage = () => {
               </FormItem>
             )}
           />
-
-          <section className="flex justify-end">
-            <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
-              <AlertDialogTrigger asChild>
-                <Button type="button" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    <SendIcon />
-                  )}
-                  {form.formState.isSubmitting ? "Submitting..." : "Submit"}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Submit Invoice Analysis</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to submit with the following settings?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <Data>
-                  {[
-                    { label: "Files", value: form.getValues("files").length },
-                  ].map(({ label, value }) => (
-                    <DataItem key={label}>
-                      <DataItemLabel>{label}</DataItemLabel>
-                      <DataItemValue>{value}</DataItemValue>
-                    </DataItem>
-                  ))}
-                </Data>
-
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={onSubmit}>
-                    Submit
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </section>
         </form>
       </Form>
     </main>
