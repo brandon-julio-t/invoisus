@@ -16,6 +16,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
   Item,
   ItemContent,
   ItemDescription,
@@ -24,10 +32,12 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex-helpers/react/cache/hooks";
+import { useMutation } from "convex/react";
 import { format } from "date-fns";
 import {
   ArrowLeftIcon,
@@ -37,6 +47,7 @@ import {
   HourglassIcon,
   Loader2Icon,
   LoaderIcon,
+  TelescopeIcon,
   XIcon,
 } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -45,7 +56,6 @@ import { toast } from "sonner";
 import { WorkflowDetailsTable } from "./_components/workflow-details-table";
 import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
 import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
-import { useMutation } from "convex/react";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -113,19 +123,42 @@ const WorkflowDetailPage = () => {
     });
   };
 
-  if (!workflowHeaderQuery) {
+  if (workflowHeaderQuery === undefined || workflowDetailsQuery === undefined) {
     return (
-      <div className="container">
-        <div className="text-center">Loading workflow header...</div>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Spinner />
+          </EmptyMedia>
+          <EmptyTitle>Loading analysis workflow data...</EmptyTitle>
+          <EmptyDescription>
+            Please wait while we load the analysis workflow data...
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
-  if (!workflowDetailsQuery) {
+  if (workflowHeaderQuery === null || workflowDetailsQuery === null) {
     return (
-      <div className="container">
-        <div className="text-center">Loading workflow details...</div>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <TelescopeIcon />
+          </EmptyMedia>
+          <EmptyTitle>Analysis workflow data not found</EmptyTitle>
+          <EmptyDescription>
+            The analysis workflow data for this ID was not found.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button asChild>
+            <Link href="/analysis-workflows">
+              Back to analysis workflows list
+            </Link>
+          </Button>
+        </EmptyContent>
+      </Empty>
     );
   }
 
