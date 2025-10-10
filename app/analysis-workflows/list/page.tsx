@@ -133,14 +133,20 @@ const WorkflowListPage = () => {
                       </Item>
                     </TableCell>
                     <TableCell>
-                      {workflow.createdByUser?.name ??
-                        workflow.createdByUser?.email}
+                      <Link href={`/analysis-workflows/${workflow._id}`}>
+                        {workflow.createdByUser?.name ??
+                          workflow.createdByUser?.email}
+                      </Link>
                     </TableCell>
                     <TableCell>
-                      {Number(workflow.filesCount).toLocaleString()}
+                      <Link href={`/analysis-workflows/${workflow._id}`}>
+                        {Number(workflow.filesCount).toLocaleString()}
+                      </Link>
                     </TableCell>
                     <TableCell>
-                      <StatsCell analysisWorkflowHeaderId={workflow._id} />
+                      <Link href={`/analysis-workflows/${workflow._id}`}>
+                        <StatsCell analysisWorkflowHeaderId={workflow._id} />
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
