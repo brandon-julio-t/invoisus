@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { stepCountIs, streamText } from "ai";
 import { httpRouter } from "convex/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
@@ -189,8 +189,17 @@ export const generateResponse = internalAction({
 
         providerOptions: {
           openai: {
-            reasoningEffort: "minimal",
+            reasoningEffort: "low",
           } satisfies OpenAIResponsesProviderOptions,
+        },
+
+        stopWhen: stepCountIs(100),
+
+        tools: {
+          web_search: openai.tools.webSearch({
+            onInputAvailable: (args) => console.log("onInputAvailable", args),
+            onInputStart: (args) => console.log("onInputStart", args),
+          }),
         },
 
         system: `
