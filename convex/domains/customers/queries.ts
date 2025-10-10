@@ -1,19 +1,12 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { query } from "../../_generated/server";
-import { paginationOptsValidator } from "convex/server";
+import { paginationOptsValidator, PaginationResult } from "convex/server";
 import { v } from "convex/values";
+import { Doc, Id } from "../../_generated/dataModel";
+import { query } from "../../_generated/server";
 
 export const getCustomersListPaginated = query({
   args: {
     search: v.optional(v.string()),
-    searchField: v.optional(
-      v.union(
-        v.literal("number"),
-        v.literal("name"),
-        v.literal("group"),
-        v.literal("problemType"),
-      ),
-    ),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
@@ -25,38 +18,60 @@ export const getCustomersListPaginated = query({
       throw new Error("User not found");
     }
 
-    const { search, searchField } = args;
-    if (search && searchField) {
-      switch (searchField) {
-        case "number":
-          return await ctx.db
-            .query("customers")
-            // Number.gte is similar with String.startsWith
-            .withIndex("by_number", (q) => q.gte("number", search))
-            // but we need to sort the Number asc so that relevant results
-            .order("asc")
-            .paginate(args.paginationOpts);
+    const { search } = args;
+    if (search) {
+      console.log("commencing best search algorithm");
 
-        case "name":
-          return await ctx.db
-            .query("customers")
-            .withSearchIndex("search_name", (q) => q.search("name", search))
-            .paginate(args.paginationOpts);
+      const isValidNumber = Number.isInteger(Number(search));
+      if (isValidNumber) {
+        console.log("search is a valid number, using number index");
 
-        case "group":
-          return await ctx.db
-            .query("customers")
-            .withSearchIndex("search_group", (q) => q.search("group", search))
-            .paginate(args.paginationOpts);
-
-        case "problemType":
-          return await ctx.db
-            .query("customers")
-            .withIndex("by_problemType", (q) => q.eq("problemType", search))
-            .order("asc")
-            .paginate(args.paginationOpts);
+        return await ctx.db
+          .query("customers")
+          // Number.gte is similar with String.startsWith
+          .withIndex("by_number", (q) => q.gte("number", search))
+          // but we need to sort the Number asc so that relevant results
+          .order("asc")
+          .paginate(args.paginationOpts);
       }
+
+      console.log("search is not a valid number, using name and group indexes");
+
+      const customersByName = await ctx.db
+        .query("customers")
+        .withSearchIndex("search_name", (q) => q.search("name", search))
+        .take(10);
+
+      const customersByGroup = await ctx.db
+        .query("customers")
+        .withSearchIndex("search_group", (q) => q.search("group", search))
+        .take(10);
+
+      const maybeMatchingCustomers = [
+        // number filter has been handled above, if the search keyword is truly a number
+        ...customersByName,
+        ...customersByGroup,
+        // problem type filter is nigh impossible to search because it's just a single character
+      ];
+
+      const addedCustomerIds = {} as Record<Id<"customers">, boolean>;
+
+      const uniqueCustomers = maybeMatchingCustomers.filter((customer) => {
+        if (addedCustomerIds[customer._id]) {
+          return false;
+        }
+        addedCustomerIds[customer._id] = true;
+        return true;
+      });
+
+      return {
+        isDone: true,
+        continueCursor: "",
+        page: uniqueCustomers,
+      } satisfies PaginationResult<Doc<"customers">>;
     }
+
+    console.log("no search, using default query");
 
     return await ctx.db
       .query("customers")

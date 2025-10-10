@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -48,7 +47,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
 import { CustomerForm, CustomerFormProps } from "../_components/customer-form";
@@ -57,24 +56,10 @@ import { Spinner } from "@/components/ui/spinner";
 
 const ITEMS_PER_PAGE = 50;
 
-const searchFields = [
-  { label: "Number", value: "number" },
-  { label: "Name", value: "name" },
-  { label: "Group", value: "group" },
-  { label: "Problem Type", value: "problemType" },
-] as const;
-
 const CustomersListPage = () => {
   const [search, setSearch] = useQueryState(
     "search",
     parseAsString.withDefault(""),
-  );
-
-  const [searchField, setSearchField] = useQueryState(
-    "searchField",
-    parseAsStringLiteral(searchFields.map((field) => field.value)).withDefault(
-      "name",
-    ),
   );
 
   const debouncedSearch = useDebounce(search, 200);
@@ -83,7 +68,6 @@ const CustomersListPage = () => {
     api.domains.customers.queries.getCustomersListPaginated,
     {
       search: debouncedSearch,
-      searchField,
     },
     { initialNumItems: ITEMS_PER_PAGE },
   );
@@ -176,53 +160,28 @@ const CustomersListPage = () => {
       <FieldSet>
         <FieldGroup>
           <Field>
-            <ButtonGroup>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="group capitalize">
-                    {
-                      searchFields.find((field) => field.value === searchField)
-                        ?.label
-                    }
-                    <ChevronDownIcon className="transition-transform duration-200 group-data-[open=true]:rotate-180" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {searchFields.map((field) => (
-                    <DropdownMenuCheckboxItem
-                      key={field.value}
-                      checked={searchField === field.value}
-                      onCheckedChange={() => setSearchField(field.value)}
-                    >
-                      {field.label}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <InputGroup>
+              <InputGroupAddon>
+                {paginatedQuery.isLoading ? <Spinner /> : <SearchIcon />}
+              </InputGroupAddon>
 
-              <InputGroup>
-                <InputGroupAddon>
-                  {paginatedQuery.isLoading ? <Spinner /> : <SearchIcon />}
+              <InputGroupInput
+                placeholder="Search customers"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+
+              {search && (
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    size="icon-xs"
+                    onClick={() => setSearch("")}
+                  >
+                    <XIcon />
+                  </InputGroupButton>
                 </InputGroupAddon>
-
-                <InputGroupInput
-                  placeholder="Search customers"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-
-                {search && (
-                  <InputGroupAddon align="inline-end">
-                    <InputGroupButton
-                      size="icon-xs"
-                      onClick={() => setSearch("")}
-                    >
-                      <XIcon />
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                )}
-              </InputGroup>
-            </ButtonGroup>
+              )}
+            </InputGroup>
           </Field>
         </FieldGroup>
       </FieldSet>
