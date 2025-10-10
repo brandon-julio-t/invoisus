@@ -5,6 +5,8 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { httpAction, internalAction } from "./_generated/server";
 import { auth } from "./auth";
+import { createPosthogClient } from "./libs/posthog";
+import { withTracing } from "@posthog/ai";
 
 const http = httpRouter();
 
@@ -165,6 +167,8 @@ export const generateResponse = internalAction({
 
     let slackStreamId = "";
 
+    const phClient = createPosthogClient();
+
     try {
       const channel = args.channelId;
       const text = args.text;
@@ -185,7 +189,14 @@ export const generateResponse = internalAction({
       console.log("slackStreamId", slackStreamId);
 
       const aiStream = streamText({
-        model: openai("gpt-5-nano"),
+        model: withTracing(openai("gpt-5-nano"), phClient, {
+          posthogProperties: {
+            functionName: "mcKinseyAi",
+          },
+          posthogGroups: {
+            functionName: "mcKinseyAi",
+          },
+        }),
 
         providerOptions: {
           openai: {
@@ -284,6 +295,8 @@ You are replying directly to Slack, so just output the message you want to send 
         ts: slackStreamId,
         finalText: errorMessage,
       });
+    } finally {
+      await phClient.shutdown();
     }
   },
 });
