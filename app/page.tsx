@@ -49,7 +49,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { ChevronsUpDownIcon, IterationCcwIcon, SendIcon } from "lucide-react";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
@@ -65,6 +65,11 @@ const HomePage = () => {
       pdfAnalysisModelPreset: "gemini-2.5-pro",
       dataExtractionModelPreset: "gpt-5-mini-medium",
     },
+  });
+
+  const files = useWatch({
+    control: form.control,
+    name: "files",
   });
 
   const uploadFile = useUploadFile(api.r2);
@@ -256,14 +261,14 @@ const HomePage = () => {
                     </AlertDialogHeader>
 
                     <Data>
-                      {[
-                        { label: "Files", value: form.watch("files").length },
-                      ].map(({ label, value }) => (
-                        <DataItem key={label}>
-                          <DataItemLabel>{label}</DataItemLabel>
-                          <DataItemValue>{value}</DataItemValue>
-                        </DataItem>
-                      ))}
+                      {[{ label: "Files", value: files.length }].map(
+                        ({ label, value }) => (
+                          <DataItem key={label}>
+                            <DataItemLabel>{label}</DataItemLabel>
+                            <DataItemValue>{value}</DataItemValue>
+                          </DataItem>
+                        ),
+                      )}
                     </Data>
 
                     <AlertDialogFooter>
@@ -310,12 +315,12 @@ const HomePage = () => {
                         <FieldError>Upload failed: {errorCount}</FieldError>
                       )}
                     </Field>
-
-                    <FormFilesPreviewSection files={field.value} form={form} />
                   </FieldGroup>
                 );
               }}
             />
+
+            <FormFilesPreviewSection files={files} form={form} />
 
             <FormField
               control={form.control}
