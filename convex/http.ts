@@ -143,7 +143,7 @@ http.route({
       text: body.event.text,
       threadTs: body.event.thread_ts ?? body.event.ts,
       userId: body.event.user,
-      teamId: body.event.team,
+      teamId: body.team_id,
     });
 
     console.log("returning...");
