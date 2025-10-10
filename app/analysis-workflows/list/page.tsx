@@ -3,6 +3,14 @@
 import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
   Item,
   ItemContent,
   ItemDescription,
@@ -21,13 +29,15 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 import {} from "@convex-dev/auth/server";
 import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import {
+  ArrowUpRightIcon,
   CheckIcon,
+  FileCode2Icon,
   HourglassIcon,
-  Loader2Icon,
   LoaderIcon,
   XIcon,
 } from "lucide-react";
@@ -42,6 +52,7 @@ const WorkflowListPage = () => {
     { initialNumItems: ITEMS_PER_PAGE },
   );
 
+  const isLoadingFirst = status === "LoadingFirstPage";
   const isLoadingMore = status === "LoadingMore";
   const canLoadMore = status === "CanLoadMore";
 
@@ -52,10 +63,33 @@ const WorkflowListPage = () => {
       </header>
 
       <section>
-        {results.length === 0 ? (
-          <div className="py-8 text-center">
-            <p className="text-muted-foreground">No workflows found</p>
-          </div>
+        {isLoadingFirst ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Spinner />
+              </EmptyMedia>
+              <EmptyTitle>Loading workflows...</EmptyTitle>
+              <EmptyDescription>
+                Please wait while we load your analysis workflows...
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : results.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <FileCode2Icon />
+              </EmptyMedia>
+              <EmptyTitle>No workflows</EmptyTitle>
+              <EmptyDescription>Start by analyzing an invoice</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button asChild>
+                <Link href="/">Analyze invoice</Link>
+              </Button>
+            </EmptyContent>
+          </Empty>
         ) : (
           <>
             <Table>
@@ -126,7 +160,7 @@ const WorkflowListPage = () => {
                   >
                     {isLoadingMore ? (
                       <>
-                        <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                        <Spinner />
                         Loading...
                       </>
                     ) : (
@@ -185,8 +219,9 @@ const StatsCell = ({
       ].map((item) => (
         <Item
           key={item.label}
-          variant={isLoading ? "muted" : "default"}
           size="sm"
+          variant={isLoading ? "muted" : "default"}
+          className={cn(isLoading && "animate-pulse")}
         >
           <ItemMedia variant="icon">
             {isLoading ? <Spinner /> : <item.icon />}
