@@ -19,15 +19,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { TableCell, TableRow } from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { triggerBrowserDownloadFileFromUrl } from "@/lib/file-download";
+import { api } from "@/convex/_generated/api";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import {
   CheckIcon,
@@ -39,7 +41,7 @@ import {
   XIcon,
 } from "lucide-react";
 import React from "react";
-import { toast } from "sonner";
+import { DownloadFileButton } from "./download-file-button";
 import { WorkflowDetailsType } from "./types";
 
 export const WorkflowDetailsTableRow = ({
@@ -47,30 +49,17 @@ export const WorkflowDetailsTableRow = ({
 }: {
   detail: WorkflowDetailsType[number];
 }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isRowExpanded, setIsRowExpanded] = React.useState(false);
 
   const internalWorkflowStatus = detail.internalWorkflowStatus;
   const inProgress = internalWorkflowStatus?.inProgress ?? [];
 
-  // const [isDownloading, startDownloading] = React.useTransition();
-  const isDownloading = false;
-  const onDownloadFile = async () => {
-    // startDownloading(async () => {
-    await toast
-      .promise(
-        triggerBrowserDownloadFileFromUrl({
-          url: detail.fileDownloadUrl,
-          filename: detail.fileName,
-        }),
-        {
-          loading: `Downloading file ${detail.fileName}...`,
-          success: `File ${detail.fileName} downloaded successfully`,
-          error: `Failed to download file ${detail.fileName}`,
-        },
-      )
-      .unwrap();
-    // });
-  };
+  const [isViewFileOpen, setIsViewFileOpen] = React.useState(false);
+
+  const downloadUrl = useQuery(
+    api.r2.queryDownloadUrl,
+    isViewFileOpen ? { key: detail.fileKey } : "skip",
+  );
 
   return (
     <React.Fragment>
@@ -81,18 +70,18 @@ export const WorkflowDetailsTableRow = ({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={() => setIsRowExpanded(!isRowExpanded)}
               >
                 <ChevronDownIcon
                   className={cn(
                     "transition-transform duration-200",
-                    isExpanded && "rotate-180",
+                    isRowExpanded && "rotate-180",
                   )}
                 />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              {isExpanded ? "Collapse details" : "Expand details"}
+              {isRowExpanded ? "Collapse details" : "Expand details"}
             </TooltipContent>
           </Tooltip>
         </TableCell>
@@ -120,7 +109,7 @@ export const WorkflowDetailsTableRow = ({
           </Badge>
         </TableCell>
         <TableCell>
-          <Dialog>
+          <Dialog open={isViewFileOpen} onOpenChange={setIsViewFileOpen}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
@@ -142,7 +131,7 @@ export const WorkflowDetailsTableRow = ({
                 </DialogHeader>
 
                 <iframe
-                  src={detail.fileDownloadUrl}
+                  src={downloadUrl}
                   className="bg-muted size-full flex-1 overflow-hidden rounded-xl border"
                   tabIndex={-1}
                   title={`Preview of ${detail.fileName}`}
@@ -153,18 +142,18 @@ export const WorkflowDetailsTableRow = ({
                     <Button variant="outline">Close</Button>
                   </DialogClose>
 
-                  <Button
+                  <DownloadFileButton
+                    fileKey={detail.fileKey}
+                    filename={detail.fileName}
                     variant="outline"
-                    onClick={onDownloadFile}
-                    disabled={isDownloading}
                   >
-                    {isDownloading ? (
-                      <Loader2Icon className="animate-spin" />
-                    ) : (
-                      <DownloadIcon />
+                    {({ isDownloading }) => (
+                      <>
+                        {isDownloading ? <Spinner /> : <DownloadIcon />}
+                        Download
+                      </>
                     )}
-                    Download
-                  </Button>
+                  </DownloadFileButton>
                 </DialogFooter>
               </div>
             </DialogContent>
@@ -172,25 +161,23 @@ export const WorkflowDetailsTableRow = ({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
+              <DownloadFileButton
+                fileKey={detail.fileKey}
+                filename={detail.fileName}
                 variant="ghost"
                 size="icon"
-                onClick={onDownloadFile}
-                disabled={isDownloading}
               >
-                {isDownloading ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <DownloadIcon />
-                )}
-              </Button>
+                {({ isDownloading }) =>
+                  isDownloading ? <Spinner /> : <DownloadIcon />
+                }
+              </DownloadFileButton>
             </TooltipTrigger>
             <TooltipContent>Download file</TooltipContent>
           </Tooltip>
         </TableCell>
       </TableRow>
 
-      {isExpanded && (
+      {isRowExpanded && (
         <TableRow className="hover:bg-background">
           <TableCell colSpan={6}>
             <div className="flex flex-col gap-4">

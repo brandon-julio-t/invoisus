@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { triggerBrowserDownloadFileFromBlob } from "@/lib/file-download";
-import { FunctionReturnType } from "convex/server";
+import { FunctionArgs, FunctionReturnType } from "convex/server";
 import JSZip from "jszip";
 import { toast } from "sonner";
 import { WorkflowDetailsType } from "../_components/types";
@@ -10,11 +10,15 @@ import { WorkflowDetailsType } from "../_components/types";
 export const downloadWorkflowDetailsFile = async ({
   header,
   details,
+  generateDownloadUrl,
 }: {
   header: FunctionReturnType<
     typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
   >;
   details: WorkflowDetailsType;
+  generateDownloadUrl: (
+    args: FunctionArgs<typeof api.r2.generateDownloadUrl>,
+  ) => Promise<FunctionReturnType<typeof api.r2.generateDownloadUrl>>;
 }) => {
   // Group details by problem existence type
   const groupedDetails = details.reduce(
@@ -48,7 +52,11 @@ export const downloadWorkflowDetailsFile = async ({
       await Promise.all(
         folderDetails.map(async (detail) => {
           try {
-            const response = await fetch(detail.fileDownloadUrl);
+            const fileDownloadUrl = await generateDownloadUrl({
+              key: detail.fileKey,
+            });
+
+            const response = await fetch(fileDownloadUrl);
             if (!response.ok) {
               const msg = `Failed to download file: ${detail.fileName}`;
               console.error(msg);

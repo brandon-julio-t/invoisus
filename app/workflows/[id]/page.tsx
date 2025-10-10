@@ -45,6 +45,7 @@ import { toast } from "sonner";
 import { WorkflowDetailsTable } from "./_components/workflow-details-table";
 import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
 import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
+import { useMutation } from "convex/react";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -80,8 +81,10 @@ const WorkflowDetailPage = () => {
     toast.success("Excel file exported successfully");
   };
 
+  const generateDownloadUrl = useMutation(api.r2.generateDownloadUrl);
+
   const [isDownloading, startDownloading] = React.useTransition();
-  const onDownloadFiles = () => {
+  const onDownloadAllFiles = () => {
     startDownloading(async () => {
       if (!workflowHeaderQuery) {
         toast.error("Workflow header not found");
@@ -98,6 +101,7 @@ const WorkflowDetailPage = () => {
           downloadWorkflowDetailsFile({
             header: workflowHeaderQuery,
             details: workflowDetailsQuery.data,
+            generateDownloadUrl,
           }),
           {
             loading: "Downloading files...",
@@ -170,11 +174,9 @@ const WorkflowDetailPage = () => {
 
               <Button
                 variant="outline"
-                onClick={onDownloadFiles}
+                onClick={onDownloadAllFiles}
                 disabled={
-                  workflowDetailsQuery.data.length === 0 ||
-                  isDownloading ||
-                  isProcessing
+                  workflowDetailsQuery.data.length === 0 || isDownloading
                 }
               >
                 {isDownloading ? (

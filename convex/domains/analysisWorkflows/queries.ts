@@ -2,7 +2,6 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { components } from "../../_generated/api";
 import { query } from "../../_generated/server";
-import { r2 } from "../../r2";
 
 export const getPaginatedAnalysisWorkflowHeaders = query({
   args: {
@@ -71,12 +70,6 @@ export const getAnalysisWorkflowDetailsByHeaderId = query({
               console.error("Error getting workflow status", error);
               return null;
             }),
-
-          fileDownloadUrl: await r2.getUrl(detail.fileKey, {
-            // 6 hours.
-            // assumption: no way the user is staying on the page for 6 hours.
-            expiresIn: 60 * 60 * 6,
-          }),
         };
       }),
     );

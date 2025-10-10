@@ -6,8 +6,11 @@ import {
   Item,
   ItemContent,
   ItemDescription,
+  ItemGroup,
+  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -17,10 +20,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import {} from "@convex-dev/auth/server";
-import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
+import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
-import { Loader2Icon } from "lucide-react";
+import {
+  CheckIcon,
+  HourglassIcon,
+  Loader2Icon,
+  LoaderIcon,
+  XIcon,
+} from "lucide-react";
 import { motion } from "motion/react";
 
 const ITEMS_PER_PAGE = 10;
@@ -55,6 +65,7 @@ const WorkflowListPage = () => {
                   <TableHead>Created At</TableHead>
                   <TableHead>Created By</TableHead>
                   <TableHead>Files Count</TableHead>
+                  <TableHead>Stats.</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -94,6 +105,9 @@ const WorkflowListPage = () => {
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
                     </TableCell>
+                    <TableCell>
+                      <StatsCell analysisWorkflowHeaderId={workflow._id} />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -126,6 +140,60 @@ const WorkflowListPage = () => {
         )}
       </section>
     </div>
+  );
+};
+
+const StatsCell = ({
+  analysisWorkflowHeaderId,
+}: {
+  analysisWorkflowHeaderId: Id<"analysisWorkflowHeaders">;
+}) => {
+  const detailsQuery = useQuery(
+    api.domains.analysisWorkflows.queries.getAnalysisWorkflowDetailsByHeaderId,
+    {
+      analysisWorkflowHeaderId: analysisWorkflowHeaderId,
+    },
+  );
+
+  const isLoading = detailsQuery === undefined;
+
+  return (
+    <ItemGroup className="flex-row">
+      {[
+        {
+          label: "Queued",
+          value: Number(detailsQuery?.stats.successCount ?? 0).toLocaleString(),
+          icon: HourglassIcon,
+        },
+        {
+          label: "Processing",
+          value: Number(
+            detailsQuery?.stats.processingCount ?? 0,
+          ).toLocaleString(),
+          icon: LoaderIcon,
+        },
+        {
+          label: "Success",
+          value: Number(detailsQuery?.stats.successCount ?? 0).toLocaleString(),
+          icon: CheckIcon,
+        },
+        {
+          label: "Failed",
+          value: Number(detailsQuery?.stats.failedCount ?? 0).toLocaleString(),
+          icon: XIcon,
+        },
+      ].map((item) => (
+        <Item key={item.label} size="sm">
+          <ItemMedia variant="icon">
+            {isLoading ? <Spinner /> : <item.icon />}
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>{item.label}</ItemTitle>
+            <ItemDescription>{item.value}</ItemDescription>
+          </ItemContent>
+        </Item>
+      ))}
+    </ItemGroup>
   );
 };
 
