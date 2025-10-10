@@ -6,11 +6,8 @@ import {
   Item,
   ItemContent,
   ItemDescription,
-  ItemGroup,
-  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -20,17 +17,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
 import {} from "@convex-dev/auth/server";
-import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
+import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
-import {
-  CheckIcon,
-  HourglassIcon,
-  Loader2Icon,
-  LoaderIcon,
-  XIcon,
-} from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
 
 const ITEMS_PER_PAGE = 10;
@@ -65,7 +55,6 @@ const WorkflowListPage = () => {
                   <TableHead>Created At</TableHead>
                   <TableHead>Created By</TableHead>
                   <TableHead>Files Count</TableHead>
-                  <TableHead>Stats.</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -105,9 +94,6 @@ const WorkflowListPage = () => {
                     <TableCell>
                       {Number(workflow.filesCount).toLocaleString()}
                     </TableCell>
-                    <TableCell>
-                      <StatsTableCell workflow={workflow} />
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -140,64 +126,6 @@ const WorkflowListPage = () => {
         )}
       </section>
     </div>
-  );
-};
-
-const StatsTableCell = ({
-  workflow,
-}: {
-  workflow: Doc<"analysisWorkflowHeaders">;
-}) => {
-  const workflowDetailsQuery = useQuery(
-    api.domains.analysisWorkflows.queries.getAnalysisWorkflowDetailsByHeaderId,
-    { analysisWorkflowHeaderId: workflow._id },
-  );
-
-  const isLoading = typeof workflowDetailsQuery === "undefined";
-
-  return (
-    <ItemGroup className="flex-row flex-nowrap gap-2">
-      {[
-        {
-          label: "Queued",
-          value: Number(
-            workflowDetailsQuery?.stats.queuedCount ?? 0,
-          ).toLocaleString(),
-          icon: HourglassIcon,
-        },
-        {
-          label: "Processing",
-          value: Number(
-            workflowDetailsQuery?.stats.processingCount ?? 0,
-          ).toLocaleString(),
-          icon: LoaderIcon,
-        },
-        {
-          label: "Success",
-          value: Number(
-            workflowDetailsQuery?.stats.successCount ?? 0,
-          ).toLocaleString(),
-          icon: CheckIcon,
-        },
-        {
-          label: "Failed",
-          value: Number(
-            workflowDetailsQuery?.stats.failedCount ?? 0,
-          ).toLocaleString(),
-          icon: XIcon,
-        },
-      ].map((item) => (
-        <Item key={item.label} size="sm">
-          <ItemMedia variant="icon">
-            {isLoading ? <Spinner /> : <item.icon />}
-          </ItemMedia>
-          <ItemContent>
-            <ItemTitle>{item.label}</ItemTitle>
-            <ItemDescription>{item.value}</ItemDescription>
-          </ItemContent>
-        </Item>
-      ))}
-    </ItemGroup>
   );
 };
 
