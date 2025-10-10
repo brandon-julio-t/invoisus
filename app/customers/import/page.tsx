@@ -48,7 +48,7 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/components/link";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";

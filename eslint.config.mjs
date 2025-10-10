@@ -56,7 +56,13 @@ const eslintConfig = [
             {
               name: "next/link",
               message:
-                'Please import Link from "@/components/link" instead of "next/link" to use the custom Link component with navigation status tracking.',
+                'Please import Link from "@/components/link" instead of "next/link" to use the custom Link component with NProgress.',
+            },
+            {
+              name: "next/navigation",
+              importNames: ["useRouter"],
+              message:
+                'Please import useRouter from "@/components/link" instead of "next/navigation" to use the custom router with NProgress.',
             },
           ],
         },

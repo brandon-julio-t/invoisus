@@ -1,12 +1,8 @@
 "use client";
 
-/**
- * @see https://github.com/vercel/next.js/pull/82814
- */
-// @ts-expect-error - useLinkStatus is there, but somehow not in next/link's type definitions
 import NextLink, { useLinkStatus } from "next/link";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter as useNextRouter, usePathname } from "next/navigation";
 import NProgress from "nprogress";
 import React from "react";
 
@@ -33,32 +29,23 @@ function LinkStatusHijacker() {
   return null;
 }
 
+export function useRouter() {
+  const router = useNextRouter();
+
+  const pushWithNProgress: typeof router.push = (...args) => {
+    NProgress.start();
+    return router.push(...args);
+  };
+
+  return {
+    ...router,
+
+    push: pushWithNProgress,
+  };
+}
+
 export function HijackRouterNavigationForNProgress() {
-  const router = useRouter();
   const pathname = usePathname();
-
-  const [isHijacked, setIsHijacked] = React.useState(false);
-
-  React.useEffect(
-    function hijackRouterPush() {
-      if (isHijacked) {
-        console.debug("router.push already hijacked");
-        return;
-      }
-
-      const originalPush = router.push;
-
-      router.push = function (...args) {
-        NProgress.start();
-        return originalPush(...args);
-      };
-
-      setIsHijacked(true);
-
-      console.debug("router.push hijacked");
-    },
-    [isHijacked, router],
-  );
 
   React.useEffect(
     function resetNProgressOnNavigation() {

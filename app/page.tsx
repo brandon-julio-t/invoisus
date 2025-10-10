@@ -49,7 +49,7 @@ import {
   Loader2Icon,
   SendIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/components/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
