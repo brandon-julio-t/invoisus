@@ -24,6 +24,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSet,
 } from "@/components/ui/field";
 import {
   Form,
@@ -256,14 +257,14 @@ const HomePage = () => {
                 </AlertDialogHeader>
 
                 <Data>
-                  {[
-                    { label: "Files", value: form.getValues("files").length },
-                  ].map(({ label, value }) => (
-                    <DataItem key={label}>
-                      <DataItemLabel>{label}</DataItemLabel>
-                      <DataItemValue>{value}</DataItemValue>
-                    </DataItem>
-                  ))}
+                  {[{ label: "Files", value: form.watch("files").length }].map(
+                    ({ label, value }) => (
+                      <DataItem key={label}>
+                        <DataItemLabel>{label}</DataItemLabel>
+                        <DataItemValue>{value}</DataItemValue>
+                      </DataItem>
+                    ),
+                  )}
                 </Data>
 
                 <AlertDialogFooter>
@@ -295,26 +296,29 @@ const HomePage = () => {
               }
 
               return (
-                <FieldGroup>
-                  <Field>
-                    {pendingCount > 0 && (
-                      <FieldDescription>
-                        Upload pending: {pendingCount}
-                      </FieldDescription>
-                    )}
-                    {successCount > 0 && (
-                      <FieldLabel>Upload success: {successCount}</FieldLabel>
-                    )}
-                    {errorCount > 0 && (
-                      <FieldError>Upload failed: {errorCount}</FieldError>
-                    )}
-                  </Field>
-                </FieldGroup>
+                <FieldSet>
+                  <FieldGroup>
+                    <Field>
+                      {pendingCount > 0 && (
+                        <FieldDescription>
+                          Upload pending: {pendingCount}
+                        </FieldDescription>
+                      )}
+                      {successCount > 0 && (
+                        <FieldLabel>Upload success: {successCount}</FieldLabel>
+                      )}
+                      {errorCount > 0 && (
+                        <FieldError>Upload failed: {errorCount}</FieldError>
+                      )}
+                    </Field>
+                  </FieldGroup>
+
+                  {/* FormFilesPreviewSection needs to be inside FormField with name files, because it's memoized (we're using react compiler) */}
+                  <FormFilesPreviewSection form={form} />
+                </FieldSet>
               );
             }}
           />
-
-          <FormFilesPreviewSection form={form} />
 
           <FormField
             control={form.control}
