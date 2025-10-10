@@ -167,9 +167,7 @@ const WorkflowDetailPage = () => {
     new Set(
       workflowDetailsQuery.data.map((detail) => detail.problemExistanceType),
     ),
-  )
-    .map((x) => (x === undefined ? "uncategorized" : x))
-    .toSorted();
+  ).toSorted();
 
   return (
     <div className="container flex flex-col gap-6">
@@ -312,10 +310,6 @@ const WorkflowDetailPage = () => {
                 (detail) => detail.problemExistanceType === problemExistance,
               );
 
-              if (details.length === 0) {
-                return null;
-              }
-
               return (
                 <React.Fragment key={`${problemExistance}-${index}`}>
                   <CardContent>
@@ -329,7 +323,7 @@ const WorkflowDetailPage = () => {
                         )}
                       />
                       <h3>
-                        {problemExistance} (
+                        {problemExistance ?? "Uncategorized"} (
                         {Number(details.length).toLocaleString()})
                       </h3>
                     </header>
