@@ -45,15 +45,20 @@ export const importCustomers = mutation({
         .withIndex("by_number", (q) => q.eq("number", customer.number))
         .first();
       if (existingCustomer) {
-        console.log(
-          `customer with number ${customer.number} already exists, skipping...`,
-          existingCustomer,
-        );
+        console.log(`Customer ${customer.number} already exists, updating...`);
+
+        await updateOneCustomer({
+          ctx,
+          args: { id: existingCustomer._id, data: customer },
+        });
+
         continue;
       }
 
       const id = await createOneCustomer({ ctx, args: customer });
-      console.log("id", id);
+      console.log(
+        `Customer ${customer.number} does not exist, created with id ${id}`,
+      );
     }
   },
 });
