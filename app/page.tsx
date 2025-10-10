@@ -6,6 +6,7 @@ import {
   DataItemLabel,
   DataItemValue,
 } from "@/components/data";
+import { useRouter } from "@/components/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
 import {
@@ -50,7 +52,6 @@ import {
   Loader2Icon,
   SendIcon,
 } from "lucide-react";
-import { useRouter } from "@/components/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -178,125 +179,131 @@ const HomePage = () => {
 
   return (
     <main className="container flex flex-col gap-6">
-      <header>
-        <h1 className="text-lg font-semibold">Analyze Invoice</h1>
-      </header>
-
       <Form {...form}>
-        <form className="flex flex-col gap-6" onSubmit={onSubmit}>
-          <FormField
-            control={form.control}
-            name="files"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Upload Files</FormLabel>
+        <form onSubmit={onSubmit}>
+          <FieldSet>
+            <FieldLegend>Analyze Invoice</FieldLegend>
 
-                <FormControl>
-                  <Dropzone
-                    maxFiles={1_000}
-                    accept={{ "application/pdf": [] }}
-                    onDrop={(files: File[]) => {
-                      const newFiles = files.map((file) => ({
-                        rawFile: file,
-                        status: "pending",
-                      }));
+            <FormField
+              control={form.control}
+              name="files"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Upload Files</FormLabel>
 
-                      field.onChange([...field.value, ...newFiles]);
-                    }}
-                    onError={(err) => {
-                      console.error(err);
+                  <FormControl>
+                    <Dropzone
+                      maxFiles={1_000}
+                      accept={{ "application/pdf": [] }}
+                      onDrop={(files: File[]) => {
+                        const newFiles = files.map((file) => ({
+                          rawFile: file,
+                          status: "pending",
+                        }));
 
-                      toast.error("File input error", {
-                        description: err.message,
-                      });
-                    }}
-                    src={
-                      field.value.length
-                        ? field.value.map((f) => f.rawFile)
-                        : undefined
-                    }
-                  >
-                    <DropzoneEmptyState />
-                    <DropzoneContent />
-                  </Dropzone>
-                </FormControl>
+                        field.onChange([...field.value, ...newFiles]);
+                      }}
+                      onError={(err) => {
+                        console.error(err);
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                        toast.error("File input error", {
+                          description: err.message,
+                        });
+                      }}
+                      src={
+                        field.value.length
+                          ? field.value.map((f) => f.rawFile)
+                          : undefined
+                      }
+                    >
+                      <DropzoneEmptyState />
+                      <DropzoneContent />
+                    </Dropzone>
+                  </FormControl>
 
-          <Field orientation="horizontal" className="justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={form.formState.isSubmitting}
-              onClick={() => form.reset()}
-            >
-              <IterationCcwIcon />
-              Reset
-            </Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
-              <AlertDialogTrigger asChild>
-                <Button type="button" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? (
-                    <Loader2Icon className="animate-spin" />
-                  ) : (
-                    <SendIcon />
-                  )}
-                  {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+            <FieldGroup>
+              <Field orientation="horizontal" className="justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={form.formState.isSubmitting}
+                  onClick={() => form.reset()}
+                >
+                  <IterationCcwIcon />
+                  Reset
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Submit Invoice Analysis</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to submit with the following settings?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
 
-                <Data>
-                  {[{ label: "Files", value: form.watch("files").length }].map(
-                    ({ label, value }) => (
-                      <DataItem key={label}>
-                        <DataItemLabel>{label}</DataItemLabel>
-                        <DataItemValue>{value}</DataItemValue>
-                      </DataItem>
-                    ),
-                  )}
-                </Data>
+                <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      type="button"
+                      disabled={form.formState.isSubmitting}
+                    >
+                      {form.formState.isSubmitting ? (
+                        <Loader2Icon className="animate-spin" />
+                      ) : (
+                        <SendIcon />
+                      )}
+                      {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Submit Invoice Analysis
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to submit with the following
+                        settings?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
 
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={onSubmit}>
-                    Submit
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </Field>
+                    <Data>
+                      {[
+                        { label: "Files", value: form.watch("files").length },
+                      ].map(({ label, value }) => (
+                        <DataItem key={label}>
+                          <DataItemLabel>{label}</DataItemLabel>
+                          <DataItemValue>{value}</DataItemValue>
+                        </DataItem>
+                      ))}
+                    </Data>
 
-          <FormField
-            control={form.control}
-            name="files"
-            render={({ field }) => {
-              const pendingCount = field.value.filter(
-                (f) => f.status === "pending",
-              ).length;
-              const successCount = field.value.filter(
-                (f) => f.status === "success",
-              ).length;
-              const errorCount = field.value.filter(
-                (f) => f.status === "error",
-              ).length;
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={onSubmit}>
+                        Submit
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Field>
+            </FieldGroup>
 
-              if (pendingCount + successCount + errorCount === 0) {
-                return <></>;
-              }
+            <FormField
+              control={form.control}
+              name="files"
+              render={({ field }) => {
+                const pendingCount = field.value.filter(
+                  (f) => f.status === "pending",
+                ).length;
+                const successCount = field.value.filter(
+                  (f) => f.status === "success",
+                ).length;
+                const errorCount = field.value.filter(
+                  (f) => f.status === "error",
+                ).length;
 
-              return (
-                <FieldSet>
+                if (pendingCount + successCount + errorCount === 0) {
+                  return <></>;
+                }
+
+                return (
                   <FieldGroup>
                     <Field>
                       {pendingCount > 0 && (
@@ -311,60 +318,59 @@ const HomePage = () => {
                         <FieldError>Upload failed: {errorCount}</FieldError>
                       )}
                     </Field>
+
+                    <FormFilesPreviewSection files={field.value} form={form} />
                   </FieldGroup>
+                );
+              }}
+            />
 
-                  {/* FormFilesPreviewSection needs to be inside FormField with name files, because it's memoized (we're using react compiler) */}
-                  <FormFilesPreviewSection form={form} />
-                </FieldSet>
-              );
-            }}
-          />
+            <FormField
+              control={form.control}
+              name="pdfAnalysisModelPreset"
+              render={({ field }) => (
+                <FormItem
+                  className={cn(
+                    process.env.NODE_ENV === "production" && "hidden",
+                  )}
+                >
+                  <FormLabel>PDF Analysis Model</FormLabel>
+                  <FormModelSelectorCombobox {...field} align="start">
+                    <FormControl>
+                      <Button variant="outline" className="w-fit">
+                        <span>{field.value}</span>
+                        <ChevronsUpDownIcon />
+                      </Button>
+                    </FormControl>
+                  </FormModelSelectorCombobox>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="pdfAnalysisModelPreset"
-            render={({ field }) => (
-              <FormItem
-                className={cn(
-                  process.env.NODE_ENV === "production" && "hidden",
-                )}
-              >
-                <FormLabel>PDF Analysis Model</FormLabel>
-                <FormModelSelectorCombobox {...field} align="start">
-                  <FormControl>
-                    <Button variant="outline" className="w-fit">
-                      <span>{field.value}</span>
-                      <ChevronsUpDownIcon />
-                    </Button>
-                  </FormControl>
-                </FormModelSelectorCombobox>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="dataExtractionModelPreset"
-            render={({ field }) => (
-              <FormItem
-                className={cn(
-                  process.env.NODE_ENV === "production" && "hidden",
-                )}
-              >
-                <FormLabel>Data Extraction Model</FormLabel>
-                <FormModelSelectorCombobox {...field} align="start">
-                  <FormControl>
-                    <Button variant="outline" className="w-fit">
-                      <span>{field.value}</span>
-                      <ChevronsUpDownIcon />
-                    </Button>
-                  </FormControl>
-                </FormModelSelectorCombobox>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="dataExtractionModelPreset"
+              render={({ field }) => (
+                <FormItem
+                  className={cn(
+                    process.env.NODE_ENV === "production" && "hidden",
+                  )}
+                >
+                  <FormLabel>Data Extraction Model</FormLabel>
+                  <FormModelSelectorCombobox {...field} align="start">
+                    <FormControl>
+                      <Button variant="outline" className="w-fit">
+                        <span>{field.value}</span>
+                        <ChevronsUpDownIcon />
+                      </Button>
+                    </FormControl>
+                  </FormModelSelectorCombobox>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </FieldSet>
         </form>
       </Form>
     </main>

@@ -22,11 +22,11 @@ import { FileUploadForm } from "../form";
 
 export const FormFilesPreviewSection = ({
   form,
+  files,
 }: {
   form: UseFormReturn<FileUploadForm>;
+  files: FileUploadForm["files"];
 }) => {
-  const files = form.watch("files");
-
   if (files.length === 0) {
     return null;
   }
@@ -46,8 +46,8 @@ export const FormFilesPreviewSection = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {files.map((_file, index) => (
-            <TableRowFile key={index} form={form} index={index} />
+          {files.map((file, index) => (
+            <TableRowFile key={index} form={form} file={file} index={index} />
           ))}
         </TableBody>
       </Table>
@@ -57,12 +57,13 @@ export const FormFilesPreviewSection = ({
 
 function TableRowFile({
   form,
+  file: fileItem,
   index,
 }: {
   form: UseFormReturn<FileUploadForm>;
+  file: FileUploadForm["files"][number];
   index: number;
 }) {
-  const fileItem = form.watch(`files.${index}`);
   const file = fileItem.rawFile;
 
   return (
