@@ -8,16 +8,6 @@ import {
 } from "@/components/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -26,10 +16,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { api } from "@/convex/_generated/api";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
-import { useQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import {
   CheckIcon,
@@ -43,6 +31,7 @@ import {
 import React from "react";
 import { DownloadFileButton } from "./download-file-button";
 import { WorkflowDetailsType } from "./types";
+import { ViewFileDialog } from "./view-file-dialog";
 
 export const WorkflowDetailsTableRow = ({
   detail,
@@ -53,13 +42,6 @@ export const WorkflowDetailsTableRow = ({
 
   const internalWorkflowStatus = detail.internalWorkflowStatus;
   const inProgress = internalWorkflowStatus?.inProgress ?? [];
-
-  const [isViewFileOpen, setIsViewFileOpen] = React.useState(false);
-
-  const downloadUrl = useQuery(
-    api.r2.queryDownloadUrl,
-    isViewFileOpen ? { key: detail.fileKey } : "skip",
-  );
 
   return (
     <React.Fragment>
@@ -109,55 +91,11 @@ export const WorkflowDetailsTableRow = ({
           </Badge>
         </TableCell>
         <TableCell>
-          <Dialog open={isViewFileOpen} onOpenChange={setIsViewFileOpen}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <EyeIcon />
-                  </Button>
-                </DialogTrigger>
-              </TooltipTrigger>
-              <TooltipContent>View file</TooltipContent>
-            </Tooltip>
-
-            <DialogContent className="h-svh w-full max-w-none sm:max-w-none">
-              <div className="flex size-full flex-1 flex-col gap-6">
-                <DialogHeader>
-                  <DialogTitle>View File</DialogTitle>
-                  <DialogDescription>
-                    Viewing &quot;{detail.fileName}&quot;
-                  </DialogDescription>
-                </DialogHeader>
-
-                <iframe
-                  src={downloadUrl}
-                  className="bg-muted size-full flex-1 overflow-hidden rounded-xl border"
-                  tabIndex={-1}
-                  title={`Preview of ${detail.fileName}`}
-                />
-
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Close</Button>
-                  </DialogClose>
-
-                  <DownloadFileButton
-                    fileKey={detail.fileKey}
-                    filename={detail.fileName}
-                    variant="outline"
-                  >
-                    {({ isDownloading }) => (
-                      <>
-                        {isDownloading ? <Spinner /> : <DownloadIcon />}
-                        Download
-                      </>
-                    )}
-                  </DownloadFileButton>
-                </DialogFooter>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <ViewFileDialog fileKey={detail.fileKey} filename={detail.fileName}>
+            <Button variant="ghost" size="icon">
+              <EyeIcon />
+            </Button>
+          </ViewFileDialog>
 
           <Tooltip>
             <TooltipTrigger asChild>
