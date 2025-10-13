@@ -1,4 +1,5 @@
 import { Email } from "@convex-dev/auth/providers/Email";
+import { generateRandomString, RandomReader } from "@oslojs/crypto/random";
 import {
   Container,
   Head,
@@ -9,7 +10,6 @@ import {
   Text,
 } from "@react-email/components";
 import { formatDistanceToNow } from "date-fns";
-import { alphabet, generateRandomString } from "oslo/crypto";
 import { Resend as ResendAPI } from "resend";
 
 export const ResendOTPPasswordReset = Email({
@@ -18,7 +18,15 @@ export const ResendOTPPasswordReset = Email({
   apiKey: process.env.RESEND_API_KEY,
 
   async generateVerificationToken() {
-    return generateRandomString(6, alphabet("0-9"));
+    const random: RandomReader = {
+      read(bytes) {
+        crypto.getRandomValues(bytes);
+      },
+    };
+
+    const alphabet = "0123456789";
+    const length = 6;
+    return generateRandomString(random, alphabet, length);
   },
 
   async sendVerificationRequest({
