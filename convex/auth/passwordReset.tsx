@@ -8,6 +8,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
+import { formatDistanceToNow } from "date-fns";
 import { alphabet, generateRandomString } from "oslo/crypto";
 import { Resend as ResendAPI } from "resend";
 
@@ -27,7 +28,8 @@ export const ResendOTPPasswordReset = Email({
     expires,
   }) {
     const resend = new ResendAPI(provider.apiKey);
-    const { error } = await resend.emails.send({
+
+    const { data, error } = await resend.emails.send({
       from: "Invoisus <notify@noreply.farmio.io>",
       to: [email],
       subject: `Reset password in Invoisus`,
@@ -35,8 +37,11 @@ export const ResendOTPPasswordReset = Email({
     });
 
     if (error) {
+      console.error(error);
       throw new Error(JSON.stringify(error));
     }
+
+    console.log(data);
   },
 });
 
@@ -62,9 +67,7 @@ function PasswordResetEmail({
             <Text className="font-semibold">Verification code</Text>
             <Text className="text-4xl font-bold">{code}</Text>
             <Text>
-              (This code is valid for{" "}
-              {Math.floor((+expires - new Date().getTime()) / (60 * 60 * 1000))}{" "}
-              hours)
+              (This code will expire in {formatDistanceToNow(expires)})
             </Text>
           </Section>
         </Container>
