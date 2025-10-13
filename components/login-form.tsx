@@ -91,7 +91,15 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <div className="flex items-center">
+                  <FormLabel>Password</FormLabel>
+                  <Link
+                    href="/reset-password"
+                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>

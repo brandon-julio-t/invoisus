@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as auth_passwordReset from "../auth/passwordReset.js";
 import type * as auth from "../auth.js";
 import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
 import type * as domains_analysisWorkflows_queries from "../domains/analysisWorkflows/queries.js";
@@ -48,6 +49,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "auth/passwordReset": typeof auth_passwordReset;
   auth: typeof auth;
   "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
   "domains/analysisWorkflows/queries": typeof domains_analysisWorkflows_queries;
