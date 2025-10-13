@@ -117,7 +117,7 @@ const CustomersListPage = () => {
               </DialogTrigger>
 
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" size="icon">
                   <ChevronDownIcon />
                 </Button>
               </DropdownMenuTrigger>
