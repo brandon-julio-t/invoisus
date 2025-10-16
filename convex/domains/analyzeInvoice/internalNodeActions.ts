@@ -253,19 +253,55 @@ ${args.fileType}
       console.log("shouldReturn", shouldReturn);
       if (shouldReturn) {
         if (result.customerNumber) {
-          const customer = await ctx.runQuery(
+          const foundCustomerByNumber = await ctx.runQuery(
             internal.domains.customers.internalQueries.getCustomerByNumber,
             { number: result.customerNumber },
           );
 
-          console.log("override customer", customer);
+          console.log("foundCustomerByNumber", foundCustomerByNumber);
 
-          if (customer) {
+          if (foundCustomerByNumber) {
             return {
               ...result,
-              customerName: customer.name,
-              customerGroup: customer.group,
-              customerProblemType: customer.problemType,
+              customerName: foundCustomerByNumber.name,
+              customerGroup: foundCustomerByNumber.group,
+              customerProblemType: foundCustomerByNumber.problemType,
+            };
+          }
+        }
+
+        if (result.customerName) {
+          const foundCustomerByName = await ctx.runQuery(
+            internal.domains.customers.internalQueries.searchCustomerByName,
+            { name: result.customerName },
+          );
+
+          console.log("foundCustomerByName", foundCustomerByName);
+
+          if (foundCustomerByName) {
+            return {
+              ...result,
+              customerName: foundCustomerByName.name,
+              customerGroup: foundCustomerByName.group,
+              customerProblemType: foundCustomerByName.problemType,
+            };
+          }
+        }
+
+        if (result.customerGroup) {
+          const foundCustomerByGroup = await ctx.runQuery(
+            internal.domains.customers.internalQueries.searchCustomerByGroup,
+            { group: result.customerGroup },
+          );
+
+          console.log("foundCustomerByGroup", foundCustomerByGroup);
+
+          if (foundCustomerByGroup) {
+            return {
+              ...result,
+              customerName: foundCustomerByGroup.name,
+              customerGroup: foundCustomerByGroup.group,
+              customerProblemType: foundCustomerByGroup.problemType,
             };
           }
         }
