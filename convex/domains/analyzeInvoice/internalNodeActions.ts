@@ -132,9 +132,6 @@ export const extractDataFromInvoiceWithAi = internalAction({
   handler: async (ctx, args): Promise<Record<string, string>> => {
     console.log("args", args);
 
-    const fileUrl = await r2.getUrl(args.fileKey);
-    console.log("fileUrl", fileUrl);
-
     const analysisConfiguration = await ctx.runQuery(
       internal.domains.analysisConfigurations.internalQueries
         .getAnalysisConfiguration,
@@ -205,17 +202,7 @@ ${args.supplementaryAnalysisResult}
 <file_name>
 ${args.fileName}
 </file_name>
-
-<file_type>
-${args.fileType}
-</file_type>
 `.trim(),
-              },
-              {
-                type: "file",
-                data: fileUrl,
-                mediaType: args.fileType,
-                filename: args.fileName,
               },
             ],
           },
