@@ -1,7 +1,7 @@
 "use node";
 
 import { vWorkflowId } from "@convex-dev/workflow";
-import { generateObject, generateText, stepCountIs } from "ai";
+import { generateObject, generateText, stepCountIs, UserContent } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internal } from "../../_generated/api";
@@ -20,12 +20,20 @@ export const analyzeInvoiceWithAi = internalAction({
     fileSize: v.number(),
     fileType: v.string(),
     fileKey: v.string(),
+    imageFileKeys: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     console.log("args", args);
 
     const fileUrl = await r2.getUrl(args.fileKey);
     console.log("fileUrl", fileUrl);
+
+    const imageFileUrls = await Promise.all(
+      args.imageFileKeys.map(
+        async (imageFileKey) => await r2.getUrl(imageFileKey),
+      ),
+    );
+    console.log("imageFileUrls", imageFileUrls);
 
     const analysisConfiguration = await ctx.runQuery(
       internal.domains.analysisConfigurations.internalQueries
@@ -53,6 +61,44 @@ export const analyzeInvoiceWithAi = internalAction({
       },
     });
 
+    const userContent: UserContent = [
+      {
+        type: "text",
+        text: `
+<mandatory_fields_to_be_analyzed>
+${dataExtractionPrompt}
+</mandatory_fields_to_be_analyzed>
+
+<file_name>
+${args.fileName}
+</file_name>
+
+<file_type>
+${args.fileType}
+</file_type>
+`.trim(),
+      },
+    ];
+
+    if (imageFileUrls.length <= 0) {
+      userContent.push({
+        type: "file",
+        data: fileUrl,
+        mediaType: args.fileType,
+        filename: args.fileName,
+      });
+    } else {
+      imageFileUrls.forEach((imageFileUrl) => {
+        userContent.push({
+          type: "image",
+          image: imageFileUrl,
+          mediaType: "image/png",
+        });
+      });
+    }
+
+    console.log("userContent", userContent);
+
     const analysisResult = await generateText({
       model,
 
@@ -67,30 +113,7 @@ export const analyzeInvoiceWithAi = internalAction({
       prompt: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: `
-<mandatory_fields_to_be_analyzed>
-${dataExtractionPrompt}
-</mandatory_fields_to_be_analyzed>
-
-<file_name>
-${args.fileName}
-</file_name>
-
-<file_type>
-${args.fileType}
-</file_type>
-`.trim(),
-            },
-            {
-              type: "file",
-              data: fileUrl,
-              mediaType: args.fileType,
-              filename: args.fileName,
-            },
-          ],
+          content: userContent,
         },
       ],
     });

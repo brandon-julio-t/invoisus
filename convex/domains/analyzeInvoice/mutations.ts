@@ -15,6 +15,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         size: v.number(),
         type: v.string(),
         fileKey: v.string(),
+        imageFileKeys: v.array(v.string()),
       }),
     ),
   },
@@ -47,6 +48,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
           pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
           dataExtractionModelPreset: args.dataExtractionModelPreset,
           fileKey: file.fileKey,
+          imageFileKeys: file.imageFileKeys,
         },
         {
           onComplete:

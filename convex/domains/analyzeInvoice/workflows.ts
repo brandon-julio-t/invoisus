@@ -11,6 +11,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     pdfAnalysisModelPreset: vModelPreset,
     dataExtractionModelPreset: vModelPreset,
     fileKey: v.string(),
+    imageFileKeys: v.array(v.string()),
   },
   handler: async (step, args) => {
     console.log("step.workflowId", step.workflowId);
@@ -56,6 +57,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
         fileSize: analysisWorkflowDetail.fileSize,
         fileType: analysisWorkflowDetail.fileType,
         fileKey: analysisWorkflowDetail.fileKey,
+        imageFileKeys: args.imageFileKeys,
       },
     );
 

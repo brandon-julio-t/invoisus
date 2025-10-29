@@ -54,6 +54,7 @@ import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
+import { extractImageBlobsFromPdfFile } from "@/lib/pdfjs";
 
 const HomePage = () => {
   const router = useRouter();
@@ -98,6 +99,7 @@ const HomePage = () => {
         size: number;
         type: string;
         fileKey: string;
+        imageFileKeys: string[];
       }> = [];
 
       let hasError = false;
@@ -127,11 +129,48 @@ const HomePage = () => {
               })
               .unwrap();
 
+            const imageFileKeys: string[] = [];
+
+            if (file.type === "application/pdf") {
+              const imageBlobs = await toast
+                .promise(extractImageBlobsFromPdfFile({ file }), {
+                  loading: `Extracting images from "${file.name}"...`,
+                  success: `Images from "${file.name}" extracted successfully`,
+                  error: `Failed to extract images from "${file.name}"`,
+                })
+                .unwrap();
+
+              const result = await Promise.all(
+                imageBlobs.map(async (imageBlob, index) => {
+                  const blobAsFile = new File(
+                    [imageBlob],
+                    `${file.name}-${index}`,
+                    {
+                      type: imageBlob.type,
+                    },
+                  );
+
+                  const imageFileKey = await toast
+                    .promise(uploadFile(blobAsFile), {
+                      loading: `Uploading image #${index + 1} of "${file.name}"...`,
+                      success: `Image #${index + 1} of "${file.name}" uploaded successfully`,
+                      error: `Failed to upload image #${index + 1} of "${file.name}"`,
+                    })
+                    .unwrap();
+
+                  return imageFileKey;
+                }),
+              );
+
+              imageFileKeys.push(...result);
+            }
+
             uploadedFiles.push({
               name: file.name,
               size: file.size,
               type: file.type,
               fileKey: uploadedFileKey,
+              imageFileKeys: imageFileKeys,
             });
 
             form.setValue(`files.${index}.status`, "success");
@@ -195,7 +234,13 @@ const HomePage = () => {
                   <FormControl>
                     <Dropzone
                       maxFiles={1_000}
-                      accept={{ "application/pdf": [] }}
+                      accept={{
+                        "application/pdf": [],
+                        "image/png": [],
+                        "image/jpeg": [],
+                        "image/jpg": [],
+                        "image/webp": [],
+                      }}
                       onDrop={(files: File[]) => {
                         const newFiles = files.map((file) => ({
                           rawFile: file,

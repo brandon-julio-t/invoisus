@@ -13,6 +13,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -36,6 +37,11 @@ export default async function RootLayout({
         <body
           className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
         >
+          <Script
+            src="//mozilla.github.io/pdf.js/build/pdf.mjs"
+            type="module"
+          ></Script>
+
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
