@@ -80,31 +80,22 @@ ${args.fileType}
       },
     ];
 
-    // <use-images-if-available>: commented out because giving images makes the AI to be too sensitive according to Toby, so now we go back to PDF again.
-    // if (imageFileUrls.length <= 0) {
-    //   userContent.push({
-    //     type: "file",
-    //     data: fileUrl,
-    //     mediaType: args.fileType,
-    //     filename: args.fileName,
-    //   });
-    // } else {
-    //   imageFileUrls.forEach((imageFileUrl) => {
-    //     userContent.push({
-    //       type: "image",
-    //       image: imageFileUrl,
-    //       mediaType: "image/png",
-    //     });
-    //   });
-    // }
-    // </use-images-if-available>
-
-    userContent.push({
-      type: "file",
-      data: fileUrl,
-      mediaType: args.fileType,
-      filename: args.fileName,
-    });
+    if (imageFileUrls.length <= 0) {
+      userContent.push({
+        type: "file",
+        data: fileUrl,
+        mediaType: args.fileType,
+        filename: args.fileName,
+      });
+    } else {
+      imageFileUrls.forEach((imageFileUrl) => {
+        userContent.push({
+          type: "image",
+          image: imageFileUrl,
+          mediaType: "image/png",
+        });
+      });
+    }
 
     console.log("userContent", userContent);
 

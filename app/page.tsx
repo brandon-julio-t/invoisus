@@ -131,39 +131,41 @@ const HomePage = () => {
 
             const imageFileKeys: string[] = [];
 
-            if (file.type === "application/pdf") {
-              const imageBlobs = await toast
-                .promise(extractImageBlobsFromPdfFile({ file }), {
-                  loading: `Extracting images from "${file.name}"...`,
-                  success: `Images from "${file.name}" extracted successfully`,
-                  error: `Failed to extract images from "${file.name}"`,
-                })
-                .unwrap();
+            // <use-images-if-available>: commented out because giving images makes the AI to be too sensitive accordingn to Toby, so now we go back to PDF again.
+            // if (file.type === "application/pdf") {
+            //   const imageBlobs = await toast
+            //     .promise(extractImageBlobsFromPdfFile({ file }), {
+            //       loading: `Extracting images from "${file.name}"...`,
+            //       success: `Images from "${file.name}" extracted successfully`,
+            //       error: `Failed to extract images from "${file.name}"`,
+            //     })
+            //     .unwrap();
 
-              const result = await Promise.all(
-                imageBlobs.map(async (imageBlob, index) => {
-                  const blobAsFile = new File(
-                    [imageBlob],
-                    `${file.name}-${index}`,
-                    {
-                      type: imageBlob.type,
-                    },
-                  );
+            //   const result = await Promise.all(
+            //     imageBlobs.map(async (imageBlob, index) => {
+            //       const blobAsFile = new File(
+            //         [imageBlob],
+            //         `${file.name}-${index}`,
+            //         {
+            //           type: imageBlob.type,
+            //         },
+            //       );
 
-                  const imageFileKey = await toast
-                    .promise(uploadFile(blobAsFile), {
-                      loading: `Uploading image #${index + 1} of "${file.name}"...`,
-                      success: `Image #${index + 1} of "${file.name}" uploaded successfully`,
-                      error: `Failed to upload image #${index + 1} of "${file.name}"`,
-                    })
-                    .unwrap();
+            //       const imageFileKey = await toast
+            //         .promise(uploadFile(blobAsFile), {
+            //           loading: `Uploading image #${index + 1} of "${file.name}"...`,
+            //           success: `Image #${index + 1} of "${file.name}" uploaded successfully`,
+            //           error: `Failed to upload image #${index + 1} of "${file.name}"`,
+            //         })
+            //         .unwrap();
 
-                  return imageFileKey;
-                }),
-              );
+            //       return imageFileKey;
+            //     }),
+            //   );
 
-              imageFileKeys.push(...result);
-            }
+            //   imageFileKeys.push(...result);
+            // }
+            // </use-images-if-available>
 
             uploadedFiles.push({
               name: file.name,
