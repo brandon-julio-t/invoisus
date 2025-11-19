@@ -46,7 +46,7 @@ import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ChevronsUpDownIcon, IterationCcwIcon, SendIcon } from "lucide-react";
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -54,17 +54,23 @@ import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
-import { extractImageBlobsFromPdfFile } from "@/lib/pdfjs";
+import { ModelPreset } from "@/convex/domains/analyzeInvoice/aiModelFactory";
 
 const HomePage = () => {
   const router = useRouter();
 
+  const analysisConfigurations = useQuery(
+    api.domains.analysisConfigurations.queries.getAnalysisConfiguration,
+  );
+
   const form = useForm<FileUploadForm>({
     resolver: zodResolver(fileUploadSchema),
-    defaultValues: {
+    values: {
       files: [],
-      pdfAnalysisModelPreset: "gemini-3-pro-preview",
-      dataExtractionModelPreset: "gpt-5-mini-medium",
+      pdfAnalysisModelPreset:
+        analysisConfigurations?.pdfAnalysisModelId ?? "gemini-2.5-pro",
+      dataExtractionModelPreset:
+        analysisConfigurations?.dataExtractionModelId ?? "gpt-5-mini-medium",
     },
   });
 

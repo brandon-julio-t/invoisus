@@ -2,6 +2,7 @@ import { authTables } from "@convex-dev/auth/server";
 import { vWorkflowId } from "@convex-dev/workflow";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { vModelPreset } from "./domains/analyzeInvoice/validators";
 
 // The schema is entirely optional.
 // You can delete this file (schema.ts) and the
@@ -24,7 +25,9 @@ export default defineSchema({
     .searchIndex("search_group", { searchField: "group" }),
 
   analysisConfigurations: defineTable({
+    pdfAnalysisModelId: v.optional(vModelPreset),
     pdfAnalysisPrompt: v.string(),
+    dataExtractionModelId: v.optional(vModelPreset),
     dataExtractionPrompt: v.string(),
   }),
 

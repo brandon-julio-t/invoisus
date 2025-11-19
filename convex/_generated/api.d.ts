@@ -8,9 +8,11 @@
  * @module
  */
 
+import type * as admin_console_functions from "../admin/console/functions.js";
 import type * as auth_passwordReset from "../auth/passwordReset.js";
 import type * as auth from "../auth.js";
 import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
+import type * as domains_analysisConfigurations_queries from "../domains/analysisConfigurations/queries.js";
 import type * as domains_analysisWorkflows_queries from "../domains/analysisWorkflows/queries.js";
 import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
@@ -49,9 +51,11 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "admin/console/functions": typeof admin_console_functions;
   "auth/passwordReset": typeof auth_passwordReset;
   auth: typeof auth;
   "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
+  "domains/analysisConfigurations/queries": typeof domains_analysisConfigurations_queries;
   "domains/analysisWorkflows/queries": typeof domains_analysisWorkflows_queries;
   "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;
