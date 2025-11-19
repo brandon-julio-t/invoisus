@@ -9,6 +9,8 @@ type ReasoningEffort = "minimal" | "low" | "medium" | "high";
 export type ModelPreset =
   | "auto"
   //
+  | "gemini-3-pro-preview"
+  //
   | "gemini-2.5-pro"
   | "gemini-2.5-flash"
   | "gemini-2.5-flash-lite"
@@ -63,6 +65,11 @@ function makeModelAndProviderOptionsFromModelPreset(modelPreset: ModelPreset) {
     case "auto":
       return {
         model: openrouter("openrouter/auto"),
+      };
+
+    case "gemini-3-pro-preview":
+      return {
+        model: openrouter("google/gemini-3-pro-preview"),
       };
 
     case "gemini-2.5-pro":

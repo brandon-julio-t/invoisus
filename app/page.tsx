@@ -63,7 +63,7 @@ const HomePage = () => {
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       files: [],
-      pdfAnalysisModelPreset: "gemini-2.5-pro",
+      pdfAnalysisModelPreset: "gemini-3-pro-preview",
       dataExtractionModelPreset: "gpt-5-mini-medium",
     },
   });
