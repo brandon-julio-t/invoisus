@@ -27,6 +27,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -52,7 +53,6 @@ import React from "react";
 import { toast } from "sonner";
 import { CustomerForm, CustomerFormProps } from "../_components/customer-form";
 import { CustomerTableRow } from "./_components/customer-table-row";
-import { Spinner } from "@/components/ui/spinner";
 
 const ITEMS_PER_PAGE = 50;
 

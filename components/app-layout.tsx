@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/sidebar";
 import { MeshGradient } from "@paper-design/shaders-react";
 import { Authenticated, Unauthenticated } from "convex/react";
-import { ModeToggle } from "./mode-toggle";
 import { usePathname } from "next/navigation";
+import { ModeToggle } from "./mode-toggle";
 
 export function AppLayout({
   children,

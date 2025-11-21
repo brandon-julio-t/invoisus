@@ -4,7 +4,6 @@ import "./globals.css";
 import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { HijackRouterNavigationForNProgress } from "@/components/link";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -14,6 +13,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
   title: "Create Next App",

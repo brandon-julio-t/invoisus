@@ -2,6 +2,7 @@
 
 import { ChevronsUpDown, LogOut } from "lucide-react";
 
+import { useRouter } from "@/components/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -22,10 +23,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex-helpers/react/cache/hooks";
-import { useRouter } from "@/components/link";
+import { usePostHog } from "posthog-js/react";
 import React from "react";
 import { toast } from "sonner";
-import { usePostHog } from "posthog-js/react";
 
 export function NavUser() {
   const { isMobile } = useSidebar();

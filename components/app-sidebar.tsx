@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import Link from "@/components/link";
 import {
   Sidebar,
   SidebarContent,
@@ -22,7 +23,6 @@ import {
   UsersIcon,
   WorkflowIcon,
 } from "lucide-react";
-import Link from "@/components/link";
 import { usePathname } from "next/navigation";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";

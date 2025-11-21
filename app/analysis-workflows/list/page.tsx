@@ -34,7 +34,6 @@ import {} from "@convex-dev/auth/server";
 import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import {
-  ArrowUpRightIcon,
   CheckIcon,
   FileCode2Icon,
   HourglassIcon,

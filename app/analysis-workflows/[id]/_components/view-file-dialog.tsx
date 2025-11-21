@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex-helpers/react/cache/hooks";
-import { DownloadIcon, EyeIcon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 import { DownloadFileButton } from "./download-file-button";
 
 export const ViewFileDialog = ({
