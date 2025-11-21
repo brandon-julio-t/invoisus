@@ -25,8 +25,31 @@ export const analyzeInvoiceWithAi = internalAction({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const fileUrl = await r2.getUrl(args.fileKey);
-    console.log("fileUrl", fileUrl);
+    const fileUrl = await r2.getUrl(args.fileKey).then(async (url) => {
+      /**
+       * @see https://github.com/vercel/ai/issues/10349
+       */
+      const isModelNeedBase64 = args.modelPreset === "gemini-3-pro-preview";
+      console.log("isModelNeedBase64", isModelNeedBase64);
+      if (!isModelNeedBase64) {
+        console.log("url", url);
+        return url;
+      }
+
+      console.log("fetching url", url);
+      const response = await fetch(url);
+      console.log("response", response);
+
+      console.log("making array buffer...");
+      const arrayBuffer = await response.arrayBuffer();
+      console.log("arrayBuffer done");
+
+      console.log("converting to base64...");
+      const base64 = Buffer.from(arrayBuffer).toString("base64");
+      console.log("base64 done");
+
+      return base64;
+    });
 
     const imageFileUrls = await Promise.all(
       args.imageFileKeys.map(
@@ -116,11 +139,16 @@ ${args.fileType}
           content: userContent,
         },
       ],
-    });
+    })
+      .catch((error) => {
+        console.error("error", error);
+        throw error;
+      })
+      .finally(async () => {
+        await phClient.shutdown();
+      });
 
     console.log("analysisResult", analysisResult);
-
-    await phClient.shutdown();
 
     const result = {
       text: analysisResult.text,
@@ -230,11 +258,16 @@ ${args.fileName}
             ],
           },
         ],
-      });
+      })
+        .catch((error) => {
+          console.error("error", error);
+          throw error;
+        })
+        .finally(async () => {
+          await phClient.shutdown();
+        });
 
       console.log("dataExtractionResult", dataExtractionResult);
-
-      await phClient.shutdown();
 
       const object = dataExtractionResult.object;
       console.log("object", object);

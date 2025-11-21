@@ -54,7 +54,6 @@ import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import { FileUploadForm, fileUploadSchema } from "./form";
-import { ModelPreset } from "@/convex/domains/analyzeInvoice/aiModelFactory";
 
 const HomePage = () => {
   const router = useRouter();
@@ -68,7 +67,7 @@ const HomePage = () => {
     values: {
       files: [],
       pdfAnalysisModelPreset:
-        analysisConfigurations?.pdfAnalysisModelId ?? "gemini-2.5-pro",
+        analysisConfigurations?.pdfAnalysisModelId ?? "gemini-3-pro-preview",
       dataExtractionModelPreset:
         analysisConfigurations?.dataExtractionModelId ?? "gpt-5-mini-medium",
     },
