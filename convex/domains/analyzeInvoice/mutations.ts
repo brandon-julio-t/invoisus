@@ -35,6 +35,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
         dataExtractionModelPreset: args.dataExtractionModelPreset,
         createdByUserId: userId,
+        lastUpdatedTime: Date.now(),
       },
     );
 
@@ -67,6 +68,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         fileSize: file.size,
         fileType: file.type,
         fileKey: file.fileKey,
+        lastUpdatedTime: Date.now(),
       });
     }
 

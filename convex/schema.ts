@@ -36,6 +36,7 @@ export default defineSchema({
     pdfAnalysisModelPreset: v.string(),
     dataExtractionModelPreset: v.string(),
     createdByUserId: v.optional(v.id("users")),
+    lastUpdatedTime: v.optional(v.number()),
   }),
 
   analysisWorkflowDetails: defineTable({
@@ -57,6 +58,7 @@ export default defineSchema({
     problemExistanceType: v.optional(
       v.union(v.literal("certainly has problem"), v.literal("not certain")),
     ),
+    lastUpdatedTime: v.optional(v.number()),
   }).index("by_analysis_workflow_header_id_and_workflow_id", [
     "analysisWorkflowHeaderId",
     "workflowId",

@@ -15,7 +15,10 @@ export const updateAnalysisWorkflowDetail = internalMutation({
 
     const { id, data } = args;
 
-    await ctx.db.patch(id, data);
+    await ctx.db.patch(id, {
+      ...data,
+      lastUpdatedTime: Date.now(),
+    });
   },
 });
 
@@ -40,10 +43,12 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
       .unique();
 
     if (analysisWorkflowDetail) {
+      const currentTime = Date.now();
       if (args.result.kind === "success") {
         await ctx.db.patch(analysisWorkflowDetail._id, {
           status: "success",
           errorMessage: undefined,
+          lastUpdatedTime: currentTime,
         });
       } else if (args.result.kind === "failed") {
         const errorMessage = args.result.error;
@@ -52,11 +57,13 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
           status: "failed",
           errorMessage: errorMessage,
           problemExistanceType: "certainly has problem",
+          lastUpdatedTime: currentTime,
         });
       } else if (args.result.kind === "canceled") {
         await ctx.db.patch(analysisWorkflowDetail._id, {
           status: "queued",
           errorMessage: "Workflow canceled",
+          lastUpdatedTime: currentTime,
         });
       }
     } else {
