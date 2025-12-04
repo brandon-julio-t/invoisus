@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -48,6 +47,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { parseAsString, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";

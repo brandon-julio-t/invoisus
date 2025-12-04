@@ -5,7 +5,6 @@ import {
   DescriptionList,
   DescriptionTerm,
 } from "@/components/catalyst-ui/description-list";
-import { useRouter } from "@/components/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +42,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
+import { useRouter } from "@bprogress/next";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";

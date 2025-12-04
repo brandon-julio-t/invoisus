@@ -1,5 +1,6 @@
 "use client";
 
+import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 import { ConvexAuthNextjsProvider } from "@convex-dev/auth/nextjs";
 import { ConvexQueryCacheProvider } from "convex-helpers/react/cache/provider";
 import { ConvexReactClient } from "convex/react";
@@ -13,8 +14,15 @@ export default function ConvexClientProvider({
   children: ReactNode;
 }) {
   return (
-    <ConvexAuthNextjsProvider client={convex}>
-      <ConvexQueryCacheProvider>{children}</ConvexQueryCacheProvider>
-    </ConvexAuthNextjsProvider>
+    <ProgressProvider
+      height="2px"
+      color="var(--primary)"
+      options={{ showSpinner: false }}
+      shallowRouting
+    >
+      <ConvexAuthNextjsProvider client={convex}>
+        <ConvexQueryCacheProvider>{children}</ConvexQueryCacheProvider>
+      </ConvexAuthNextjsProvider>
+    </ProgressProvider>
   );
 }

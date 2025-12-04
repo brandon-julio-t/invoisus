@@ -1,6 +1,5 @@
 "use client";
 
-import Link, { useRouter } from "@/components/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,6 +38,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import { parseFileWithXlsx } from "@/lib/excel";
 import { cn } from "@/lib/utils";
+import { useRouter } from "@bprogress/next";
 import { useMutation } from "convex/react";
 import {
   ArrowLeftIcon,
@@ -48,6 +48,7 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";

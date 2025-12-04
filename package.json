@@ -28,6 +28,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.77",
     "@auth/core": "0.37.0",
+    "@bprogress/next": "^3.2.12",
     "@convex-dev/auth": "^0.0.89",
     "@convex-dev/migrations": "^0.3.1",
     "@convex-dev/r2": "^0.8.1",
@@ -81,7 +82,6 @@
     "motion": "^12.23.25",
     "next": "16.0.7",
     "next-themes": "^0.4.6",
-    "nprogress": "^0.2.0",
     "nuqs": "^2.8.2",
     "posthog-js": "^1.301.0",
     "posthog-node": "^5.17.0",
@@ -105,7 +105,6 @@
     "@eslint/eslintrc": "^3.3.3",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
-    "@types/nprogress": "^0.2.3",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "eslint": "^9.39.1",

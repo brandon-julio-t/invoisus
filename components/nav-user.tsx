@@ -2,7 +2,6 @@
 
 import { ChevronsUpDown, LogOut } from "lucide-react";
 
-import { useRouter } from "@/components/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "@bprogress/next";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { usePostHog } from "posthog-js/react";

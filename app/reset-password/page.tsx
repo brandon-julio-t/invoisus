@@ -1,6 +1,5 @@
 "use client";
 
-import Link, { useRouter } from "@/components/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,9 +30,11 @@ import {
 } from "@/components/ui/input-otp";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
+import { useRouter } from "@bprogress/next";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon, MailIcon } from "lucide-react";
+import Link from "next/link";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";

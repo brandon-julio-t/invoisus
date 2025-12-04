@@ -38,22 +38,16 @@ const eslintConfig = [
   },
 
   {
-    ignores: ["components/link.tsx"],
     rules: {
       "no-restricted-imports": [
         "error",
         {
           paths: [
             {
-              name: "next/link",
-              message:
-                'Please import Link from "@/components/link" instead of "next/link" to use the custom Link component with NProgress.',
-            },
-            {
               name: "next/navigation",
               importNames: ["useRouter"],
               message:
-                'Please import useRouter from "@/components/link" instead of "next/navigation" to use the custom router with NProgress.',
+                'Please import useRouter from "@bprogress/next" instead of "next/navigation".',
             },
           ],
         },

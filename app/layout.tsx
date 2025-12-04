@@ -1,9 +1,7 @@
-import "nprogress/nprogress.css";
 import "./globals.css";
 
 import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
-import { HijackRouterNavigationForNProgress } from "@/components/link";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -51,8 +49,6 @@ export default async function RootLayout({
             <ConvexClientProvider>
               <NuqsAdapter>
                 <Toaster closeButton richColors position="bottom-right" />
-
-                <HijackRouterNavigationForNProgress />
 
                 <PostHogProvider>
                   <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>

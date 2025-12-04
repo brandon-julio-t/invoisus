@@ -5,7 +5,6 @@ import {
   DescriptionList,
   DescriptionTerm,
 } from "@/components/catalyst-ui/description-list";
-import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -52,6 +51,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import React from "react";
