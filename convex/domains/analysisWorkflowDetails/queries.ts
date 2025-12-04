@@ -6,6 +6,18 @@ import { query } from "../../_generated/server";
 export const getAnalysisWorkflowDetails = query({
   args: {
     analysisWorkflowHeaderId: v.id("analysisWorkflowHeaders"),
+    filterType: v.optional(
+      v.union(
+        v.literal("all"),
+        //
+        v.literal("processing"),
+        v.literal("success"),
+        v.literal("failed"),
+        //
+        v.literal("certainly has problem"),
+        v.literal("not certain"),
+      ),
+    ),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
@@ -17,11 +29,44 @@ export const getAnalysisWorkflowDetails = query({
       throw new Error("User not found");
     }
 
-    return await ctx.db
+    let queryIndexed = ctx.db
       .query("analysisWorkflowDetails")
-      .withIndex("by_analysis_workflow_header_id_and_workflow_id", (q) =>
+      .withIndex("by_analysisWorkflowHeaderId_problemExistenceType", (q) =>
         q.eq("analysisWorkflowHeaderId", args.analysisWorkflowHeaderId),
-      )
-      .paginate(args.paginationOpts);
+      );
+
+    const problemExistanceType = args.filterType ?? "all";
+    if (problemExistanceType !== "all") {
+      switch (problemExistanceType) {
+        case "failed":
+        case "success":
+        case "processing":
+          queryIndexed = ctx.db
+            .query("analysisWorkflowDetails")
+            .withIndex("by_analysisWorkflowHeaderId_status", (q) =>
+              q
+                .eq("analysisWorkflowHeaderId", args.analysisWorkflowHeaderId)
+                .eq("status", problemExistanceType),
+            );
+
+          break;
+
+        case "certainly has problem":
+        case "not certain":
+          queryIndexed = ctx.db
+            .query("analysisWorkflowDetails")
+            .withIndex(
+              "by_analysisWorkflowHeaderId_problemExistenceType",
+              (q) =>
+                q
+                  .eq("analysisWorkflowHeaderId", args.analysisWorkflowHeaderId)
+                  .eq("problemExistanceType", problemExistanceType),
+            );
+
+          break;
+      }
+    }
+
+    return await queryIndexed.order("asc").paginate(args.paginationOpts);
   },
 });
