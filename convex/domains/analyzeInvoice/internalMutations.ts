@@ -1,27 +1,8 @@
 import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
-import { partial } from "convex-helpers/validators";
 import { v } from "convex/values";
 import { Id } from "../../_generated/dataModel";
 import { internalMutation } from "../../_generated/server";
-import schema from "../../schema";
-
-export const updateAnalysisWorkflowDetail = internalMutation({
-  args: {
-    id: v.id("analysisWorkflowDetails"),
-    data: partial(schema.tables.analysisWorkflowDetails.validator),
-  },
-  handler: async (ctx, args) => {
-    console.log("args", args);
-
-    const { id, data } = args;
-
-    await ctx.db.patch(id, {
-      ...data,
-      lastUpdatedTime: Date.now(),
-    });
-  },
-});
 
 export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
   args: {

@@ -13,6 +13,7 @@ import type * as auth_passwordReset from "../auth/passwordReset.js";
 import type * as auth from "../auth.js";
 import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
 import type * as domains_analysisConfigurations_queries from "../domains/analysisConfigurations/queries.js";
+import type * as domains_analysisWorkflowDetails_internalCrud from "../domains/analysisWorkflowDetails/internalCrud.js";
 import type * as domains_analysisWorkflows_queries from "../domains/analysisWorkflows/queries.js";
 import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
@@ -56,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
   "domains/analysisConfigurations/queries": typeof domains_analysisConfigurations_queries;
+  "domains/analysisWorkflowDetails/internalCrud": typeof domains_analysisWorkflowDetails_internalCrud;
   "domains/analysisWorkflows/queries": typeof domains_analysisWorkflows_queries;
   "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;

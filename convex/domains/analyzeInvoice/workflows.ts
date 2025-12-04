@@ -35,12 +35,12 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     console.log("Updating analysis workflow detail status to processing");
 
     await step.runMutation(
-      internal.domains.analyzeInvoice.internalMutations
-        .updateAnalysisWorkflowDetail,
+      internal.domains.analysisWorkflowDetails.internalCrud.update,
       {
         id: analysisWorkflowDetail._id,
-        data: {
+        patch: {
           status: "processing",
+          lastUpdatedTime: Date.now(),
         },
       },
     );
@@ -64,11 +64,13 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     console.log("AI analysis result", aiAnalysisResult);
 
     await step.runMutation(
-      internal.domains.analyzeInvoice.internalMutations
-        .updateAnalysisWorkflowDetail,
+      internal.domains.analysisWorkflowDetails.internalCrud.update,
       {
         id: analysisWorkflowDetail._id,
-        data: { analysisResult: aiAnalysisResult.text },
+        patch: {
+          analysisResult: aiAnalysisResult.text,
+          lastUpdatedTime: Date.now(),
+        },
       },
     );
 
@@ -90,15 +92,15 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     console.log("AI data extraction result", aiDataExtractionResult);
 
     await step.runMutation(
-      internal.domains.analyzeInvoice.internalMutations
-        .updateAnalysisWorkflowDetail,
+      internal.domains.analysisWorkflowDetails.internalCrud.update,
       {
         id: analysisWorkflowDetail._id,
-        data: {
+        patch: {
           dataExtractionResult: aiDataExtractionResult,
           problemExistanceType: aiDataExtractionResult.problemExistanceType as
             | "certainly has problem"
             | "not certain",
+          lastUpdatedTime: Date.now(),
         },
       },
     );
