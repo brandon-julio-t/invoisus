@@ -242,9 +242,9 @@ const CustomersListPage = () => {
             >
               <motion.button onViewportEnter={onLoadMore}>
                 {paginatedQuery.isLoading && <Spinner />}
-                {paginatedQuery.status === "CanLoadMore"
-                  ? "Load More"
-                  : "No more data"}
+                {paginatedQuery.status === "Exhausted"
+                  ? "No more data"
+                  : "Load More"}
               </motion.button>
             </Button>
           </div>

@@ -395,9 +395,9 @@ const WorkflowDetailPage = () => {
             >
               <motion.button onViewportEnter={onLoadMore}>
                 {workflowDetailsQuery.isLoading && <Spinner />}
-                {workflowDetailsQuery.status === "CanLoadMore"
-                  ? "Load More"
-                  : "No more data"}
+                {workflowDetailsQuery.status === "Exhausted"
+                  ? "No more data"
+                  : "Load More"}
               </motion.button>
             </Button>
           </ItemContent>
