@@ -1,13 +1,14 @@
 "use client";
 
 import { Response } from "@/components/ai-elements/response";
+import { Badge } from "@/components/catalyst-ui/badge";
 import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
 } from "@/components/catalyst-ui/description-list";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -18,14 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
 import { cn } from "@/lib/utils";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  DownloadIcon,
-  EyeIcon,
-  HourglassIcon,
-  XIcon,
-} from "lucide-react";
+import { ChevronDownIcon, DownloadIcon, EyeIcon } from "lucide-react";
 import React from "react";
 import { DownloadFileButton } from "./download-file-button";
 import { WorkflowDetailsType } from "./types";
@@ -63,24 +57,31 @@ export const WorkflowDetailsTableRow = ({
           </Tooltip>
         </TableCell>
         <TableCell>
-          <div className="max-w-xs truncate font-medium">{detail.fileName}</div>
+          <ItemContent>
+            <ItemTitle>{detail.fileName}</ItemTitle>
+            <ItemDescription>
+              {detail.fileType} &bull; {formatFileSize(detail.fileSize)}
+            </ItemDescription>
+          </ItemContent>
         </TableCell>
-        <TableCell>{detail.fileType}</TableCell>
-        <TableCell>{formatFileSize(detail.fileSize)}</TableCell>
         <TableCell>
           <Badge
-            variant={getStatusBadgeVariant(detail.status)}
+            color={getStatusBadgeColor(detail.status)}
             className="capitalize"
           >
-            {detail.status === "queued" && <HourglassIcon />}
-
-            {detail.status === "processing" && <Spinner />}
-
-            {detail.status === "success" && <CheckIcon />}
-
-            {detail.status === "failed" && <XIcon />}
-
             {detail.status}
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Badge
+            color={
+              detail.problemExistanceType === "certainly has problem"
+                ? "red"
+                : "yellow"
+            }
+            className="capitalize"
+          >
+            {detail.problemExistanceType}
           </Badge>
         </TableCell>
         <TableCell>
@@ -191,17 +192,19 @@ export const WorkflowDetailsTableRow = ({
   );
 };
 
-const getStatusBadgeVariant = (status: string) => {
+const getStatusBadgeColor = (
+  status: string,
+): React.ComponentProps<typeof Badge>["color"] => {
   switch (status) {
     case "success":
-      return "success";
+      return "green";
     case "failed":
-      return "destructive";
+      return "red";
     case "processing":
-      return "warning";
+      return "yellow";
     case "queued":
-      return "warning";
+      return "yellow";
     default:
-      return "outline";
+      return "zinc";
   }
 };

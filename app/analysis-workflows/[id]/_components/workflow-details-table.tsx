@@ -21,9 +21,8 @@ export const WorkflowDetailsTable = ({
         <TableRow>
           <TableHead className="w-1">{/* expand row */}</TableHead>
           <TableHead>File Name</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Size</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead>Problem Identification</TableHead>
           <TableHead className="w-1">{/* download file */}</TableHead>
         </TableRow>
       </TableHeader>
