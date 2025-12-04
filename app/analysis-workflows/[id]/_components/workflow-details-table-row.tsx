@@ -183,8 +183,8 @@ export const WorkflowDetailsTableRow = ({
                           <div className="flex-1">
                             <div className="font-medium">{step.step.name}</div>
                             <div className="text-muted-foreground text-xs">
-                              {step.step.functionType} • Started{" "}
-                              {format(step._creationTime, "PPPPpppp")} •{" "}
+                              • Started {format(step._creationTime, "PPPPpppp")}{" "}
+                              •{" "}
                               {formatDistanceToNow(step._creationTime, {
                                 addSuffix: true,
                               })}
