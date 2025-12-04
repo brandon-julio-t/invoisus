@@ -28,15 +28,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
 import {} from "@convex-dev/auth/server";
-import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
+import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import {
+  ArrowRightIcon,
   CheckIcon,
   FileCode2Icon,
-  HourglassIcon,
   LoaderIcon,
   XIcon,
 } from "lucide-react";
@@ -95,60 +93,93 @@ const WorkflowListPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Workflow ID</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Created By</TableHead>
-                  <TableHead>Files Count</TableHead>
-                  <TableHead>Stats.</TableHead>
+                  <TableHead className="pl-6">Creation</TableHead>
+                  <TableHead className="text-right">Files Count</TableHead>
+                  <TableHead className="pl-6">Stats.</TableHead>
+                  <TableHead className="w-1">&nbsp;</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {results.map((workflow) => (
-                  <TableRow key={workflow._id}>
-                    <TableCell>
-                      <Item className="-mx-4" asChild>
-                        <Link href={`/analysis-workflows/${workflow._id}`}>
-                          <ItemContent>
-                            <ItemTitle className="font-mono">
-                              {workflow._id}
-                            </ItemTitle>
-                          </ItemContent>
-                        </Link>
-                      </Item>
-                    </TableCell>
-                    <TableCell>
-                      <Item className="-mx-4" asChild>
-                        <Link href={`/analysis-workflows/${workflow._id}`}>
+                {results.map((workflow) => {
+                  const total = workflow.filesCount;
+                  const successCount = workflow.successCount ?? 0;
+                  const failedCount = workflow.failedCount ?? 0;
+                  const processingCount = total - successCount - failedCount;
+
+                  return (
+                    <TableRow key={workflow._id}>
+                      <TableCell>
+                        <ItemContent>
+                          <ItemTitle className="font-mono truncate max-w-3xs">
+                            {workflow._id}
+                          </ItemTitle>
+                        </ItemContent>
+                      </TableCell>
+                      <TableCell>
+                        <Item>
                           <ItemContent>
                             <ItemTitle>
-                              {format(workflow._creationTime, "PPPp")}
+                              by{" "}
+                              {workflow.createdByUser?.name ??
+                                workflow.createdByUser?.email}
                             </ItemTitle>
                             <ItemDescription>
+                              at {format(workflow._creationTime, "PPPp")}
+                            </ItemDescription>
+                            <ItemDescription>
+                              around{" "}
                               {formatDistanceToNow(workflow._creationTime, {
                                 addSuffix: true,
                               })}
                             </ItemDescription>
                           </ItemContent>
-                        </Link>
-                      </Item>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/analysis-workflows/${workflow._id}`}>
-                        {workflow.createdByUser?.name ??
-                          workflow.createdByUser?.email}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/analysis-workflows/${workflow._id}`}>
+                        </Item>
+                      </TableCell>
+                      <TableCell className="text-right">
                         {Number(workflow.filesCount).toLocaleString()}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={`/analysis-workflows/${workflow._id}`}>
-                        <StatsCell analysisWorkflowHeaderId={workflow._id} />
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                      <TableCell>
+                        <ItemGroup className="flex-row">
+                          {[
+                            {
+                              label: "Processing",
+                              value: processingCount.toLocaleString(),
+                              icon: LoaderIcon,
+                            },
+                            {
+                              label: "Success",
+                              value: successCount.toLocaleString(),
+                              icon: CheckIcon,
+                            },
+                            {
+                              label: "Failed",
+                              value: failedCount.toLocaleString(),
+                              icon: XIcon,
+                            },
+                          ].map((item) => (
+                            <Item key={item.label} size="sm">
+                              <ItemMedia variant="icon">
+                                <item.icon />
+                              </ItemMedia>
+                              <ItemContent>
+                                <ItemTitle>{item.label}</ItemTitle>
+                                <ItemDescription>{item.value}</ItemDescription>
+                              </ItemContent>
+                            </Item>
+                          ))}
+                        </ItemGroup>
+                      </TableCell>
+                      <TableCell>
+                        <Link href={`/analysis-workflows/${workflow._id}`}>
+                          <Button variant="ghost">
+                            View Details
+                            <ArrowRightIcon />
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
 
@@ -179,65 +210,6 @@ const WorkflowListPage = () => {
         )}
       </section>
     </div>
-  );
-};
-
-const StatsCell = ({
-  analysisWorkflowHeaderId,
-}: {
-  analysisWorkflowHeaderId: Id<"analysisWorkflowHeaders">;
-}) => {
-  const detailsQuery = useQuery(
-    api.domains.analysisWorkflows.queries.getAnalysisWorkflowDetailsByHeaderId,
-    {
-      analysisWorkflowHeaderId: analysisWorkflowHeaderId,
-    },
-  );
-
-  const isLoading = detailsQuery === undefined;
-
-  return (
-    <ItemGroup className="flex-row">
-      {[
-        {
-          label: "Queued",
-          value: Number(detailsQuery?.stats.queuedCount ?? 0).toLocaleString(),
-          icon: HourglassIcon,
-        },
-        {
-          label: "Processing",
-          value: Number(
-            detailsQuery?.stats.processingCount ?? 0,
-          ).toLocaleString(),
-          icon: LoaderIcon,
-        },
-        {
-          label: "Success",
-          value: Number(detailsQuery?.stats.successCount ?? 0).toLocaleString(),
-          icon: CheckIcon,
-        },
-        {
-          label: "Failed",
-          value: Number(detailsQuery?.stats.failedCount ?? 0).toLocaleString(),
-          icon: XIcon,
-        },
-      ].map((item) => (
-        <Item
-          key={item.label}
-          size="sm"
-          variant={isLoading ? "muted" : "default"}
-          className={cn(isLoading && "animate-pulse")}
-        >
-          <ItemMedia variant="icon">
-            {isLoading ? <Spinner /> : <item.icon />}
-          </ItemMedia>
-          <ItemContent>
-            <ItemTitle>{item.label}</ItemTitle>
-            <ItemDescription>{item.value}</ItemDescription>
-          </ItemContent>
-        </Item>
-      ))}
-    </ItemGroup>
   );
 };
 
