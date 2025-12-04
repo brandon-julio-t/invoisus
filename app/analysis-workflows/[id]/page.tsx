@@ -35,8 +35,7 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { useQuery } from "convex-helpers/react/cache/hooks";
+import { usePaginatedQuery, useQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
 import { format, formatDistanceStrict } from "date-fns";
 import {
@@ -64,10 +63,21 @@ const WorkflowDetailPage = () => {
     { id: analysisWorkflowHeaderId },
   );
 
-  const workflowDetailsQuery = useQuery(
-    api.domains.analysisWorkflows.queries.getAnalysisWorkflowDetailsByHeaderId,
-    { analysisWorkflowHeaderId: analysisWorkflowHeaderId },
+  const workflowDetailsQuery = usePaginatedQuery(
+    api.domains.analysisWorkflowDetails.queries.getAnalysisWorkflowDetails,
+    {
+      analysisWorkflowHeaderId: analysisWorkflowHeaderId,
+    },
+    {
+      initialNumItems: 50,
+    },
   );
+
+  const onLoadMore = () => {
+    if (workflowDetailsQuery.status === "CanLoadMore") {
+      workflowDetailsQuery.loadMore(100);
+    }
+  };
 
   const onExportExcel = () => {
     if (!workflowHeaderQuery) {
@@ -83,7 +93,7 @@ const WorkflowDetailPage = () => {
     const toastId = toast.loading("Exporting to Excel...");
     exportWorkflowDetailsToExcel({
       header: workflowHeaderQuery,
-      details: workflowDetailsQuery.data,
+      details: workflowDetailsQuery.results,
     });
     toast.dismiss(toastId);
     toast.success("Excel file exported successfully");
@@ -108,7 +118,7 @@ const WorkflowDetailPage = () => {
         .promise(
           downloadWorkflowDetailsFile({
             header: workflowHeaderQuery,
-            details: workflowDetailsQuery.data,
+            details: workflowDetailsQuery.results,
             generateDownloadUrl,
           }),
           {
@@ -160,13 +170,10 @@ const WorkflowDetailPage = () => {
     );
   }
 
-  const isProcessing = workflowDetailsQuery.stats.processingCount > 0;
-
-  const problemExistances = Array.from(
-    new Set(
-      workflowDetailsQuery.data.map((detail) => detail.problemExistanceType),
-    ),
-  ).toSorted();
+  const totalFilesCount = workflowHeaderQuery.filesCount ?? 0;
+  const successCount = workflowHeaderQuery.successCount ?? 0;
+  const failedCount = workflowHeaderQuery.failedCount ?? 0;
+  const processingCount = totalFilesCount - successCount - failedCount;
 
   return (
     <div className="container flex flex-col gap-6">
@@ -196,7 +203,8 @@ const WorkflowDetailPage = () => {
                 variant="outline"
                 onClick={onExportExcel}
                 disabled={
-                  workflowDetailsQuery.data.length === 0 || isProcessing
+                  workflowDetailsQuery.isLoading ||
+                  workflowDetailsQuery.results.length <= 0
                 }
               >
                 <FileIcon />
@@ -207,7 +215,9 @@ const WorkflowDetailPage = () => {
                 variant="outline"
                 onClick={onDownloadAllFiles}
                 disabled={
-                  workflowDetailsQuery.data.length === 0 || isDownloading
+                  workflowDetailsQuery.isLoading ||
+                  workflowDetailsQuery.results.length <= 0 ||
+                  isDownloading
                 }
               >
                 {isDownloading ? <Spinner /> : <DownloadIcon />}
@@ -269,24 +279,17 @@ const WorkflowDetailPage = () => {
         {[
           {
             label: "Processing",
-            value: Number(
-              workflowDetailsQuery.stats.queuedCount +
-                workflowDetailsQuery.stats.processingCount,
-            ).toLocaleString(),
+            value: processingCount.toLocaleString(),
             icon: LoaderIcon,
           },
           {
             label: "Success",
-            value: Number(
-              workflowDetailsQuery.stats.successCount,
-            ).toLocaleString(),
+            value: successCount.toLocaleString(),
             icon: CheckIcon,
           },
           {
             label: "Failed",
-            value: Number(
-              workflowDetailsQuery.stats.failedCount,
-            ).toLocaleString(),
+            value: failedCount.toLocaleString(),
             icon: XIcon,
           },
         ].map((item) => (
@@ -310,51 +313,16 @@ const WorkflowDetailPage = () => {
         <CardHeader>
           <CardTitle>Analysis Details</CardTitle>
           <CardDescription>
-            {workflowDetailsQuery.data.length} file
-            {workflowDetailsQuery.data.length !== 1 ? "s" : ""} in this workflow
+            {Number(workflowHeaderQuery.filesCount ?? 0).toLocaleString()}{" "}
+            file(s) in this workflow
           </CardDescription>
         </CardHeader>
 
         <Separator />
 
-        {problemExistances.length ? (
-          <div className="flex flex-col gap-6">
-            {problemExistances.map((problemExistance, index) => {
-              const details = workflowDetailsQuery.data.filter(
-                (detail) => detail.problemExistanceType === problemExistance,
-              );
-
-              return (
-                <React.Fragment key={`${problemExistance}-${index}`}>
-                  <CardContent>
-                    <header className="mb-4 flex flex-row items-center gap-2 text-lg font-medium capitalize">
-                      <div
-                        className={cn(
-                          "size-(--text-sm) rounded-full",
-                          problemExistance === "certainly has problem" &&
-                            "bg-destructive/80",
-                          problemExistance === "not certain" && "bg-warning/80",
-                        )}
-                      />
-                      <h3>
-                        {problemExistance ?? "Uncategorized"} (
-                        {Number(details.length).toLocaleString()})
-                      </h3>
-                    </header>
-
-                    <WorkflowDetailsTable details={details} />
-                  </CardContent>
-
-                  <Separator className="last:hidden" />
-                </React.Fragment>
-              );
-            })}
-          </div>
-        ) : (
-          <CardContent>
-            <WorkflowDetailsTable details={workflowDetailsQuery.data} />
-          </CardContent>
-        )}
+        <CardContent>
+          <WorkflowDetailsTable details={workflowDetailsQuery.results} />
+        </CardContent>
       </Card>
     </div>
   );
