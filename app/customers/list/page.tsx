@@ -18,6 +18,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import {
   InputGroup,
@@ -25,12 +32,10 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -43,6 +48,7 @@ import {
   ChevronDownIcon,
   PlusIcon,
   SearchIcon,
+  TelescopeIcon,
   UploadIcon,
   XIcon,
 } from "lucide-react";
@@ -72,13 +78,9 @@ const CustomersListPage = () => {
     { initialNumItems: ITEMS_PER_PAGE },
   );
 
-  const isLoadingMore = paginatedQuery.status === "LoadingMore";
-  const canLoadMore = paginatedQuery.status === "CanLoadMore";
-  const isLoadingFirstPage = paginatedQuery.status === "LoadingFirstPage";
-
   const onLoadMore = () => {
-    if (canLoadMore) {
-      paginatedQuery.loadMore(ITEMS_PER_PAGE / 2);
+    if (paginatedQuery.status === "CanLoadMore") {
+      paginatedQuery.loadMore(ITEMS_PER_PAGE * 2);
     }
   };
 
@@ -186,87 +188,69 @@ const CustomersListPage = () => {
         </FieldGroup>
       </FieldSet>
 
-      <section>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Number</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Group</TableHead>
-              <TableHead>Problem Type</TableHead>
-              <TableHead className="w-1">{/* actions */}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoadingFirstPage ? (
-              <>
-                <TableSkeletonRow />
-                <TableSkeletonRow />
-                <TableSkeletonRow />
-                <TableSkeletonRow />
-                <TableSkeletonRow />
-              </>
-            ) : paginatedQuery.results.length === 0 ? (
+      {paginatedQuery.status === "LoadingFirstPage" ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Spinner />
+            </EmptyMedia>
+            <EmptyTitle>Loading customers...</EmptyTitle>
+            <EmptyDescription>
+              Please wait while we load your customers...
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : paginatedQuery.results.length <= 0 ? (
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <TelescopeIcon />
+            </EmptyMedia>
+            <EmptyTitle>No customers found</EmptyTitle>
+            <EmptyDescription>
+              No customers found. Try changing the search query or contact
+              support for help.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : (
+        <>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={4} className="py-8 text-center">
-                  <p className="text-muted-foreground">No customers found</p>
-                </TableCell>
+                <TableHead>Number</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Group</TableHead>
+                <TableHead>Problem Type</TableHead>
+                <TableHead className="w-1">{/* actions */}</TableHead>
               </TableRow>
-            ) : (
-              paginatedQuery.results.map((customer) => (
+            </TableHeader>
+            <TableBody>
+              {paginatedQuery.results.map((customer) => (
                 <CustomerTableRow key={customer._id} customer={customer} />
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
 
-        <div className="mt-6 flex justify-center">
-          <Button
-            onClick={onLoadMore}
-            disabled={isLoadingMore || !canLoadMore}
-            variant="outline"
-            asChild
-          >
-            <motion.button onViewportEnter={onLoadMore}>
-              {isLoadingMore ? (
-                <>
-                  <Spinner />
-                  Loading...
-                </>
-              ) : !canLoadMore ? (
-                "No more customers"
-              ) : (
-                "Load More"
-              )}
-            </motion.button>
-          </Button>
-        </div>
-      </section>
+          <div className="mt-6 flex justify-center">
+            <Button
+              onClick={onLoadMore}
+              disabled={paginatedQuery.status !== "CanLoadMore"}
+              variant="outline"
+              asChild
+            >
+              <motion.button onViewportEnter={onLoadMore}>
+                {paginatedQuery.isLoading && <Spinner />}
+                {paginatedQuery.status === "CanLoadMore"
+                  ? "Load More"
+                  : "No more data"}
+              </motion.button>
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
-
-const TableSkeletonRow = () => (
-  <TableRow>
-    <TableCell className="w-1">
-      <Skeleton className="h-4 w-4" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-16" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-32" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-20" />
-    </TableCell>
-    <TableCell>
-      <Skeleton className="h-4 w-24" />
-    </TableCell>
-    <TableCell className="w-1">
-      <Skeleton className="h-4 w-4" />
-    </TableCell>
-  </TableRow>
-);
 
 export default CustomersListPage;
