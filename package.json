@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "eslint . --fix --cache --cache-location .eslintcache",
     "format": "prettier --write . --cache --cache-location .prettiercache",
-    "typecheck": "next typegen && tsc --noEmit --tsBuildInfoFile .tsbuildinfo",
+    "typecheck": "next typegen && tsgo --noEmit --tsBuildInfoFile .tsbuildinfo",
     "check": "npm-run-all format lint typecheck",
     "prepare": "husky"
   },
@@ -108,6 +108,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@typescript/native-preview": "latest",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.7",
     "husky": "^9.1.7",
