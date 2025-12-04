@@ -175,7 +175,7 @@ const WorkflowListPage = () => {
                       </TableCell>
                       <TableCell>
                         <Link href={`/analysis-workflows/${workflow._id}`}>
-                          <Button variant="ghost">
+                          <Button variant="ghost" size="lg">
                             View Details
                             <ArrowRightIcon />
                           </Button>
