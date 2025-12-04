@@ -1,11 +1,11 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
+import type { api } from "@/convex/_generated/api";
 import { triggerBrowserDownloadFileFromBlob } from "@/lib/file-download";
-import { FunctionArgs, FunctionReturnType } from "convex/server";
+import type { FunctionArgs, FunctionReturnType } from "convex/server";
 import JSZip from "jszip";
 import { toast } from "sonner";
-import { WorkflowDetailsType } from "../_components/types";
+import type { WorkflowDetailsType } from "../_components/types";
 
 export const downloadWorkflowDetailsFile = async ({
   header,

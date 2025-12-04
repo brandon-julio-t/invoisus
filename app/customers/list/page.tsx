@@ -57,7 +57,8 @@ import Link from "next/link";
 import { parseAsString, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
-import { CustomerForm, CustomerFormProps } from "../_components/customer-form";
+import type { CustomerFormProps } from "../_components/customer-form";
+import { CustomerForm } from "../_components/customer-form";
 import { CustomerTableRow } from "./_components/customer-table-row";
 
 const ITEMS_PER_PAGE = 50;

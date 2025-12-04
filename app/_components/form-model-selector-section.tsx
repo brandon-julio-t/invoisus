@@ -18,8 +18,8 @@ import { allModelPresets } from "@/convex/libs/ai";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
 import React from "react";
-import { ControllerRenderProps } from "react-hook-form";
-import { FileUploadForm } from "../form";
+import type { ControllerRenderProps } from "react-hook-form";
+import type { FileUploadForm } from "../form";
 
 export const FormModelSelectorCombobox = ({
   children,

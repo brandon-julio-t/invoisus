@@ -1,4 +1,4 @@
-import { WorkflowId } from "@convex-dev/workflow";
+import type { WorkflowId } from "@convex-dev/workflow";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";

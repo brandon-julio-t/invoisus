@@ -2,7 +2,7 @@ import { httpRouter } from "convex/server";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 import { auth } from "./auth";
-import { SlackChallenge, SlackEvent } from "./mcKinseyAi/types";
+import type { SlackChallenge, SlackEvent } from "./mcKinseyAi/types";
 
 const http = httpRouter();
 

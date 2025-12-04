@@ -31,15 +31,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
+import type { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { PencilIcon, XIcon } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import {
-  CustomerForm,
-  CustomerFormProps,
-} from "../../_components/customer-form";
+import type { CustomerFormProps } from "../../_components/customer-form";
+import { CustomerForm } from "../../_components/customer-form";
 
 export const CustomerTableRow = ({
   customer,

@@ -15,10 +15,10 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import type { LucideIcon } from "lucide-react";
 import {
   CommandIcon,
   FileCode2Icon,
-  LucideIcon,
   UsersIcon,
   WorkflowIcon,
 } from "lucide-react";

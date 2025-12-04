@@ -1,4 +1,4 @@
-import { ModelPreset } from "@/convex/domains/analyzeInvoice/aiModelFactory";
+import type { ModelPreset } from "@/convex/domains/analyzeInvoice/aiModelFactory";
 import { z } from "zod";
 
 export const fileUploadSchema = z.object({

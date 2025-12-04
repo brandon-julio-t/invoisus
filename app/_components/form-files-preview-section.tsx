@@ -17,9 +17,9 @@ import {
 } from "@/components/ui/tooltip";
 import { formatFileSize } from "@/lib/strings";
 import { CheckIcon, XIcon } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
+import type { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
-import { FileUploadForm } from "../form";
+import type { FileUploadForm } from "../form";
 
 export const FormFilesPreviewSection = ({
   form,

@@ -10,7 +10,7 @@
     "predev": "convex dev --until-success && convex dev --once --run-sh \"node setup.mjs --once\" && convex dashboard",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint . --cache --cache-location .eslintcache",
+    "lint": "eslint . --fix --cache --cache-location .eslintcache",
     "format": "prettier --write . --cache --cache-location .prettiercache",
     "typecheck": "next typegen && tsc --noEmit --tsBuildInfoFile .tsbuildinfo",
     "check": "npm-run-all format lint typecheck",
@@ -102,6 +102,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@convex-dev/eslint-plugin": "^1.0.0",
     "@eslint/eslintrc": "^3.3.3",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",

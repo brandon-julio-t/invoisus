@@ -1,7 +1,7 @@
-import { Infer } from "convex/values";
-import { Id } from "../../_generated/dataModel";
-import { MutationCtx } from "../../_generated/server";
-import { vCustomer } from "./validators";
+import type { Infer } from "convex/values";
+import type { Id } from "../../_generated/dataModel";
+import type { MutationCtx } from "../../_generated/server";
+import type { vCustomer } from "./validators";
 
 export async function createOneCustomer({
   ctx,

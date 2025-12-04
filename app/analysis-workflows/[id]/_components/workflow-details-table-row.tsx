@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDownIcon, DownloadIcon, EyeIcon } from "lucide-react";
 import React from "react";
 import { DownloadFileButton } from "./download-file-button";
-import { WorkflowDetailsType } from "./types";
+import type { WorkflowDetailsType } from "./types";
 import { ViewFileDialog } from "./view-file-dialog";
 
 export const WorkflowDetailsTableRow = ({

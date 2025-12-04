@@ -1,5 +1,6 @@
 import { Email } from "@convex-dev/auth/providers/Email";
-import { generateRandomString, RandomReader } from "@oslojs/crypto/random";
+import type { RandomReader } from "@oslojs/crypto/random";
+import { generateRandomString } from "@oslojs/crypto/random";
 import {
   Container,
   Head,

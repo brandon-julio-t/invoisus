@@ -1,9 +1,10 @@
 "use node";
 
-import { Tool, tool } from "ai";
+import type { Tool } from "ai";
+import { tool } from "ai";
 import { z } from "zod";
 import { internal } from "../../_generated/api";
-import { ActionCtx } from "../../_generated/server";
+import type { ActionCtx } from "../../_generated/server";
 
 export const getCustomerByNumber = (ctx: ActionCtx): Tool => {
   return tool({

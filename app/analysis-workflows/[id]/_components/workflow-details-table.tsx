@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { WorkflowDetailsType } from "./types";
+import type { WorkflowDetailsType } from "./types";
 import { WorkflowDetailsTableRow } from "./workflow-details-table-row";
 
 export const WorkflowDetailsTable = ({

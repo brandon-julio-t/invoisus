@@ -45,14 +45,16 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "@bprogress/next";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache/hooks";
+import { useMutation } from "convex/react";
 import { ChevronsUpDownIcon, IterationCcwIcon, SendIcon } from "lucide-react";
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
 import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
-import { FileUploadForm, fileUploadSchema } from "./form";
+import type { FileUploadForm } from "./form";
+import { fileUploadSchema } from "./form";
 
 const HomePage = () => {
   const router = useRouter();

@@ -1,6 +1,7 @@
 "use node";
 
-import { openai, OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
+import type { OpenAIResponsesProviderOptions } from "@ai-sdk/openai";
+import { openai } from "@ai-sdk/openai";
 import { withTracing } from "@posthog/ai";
 import { stepCountIs, streamText } from "ai";
 import { v } from "convex/values";

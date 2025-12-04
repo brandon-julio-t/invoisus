@@ -1,8 +1,12 @@
-import nextVitals from "eslint-config-next/core-web-vitals";
+import convexPlugin from "@convex-dev/eslint-plugin";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import { globalIgnores } from "eslint/config";
 
 const eslintConfig = [
-  ...nextVitals,
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  ...convexPlugin.configs.recommended,
 
   globalIgnores([
     "node_modules/**",
@@ -15,6 +19,8 @@ const eslintConfig = [
 
   {
     rules: {
+      "@typescript-eslint/consistent-type-imports": "error",
+
       "no-restricted-imports": [
         "error",
         {
@@ -31,18 +37,7 @@ const eslintConfig = [
               message:
                 "Prefer importing usePaginatedQuery from 'convex-helpers/react/cache/hooks' instead of 'convex/react'",
             },
-          ],
-        },
-      ],
-    },
-  },
 
-  {
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          paths: [
             {
               name: "next/navigation",
               importNames: ["useRouter"],

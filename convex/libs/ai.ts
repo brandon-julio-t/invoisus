@@ -1,4 +1,4 @@
-import { ModelPreset } from "../domains/analyzeInvoice/aiModelFactory";
+import type { ModelPreset } from "../domains/analyzeInvoice/aiModelFactory";
 
 export const allModelPresets: ModelPreset[] = [
   "auto",

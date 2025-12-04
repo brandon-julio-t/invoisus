@@ -1,7 +1,7 @@
 import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
 import { v } from "convex/values";
-import { Id } from "../../_generated/dataModel";
+import type { Id } from "../../_generated/dataModel";
 import { internalMutation } from "../../_generated/server";
 
 export const aiInvoiceAnalysisWorkflowComplete = internalMutation({

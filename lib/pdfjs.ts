@@ -7,6 +7,7 @@ export async function extractImageBlobsFromPdfFile({ file }: { file: File }) {
   const blobs: Blob[] = [];
 
   // Loaded via <script> tag, create shortcut to access PDF.js exports.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { pdfjsLib } = globalThis as any;
 
   // The workerSrc property shall be specified.

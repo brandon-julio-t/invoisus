@@ -1,11 +1,11 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
+import type { api } from "@/convex/_generated/api";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
-import { FunctionReturnType } from "convex/server";
+import type { FunctionReturnType } from "convex/server";
 import { format } from "date-fns";
 import * as XLSX from "xlsx";
-import { WorkflowDetailsType } from "../_components/types";
+import type { WorkflowDetailsType } from "../_components/types";
 
 export const exportWorkflowDetailsToExcel = ({
   header,

@@ -1,7 +1,8 @@
 "use node";
 
 import { vWorkflowId } from "@convex-dev/workflow";
-import { generateObject, generateText, stepCountIs, UserContent } from "ai";
+import type { UserContent } from "ai";
+import { generateObject, generateText, stepCountIs } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internal } from "../../_generated/api";
