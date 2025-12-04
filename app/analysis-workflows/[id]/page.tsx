@@ -353,7 +353,7 @@ const WorkflowDetailPage = () => {
         </ItemActions>
       </Item>
 
-      {workflowDetailsQuery.isLoading ? (
+      {workflowDetailsQuery.status === "LoadingFirstPage" ? (
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
