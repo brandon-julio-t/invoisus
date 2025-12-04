@@ -2,6 +2,7 @@ import { vWorkflowId } from "@convex-dev/workflow";
 import { vResultValidator } from "@convex-dev/workpool";
 import { partial } from "convex-helpers/validators";
 import { v } from "convex/values";
+import { Id } from "../../_generated/dataModel";
 import { internalMutation } from "../../_generated/server";
 import schema from "../../schema";
 
@@ -31,7 +32,13 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const analysisWorkflowHeaderId = args.context;
+    const analysisWorkflowHeaderId =
+      args.context as Id<"analysisWorkflowHeaders">;
+
+    const analysisWorkflowHeader = await ctx.db.get(analysisWorkflowHeaderId);
+    if (!analysisWorkflowHeader) {
+      throw new Error("Analysis workflow header not found");
+    }
 
     const analysisWorkflowDetail = await ctx.db
       .query("analysisWorkflowDetails")
@@ -42,32 +49,47 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
       )
       .unique();
 
-    if (analysisWorkflowDetail) {
-      const currentTime = Date.now();
-      if (args.result.kind === "success") {
-        await ctx.db.patch(analysisWorkflowDetail._id, {
-          status: "success",
-          errorMessage: undefined,
-          lastUpdatedTime: currentTime,
-        });
-      } else if (args.result.kind === "failed") {
-        const errorMessage = args.result.error;
-
-        await ctx.db.patch(analysisWorkflowDetail._id, {
-          status: "failed",
-          errorMessage: errorMessage,
-          problemExistanceType: "certainly has problem",
-          lastUpdatedTime: currentTime,
-        });
-      } else if (args.result.kind === "canceled") {
-        await ctx.db.patch(analysisWorkflowDetail._id, {
-          status: "queued",
-          errorMessage: "Workflow canceled",
-          lastUpdatedTime: currentTime,
-        });
-      }
-    } else {
-      console.error("Analysis workflow detail not found");
+    if (!analysisWorkflowDetail) {
+      throw new Error("Analysis workflow detail not found");
     }
+
+    const currentTime = Date.now();
+
+    const isSuccess = args.result.kind === "success";
+
+    if (args.result.kind === "success") {
+      await ctx.db.patch(analysisWorkflowDetail._id, {
+        status: "success",
+        errorMessage: undefined,
+        lastUpdatedTime: currentTime,
+      });
+    } else if (args.result.kind === "failed") {
+      const errorMessage = args.result.error;
+
+      await ctx.db.patch(analysisWorkflowDetail._id, {
+        status: "failed",
+        errorMessage: errorMessage,
+        problemExistanceType: "certainly has problem",
+        lastUpdatedTime: currentTime,
+      });
+    } else if (args.result.kind === "canceled") {
+      await ctx.db.patch(analysisWorkflowDetail._id, {
+        status: "failed",
+        errorMessage: "Workflow canceled",
+        lastUpdatedTime: currentTime,
+      });
+    }
+
+    await ctx.db.patch(analysisWorkflowHeaderId, {
+      lastUpdatedTime: currentTime,
+
+      successCount: isSuccess
+        ? (analysisWorkflowHeader.successCount ?? 0) + 1
+        : (analysisWorkflowHeader.successCount ?? 0),
+
+      failedCount: isSuccess
+        ? (analysisWorkflowHeader.failedCount ?? 0)
+        : (analysisWorkflowHeader.failedCount ?? 0) + 1,
+    });
   },
 });
