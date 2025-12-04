@@ -94,8 +94,7 @@ const WorkflowListPage = () => {
                 <TableRow>
                   <TableHead>Workflow ID</TableHead>
                   <TableHead className="pl-6">Creation</TableHead>
-                  <TableHead className="text-right">Files Count</TableHead>
-                  <TableHead className="pl-6">Stats.</TableHead>
+                  <TableHead>Stats.</TableHead>
                   <TableHead className="w-1">&nbsp;</TableHead>
                 </TableRow>
               </TableHeader>
@@ -110,9 +109,12 @@ const WorkflowListPage = () => {
                     <TableRow key={workflow._id}>
                       <TableCell>
                         <ItemContent>
-                          <ItemTitle className="font-mono truncate max-w-3xs">
+                          <ItemTitle className="font-mono">
                             {workflow._id}
                           </ItemTitle>
+                          <ItemDescription>
+                            {Number(workflow.filesCount).toLocaleString()} files
+                          </ItemDescription>
                         </ItemContent>
                       </TableCell>
                       <TableCell>
@@ -135,11 +137,8 @@ const WorkflowListPage = () => {
                           </ItemContent>
                         </Item>
                       </TableCell>
-                      <TableCell className="text-right">
-                        {Number(workflow.filesCount).toLocaleString()}
-                      </TableCell>
                       <TableCell>
-                        <ItemGroup className="flex-row">
+                        <ItemGroup className="flex-row gap-2">
                           {[
                             {
                               label: "Processing",
@@ -157,14 +156,19 @@ const WorkflowListPage = () => {
                               icon: XIcon,
                             },
                           ].map((item) => (
-                            <Item key={item.label} size="sm">
-                              <ItemMedia variant="icon">
+                            <Item
+                              key={item.label}
+                              variant="outline"
+                              size="sm"
+                              className="flex-nowrap"
+                            >
+                              <ItemContent>
+                                <ItemDescription>{item.label}</ItemDescription>
+                                <ItemTitle>{item.value}</ItemTitle>
+                              </ItemContent>
+                              <ItemMedia variant="image">
                                 <item.icon />
                               </ItemMedia>
-                              <ItemContent>
-                                <ItemTitle>{item.label}</ItemTitle>
-                                <ItemDescription>{item.value}</ItemDescription>
-                              </ItemContent>
                             </Item>
                           ))}
                         </ItemGroup>
