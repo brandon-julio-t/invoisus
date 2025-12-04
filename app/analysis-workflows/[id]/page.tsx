@@ -1,20 +1,12 @@
 "use client";
 
 import {
-  Data,
-  DataItem,
-  DataItemLabel,
-  DataItemValue,
-} from "@/components/data";
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+} from "@/components/catalyst-ui/description-list";
 import Link from "@/components/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Empty,
   EmptyContent,
@@ -25,13 +17,14 @@ import {
 } from "@/components/ui/empty";
 import {
   Item,
+  ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -176,9 +169,9 @@ const WorkflowDetailPage = () => {
   const processingCount = totalFilesCount - successCount - failedCount;
 
   return (
-    <div className="container flex flex-col gap-6">
+    <ItemGroup className="container gap-6">
       <section>
-        <Button variant="ghost" className="-mx-4" asChild>
+        <Button variant="ghost" asChild>
           <Link href="/analysis-workflows">
             <ArrowLeftIcon />
             Back to analysis workflows
@@ -186,96 +179,84 @@ const WorkflowDetailPage = () => {
         </Button>
       </section>
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col gap-2 @md:flex-row">
-            <header className="flex flex-1 flex-col gap-1.5">
-              <CardTitle>Workflow Overview</CardTitle>
+      <Item variant="outline">
+        <ItemContent>
+          <ItemTitle>Workflow Overview</ItemTitle>
+        </ItemContent>
 
-              <CardDescription>
-                Created on{" "}
-                {format(workflowHeaderQuery._creationTime ?? 0, "PPPPpppp")}
-              </CardDescription>
-            </header>
+        <ItemActions className="flex-wrap">
+          <Button
+            variant="outline"
+            onClick={onExportExcel}
+            disabled={
+              workflowDetailsQuery.isLoading ||
+              workflowDetailsQuery.results.length <= 0
+            }
+          >
+            <FileIcon />
+            Export to Excel
+          </Button>
 
-            <div className="flex flex-col gap-2 @md:flex-row">
-              <Button
-                variant="outline"
-                onClick={onExportExcel}
-                disabled={
-                  workflowDetailsQuery.isLoading ||
-                  workflowDetailsQuery.results.length <= 0
-                }
-              >
-                <FileIcon />
-                Export to Excel
-              </Button>
+          <Button
+            variant="outline"
+            onClick={onDownloadAllFiles}
+            disabled={
+              workflowDetailsQuery.isLoading ||
+              workflowDetailsQuery.results.length <= 0 ||
+              isDownloading
+            }
+          >
+            {isDownloading ? <Spinner /> : <DownloadIcon />}
+            Download all Files
+          </Button>
+        </ItemActions>
 
-              <Button
-                variant="outline"
-                onClick={onDownloadAllFiles}
-                disabled={
-                  workflowDetailsQuery.isLoading ||
-                  workflowDetailsQuery.results.length <= 0 ||
-                  isDownloading
-                }
-              >
-                {isDownloading ? <Spinner /> : <DownloadIcon />}
-                Download all Files
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
+        <ItemFooter>
+          <DescriptionList className="w-full">
+            <DescriptionTerm>Created By:</DescriptionTerm>
+            <DescriptionDetails>
+              {workflowHeaderQuery.createdByUser?.name ??
+                workflowHeaderQuery.createdByUser?.email}
+            </DescriptionDetails>
 
-        <CardContent>
-          <Data>
-            {[
-              {
-                label: "Created By:",
-                value:
-                  workflowHeaderQuery.createdByUser?.name ??
-                  workflowHeaderQuery.createdByUser?.email,
-              },
-              {
-                label: "Created At:",
-                value: workflowHeaderQuery._creationTime
-                  ? format(workflowHeaderQuery._creationTime, "PPPPpppp")
-                  : "N/A",
-              },
-              {
-                label: "Last Updated At:",
-                value: workflowHeaderQuery.lastUpdatedTime
-                  ? format(workflowHeaderQuery.lastUpdatedTime, "PPPPpppp")
-                  : "N/A",
-              },
-              {
-                label: "Duration:",
-                value: workflowHeaderQuery.lastUpdatedTime
-                  ? formatDistanceStrict(
-                      workflowHeaderQuery._creationTime ?? 0,
-                      workflowHeaderQuery.lastUpdatedTime ?? 0,
-                    )
-                  : "N/A",
-              },
-              {
-                label: "Files Count:",
-                value: workflowHeaderQuery.filesCount,
-              },
-              {
-                label: "Workflow ID:",
-                value: workflowHeaderQuery._id,
-              },
-            ].map((item) => (
-              <DataItem key={item.label}>
-                <DataItemLabel>{item.label}</DataItemLabel>
-                <DataItemValue className="truncate">{item.value}</DataItemValue>
-              </DataItem>
-            ))}
-          </Data>
-        </CardContent>
-      </Card>
+            <DescriptionTerm>Created At:</DescriptionTerm>
+            <DescriptionDetails>
+              {workflowHeaderQuery._creationTime
+                ? format(workflowHeaderQuery._creationTime, "PPPPp")
+                : "N/A"}
+            </DescriptionDetails>
 
-      <ItemGroup className="flex-row flex-wrap gap-2">
+            <DescriptionTerm>Last Updated At:</DescriptionTerm>
+            <DescriptionDetails>
+              {workflowHeaderQuery.lastUpdatedTime
+                ? format(workflowHeaderQuery.lastUpdatedTime, "PPPPp")
+                : "N/A"}
+            </DescriptionDetails>
+
+            <DescriptionTerm>Duration:</DescriptionTerm>
+            <DescriptionDetails>
+              {workflowHeaderQuery.lastUpdatedTime
+                ? formatDistanceStrict(
+                    workflowHeaderQuery._creationTime ?? 0,
+                    workflowHeaderQuery.lastUpdatedTime ?? 0,
+                  )
+                : "N/A"}
+            </DescriptionDetails>
+
+            <DescriptionTerm>Files Count:</DescriptionTerm>
+            <DescriptionDetails>
+              {workflowHeaderQuery.filesCount} files
+            </DescriptionDetails>
+
+            <DescriptionTerm>Workflow ID:</DescriptionTerm>
+            <DescriptionDetails className="font-mono truncate">
+              {workflowHeaderQuery._id}
+            </DescriptionDetails>
+          </DescriptionList>
+        </ItemFooter>
+      </Item>
+
+      <ItemGroup className="flex-col md:flex-row md:flex-wrap gap-6">
         {[
           {
             label: "Processing",
@@ -309,22 +290,15 @@ const WorkflowDetailPage = () => {
         ))}
       </ItemGroup>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Analysis Details</CardTitle>
-          <CardDescription>
-            {Number(workflowHeaderQuery.filesCount ?? 0).toLocaleString()}{" "}
-            file(s) in this workflow
-          </CardDescription>
-        </CardHeader>
-
-        <Separator />
-
-        <CardContent>
+      <Item className="p-0">
+        <ItemContent className="w-full">
+          <ItemTitle>Analysis Details</ItemTitle>
+        </ItemContent>
+        <ItemFooter className="w-full">
           <WorkflowDetailsTable details={workflowDetailsQuery.results} />
-        </CardContent>
-      </Card>
-    </div>
+        </ItemFooter>
+      </Item>
+    </ItemGroup>
   );
 };
 
