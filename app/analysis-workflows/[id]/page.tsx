@@ -38,13 +38,12 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
-import { format } from "date-fns";
+import { format, formatDistanceStrict } from "date-fns";
 import {
   ArrowLeftIcon,
   CheckIcon,
   DownloadIcon,
   FileIcon,
-  HourglassIcon,
   LoaderIcon,
   TelescopeIcon,
   XIcon,
@@ -228,6 +227,27 @@ const WorkflowDetailPage = () => {
                   workflowHeaderQuery.createdByUser?.email,
               },
               {
+                label: "Created At:",
+                value: workflowHeaderQuery._creationTime
+                  ? format(workflowHeaderQuery._creationTime, "PPPPpppp")
+                  : "N/A",
+              },
+              {
+                label: "Last Updated At:",
+                value: workflowHeaderQuery.lastUpdatedTime
+                  ? format(workflowHeaderQuery.lastUpdatedTime, "PPPPpppp")
+                  : "N/A",
+              },
+              {
+                label: "Duration:",
+                value: workflowHeaderQuery.lastUpdatedTime
+                  ? formatDistanceStrict(
+                      workflowHeaderQuery._creationTime ?? 0,
+                      workflowHeaderQuery.lastUpdatedTime ?? 0,
+                    )
+                  : "N/A",
+              },
+              {
                 label: "Files Count:",
                 value: workflowHeaderQuery.filesCount,
               },
@@ -248,16 +268,10 @@ const WorkflowDetailPage = () => {
       <ItemGroup className="flex-row flex-wrap gap-2">
         {[
           {
-            label: "Queued",
-            value: Number(
-              workflowDetailsQuery.stats.queuedCount,
-            ).toLocaleString(),
-            icon: HourglassIcon,
-          },
-          {
             label: "Processing",
             value: Number(
-              workflowDetailsQuery.stats.processingCount,
+              workflowDetailsQuery.stats.queuedCount +
+                workflowDetailsQuery.stats.processingCount,
             ).toLocaleString(),
             icon: LoaderIcon,
           },
