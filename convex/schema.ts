@@ -61,7 +61,7 @@ export default defineSchema({
       v.union(v.literal("certainly has problem"), v.literal("not certain")),
     ),
     lastUpdatedTime: v.optional(v.number()),
-  }).index("by_analysis_workflow_header_id_and_workflow_id", [
+  }).index("by_analysisWorkflowHeaderId_workflowId", [
     "analysisWorkflowHeaderId",
     "workflowId",
   ]),

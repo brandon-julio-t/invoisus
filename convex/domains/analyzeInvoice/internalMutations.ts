@@ -23,7 +23,7 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
 
     const analysisWorkflowDetail = await ctx.db
       .query("analysisWorkflowDetails")
-      .withIndex("by_analysis_workflow_header_id_and_workflow_id", (q) =>
+      .withIndex("by_analysisWorkflowHeaderId_workflowId", (q) =>
         q
           .eq("analysisWorkflowHeaderId", analysisWorkflowHeaderId)
           .eq("workflowId", args.workflowId),
