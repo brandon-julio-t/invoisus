@@ -1,11 +1,10 @@
 "use client";
 
 import {
-  Data,
-  DataItem,
-  DataItemLabel,
-  DataItemValue,
-} from "@/components/data";
+  DescriptionDetails,
+  DescriptionList,
+  DescriptionTerm,
+} from "@/components/catalyst-ui/description-list";
 import { useRouter } from "@/components/link";
 import {
   AlertDialog,
@@ -312,16 +311,16 @@ const HomePage = () => {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
 
-                    <Data>
+                    <DescriptionList>
                       {[{ label: "Files", value: files.length }].map(
                         ({ label, value }) => (
-                          <DataItem key={label}>
-                            <DataItemLabel>{label}</DataItemLabel>
-                            <DataItemValue>{value}</DataItemValue>
-                          </DataItem>
+                          <React.Fragment key={label}>
+                            <DescriptionTerm>{label}</DescriptionTerm>
+                            <DescriptionDetails>{value}</DescriptionDetails>
+                          </React.Fragment>
                         ),
                       )}
-                    </Data>
+                    </DescriptionList>
 
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>

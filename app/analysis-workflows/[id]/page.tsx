@@ -40,6 +40,7 @@ import {
   TelescopeIcon,
   XIcon,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { useParams } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -294,9 +295,30 @@ const WorkflowDetailPage = () => {
         <ItemContent className="w-full">
           <ItemTitle>Analysis Details</ItemTitle>
         </ItemContent>
-        <ItemFooter className="w-full">
+      </Item>
+
+      <Item className="p-0">
+        <ItemContent className="w-full">
           <WorkflowDetailsTable details={workflowDetailsQuery.results} />
-        </ItemFooter>
+
+          <Button
+            variant={
+              workflowDetailsQuery.status === "CanLoadMore"
+                ? "outline"
+                : "ghost"
+            }
+            onClick={onLoadMore}
+            disabled={workflowDetailsQuery.status !== "CanLoadMore"}
+            asChild
+          >
+            <motion.button onViewportEnter={onLoadMore}>
+              {workflowDetailsQuery.isLoading && <Spinner />}
+              {workflowDetailsQuery.status === "CanLoadMore"
+                ? "Load More"
+                : "No more data"}
+            </motion.button>
+          </Button>
+        </ItemContent>
       </Item>
     </ItemGroup>
   );
