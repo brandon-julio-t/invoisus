@@ -279,13 +279,13 @@ const WorkflowDetailPage = () => {
             variant="outline"
             className="flex-1 flex-nowrap"
           >
-            <ItemMedia variant="icon">
+            <ItemContent>
+              <ItemDescription>{item.label}</ItemDescription>
+              <ItemTitle>{item.value}</ItemTitle>
+            </ItemContent>
+            <ItemMedia variant="image">
               <item.icon />
             </ItemMedia>
-            <ItemContent>
-              <ItemTitle>{item.label}</ItemTitle>
-              <ItemDescription>{item.value}</ItemDescription>
-            </ItemContent>
           </Item>
         ))}
       </ItemGroup>
