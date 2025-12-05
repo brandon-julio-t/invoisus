@@ -1,18 +1,30 @@
 import { v } from "convex/values";
 import { workflow } from "../..";
-import { internalMutation } from "../../_generated/server";
+import { internal } from "../../_generated/api";
+import { internalAction, internalQuery } from "../../_generated/server";
 
-export const stopAllProcessingWorkflows = internalMutation({
+export const getAllProcessingAnalysisWorkflowDetails = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("analysisWorkflowDetails")
+      .withIndex("by_status", (q) => q.eq("status", "processing"))
+      .collect();
+  },
+});
+
+export const stopAllProcessingWorkflows = internalAction({
   args: {
     areYouSure: v.literal("yes"),
   },
   handler: async (ctx, args) => {
     console.log(args);
 
-    const analysisWorkflowDetails = await ctx.db
-      .query("analysisWorkflowDetails")
-      .withIndex("by_status", (q) => q.eq("status", "processing"))
-      .collect();
+    const analysisWorkflowDetails = await ctx.runQuery(
+      internal.admin.console.dangerousFunctions
+        .getAllProcessingAnalysisWorkflowDetails,
+      {},
+    );
 
     for (const analysisWorkflowDetail of analysisWorkflowDetails) {
       console.log(

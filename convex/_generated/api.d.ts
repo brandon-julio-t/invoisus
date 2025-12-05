@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as admin_console_dangerousFunctions from "../admin/console/dangerousFunctions.js";
 import type * as admin_console_functions from "../admin/console/functions.js";
 import type * as auth from "../auth.js";
 import type * as auth_passwordReset from "../auth/passwordReset.js";
@@ -45,6 +46,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "admin/console/dangerousFunctions": typeof admin_console_dangerousFunctions;
   "admin/console/functions": typeof admin_console_functions;
   auth: typeof auth;
   "auth/passwordReset": typeof auth_passwordReset;
