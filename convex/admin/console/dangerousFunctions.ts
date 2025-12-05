@@ -15,11 +15,37 @@ export const stopAllProcessingWorkflows = internalMutation({
       .collect();
 
     for (const analysisWorkflowDetail of analysisWorkflowDetails) {
-      console.log("cancelling:", analysisWorkflowDetail);
-      await ctx.runMutation(components.workflow.workflow.cancel, {
-        workflowId: analysisWorkflowDetail.workflowId,
-      });
-      console.log("cancelled:", analysisWorkflowDetail);
+      console.log(
+        "cancelling analysis workflow detail:",
+        analysisWorkflowDetail,
+      );
+
+      if (
+        analysisWorkflowDetail.status === "failed" ||
+        analysisWorkflowDetail.status === "success"
+      ) {
+        console.log(
+          "skipping because it's already finished:",
+          analysisWorkflowDetail,
+        );
+        continue;
+      }
+
+      await ctx
+        .runMutation(components.workflow.workflow.cancel, {
+          workflowId: analysisWorkflowDetail.workflowId,
+        })
+        .then((result) => {
+          console.log(
+            "cancelled analysis workflow detail:",
+            analysisWorkflowDetail,
+          );
+
+          console.log("cancelled result:", result);
+        })
+        .catch((error) => {
+          console.error("error cancelling analysis workflow detail:", error);
+        });
     }
   },
 });
