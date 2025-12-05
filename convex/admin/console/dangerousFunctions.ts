@@ -1,4 +1,4 @@
-import { components } from "@/convex/_generated/api";
+import { workflow } from "@/convex";
 import { internalMutation } from "@/convex/_generated/server";
 import { v } from "convex/values";
 
@@ -31,10 +31,8 @@ export const stopAllProcessingWorkflows = internalMutation({
         continue;
       }
 
-      await ctx
-        .runMutation(components.workflow.workflow.cancel, {
-          workflowId: analysisWorkflowDetail.workflowId,
-        })
+      await workflow
+        .cancel(ctx, analysisWorkflowDetail.workflowId)
         .then((result) => {
           console.log(
             "cancelled analysis workflow detail:",
