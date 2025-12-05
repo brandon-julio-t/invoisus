@@ -62,14 +62,18 @@ export default defineSchema({
     ),
     lastUpdatedTime: v.optional(v.number()),
   })
+    .index("by_status", ["status"])
+
     .index("by_analysisWorkflowHeaderId_workflowId", [
       "analysisWorkflowHeaderId",
       "workflowId",
     ])
+
     .index("by_analysisWorkflowHeaderId_status", [
       "analysisWorkflowHeaderId",
       "status",
     ])
+
     .index("by_analysisWorkflowHeaderId_problemExistenceType", [
       "analysisWorkflowHeaderId",
       "problemExistanceType",
