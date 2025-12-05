@@ -1,6 +1,6 @@
-import { workflow } from "@/convex";
-import { internalMutation } from "@/convex/_generated/server";
 import { v } from "convex/values";
+import { workflow } from "../..";
+import { internalMutation } from "../../_generated/server";
 
 export const stopAllProcessingWorkflows = internalMutation({
   args: {
