@@ -252,17 +252,17 @@ const WorkflowDetailPage = () => {
                 <DescriptionDetails>
                   {workflowHeaderQuery.lastUpdatedTime
                     ? format(workflowHeaderQuery.lastUpdatedTime, "PPPPp")
-                    : "N/A"}
-                </DescriptionDetails>
-
-                <DescriptionTerm>Duration:</DescriptionTerm>
-                <DescriptionDetails>
-                  {workflowHeaderQuery.lastUpdatedTime
-                    ? formatDistanceStrict(
+                    : "N/A"}{" "}
+                  {workflowHeaderQuery.lastUpdatedTime && (
+                    <span className="text-sm text-muted-foreground">
+                      {formatDistanceStrict(
                         workflowHeaderQuery._creationTime ?? 0,
                         workflowHeaderQuery.lastUpdatedTime ?? 0,
-                      )
-                    : "N/A"}
+                        { addSuffix: true },
+                      )}{" "}
+                      since creation
+                    </span>
+                  )}
                 </DescriptionDetails>
 
                 <DescriptionTerm>Files Count:</DescriptionTerm>
