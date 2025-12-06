@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDownIcon, DownloadIcon, EyeIcon } from "lucide-react";
 import React from "react";
 import { DownloadFileButton } from "./download-file-button";
+import { RetryButton } from "./retry-button";
 import type { WorkflowDetailsType } from "./types";
 import { ViewFileDialog } from "./view-file-dialog";
 
@@ -69,6 +70,9 @@ export const WorkflowDetailsTableRow = ({
             color={getStatusBadgeColor(detail.status)}
             className="capitalize"
           >
+            {detail.status === "queued" || detail.status === "processing" ? (
+              <Spinner className="size-3" />
+            ) : null}
             {detail.status}
           </Badge>
         </TableCell>
@@ -85,6 +89,10 @@ export const WorkflowDetailsTableRow = ({
           </Badge>
         </TableCell>
         <TableCell>
+          {detail.status === "failed" && (
+            <RetryButton analysisWorkflowDetailId={detail._id} />
+          )}
+
           <ViewFileDialog fileKey={detail.fileKey} filename={detail.fileName}>
             <Button variant="ghost" size="icon">
               <EyeIcon />

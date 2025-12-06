@@ -56,6 +56,7 @@ import { useParams } from "next/navigation";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
+import { RetryAllFailedButton } from "./_components/retry-all-failed-button";
 import { WorkflowDetailsTable } from "./_components/workflow-details-table";
 import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
 import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
@@ -352,6 +353,16 @@ const WorkflowDetailPage = () => {
           </Select>
         </ItemActions>
       </Item>
+
+      {failedCount > 0 && (
+        <Item className="p-0">
+          <ItemActions className="ml-auto">
+            <RetryAllFailedButton
+              analysisWorkflowHeaderId={analysisWorkflowHeaderId}
+            />
+          </ItemActions>
+        </Item>
+      )}
 
       {workflowDetailsQuery.status === "LoadingFirstPage" ? (
         <Empty>
