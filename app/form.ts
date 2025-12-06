@@ -9,7 +9,7 @@ export const fileUploadSchema = z.object({
         status: z.enum(["pending", "uploading", "success", "error"]),
       }),
     )
-    .min(1),
+    .nonempty(),
   pdfAnalysisModelPreset: z.string<ModelPreset>(),
   dataExtractionModelPreset: z.string<ModelPreset>(),
 });

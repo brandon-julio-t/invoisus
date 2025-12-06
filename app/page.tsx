@@ -197,6 +197,14 @@ const HomePage = () => {
         return;
       }
 
+      if (uploadedFiles.length <= 0) {
+        toast.error("Cannot submit with 0 files", {
+          description:
+            "Please refresh the page and try again or contact support if the problem persists",
+        });
+        return;
+      }
+
       const analysisWorkflowHeaderId = await toast
         .promise(
           handleEnqueueAiInvoiceAnalysis({
