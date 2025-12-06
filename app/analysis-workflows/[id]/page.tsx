@@ -306,7 +306,7 @@ const WorkflowDetailPage = () => {
                   <ItemTitle>{item.value}</ItemTitle>
                 </ItemContent>
                 <ItemMedia variant="image">
-                  <item.icon />
+                  <item.icon className="text-muted-foreground" />
                 </ItemMedia>
               </Item>
             ))}
