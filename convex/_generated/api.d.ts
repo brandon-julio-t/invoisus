@@ -14,6 +14,7 @@ import type * as auth from "../auth.js";
 import type * as auth_passwordReset from "../auth/passwordReset.js";
 import type * as domains_analysisConfigurations_internalQueries from "../domains/analysisConfigurations/internalQueries.js";
 import type * as domains_analysisConfigurations_queries from "../domains/analysisConfigurations/queries.js";
+import type * as domains_analysisWorkflowDetails_core_retryOneAnalysisWorkflowDetailLogic_index from "../domains/analysisWorkflowDetails/core/retryOneAnalysisWorkflowDetailLogic/index.js";
 import type * as domains_analysisWorkflowDetails_internalCrud from "../domains/analysisWorkflowDetails/internalCrud.js";
 import type * as domains_analysisWorkflowDetails_mutations from "../domains/analysisWorkflowDetails/mutations.js";
 import type * as domains_analysisWorkflowDetails_queries from "../domains/analysisWorkflowDetails/queries.js";
@@ -54,6 +55,7 @@ declare const fullApi: ApiFromModules<{
   "auth/passwordReset": typeof auth_passwordReset;
   "domains/analysisConfigurations/internalQueries": typeof domains_analysisConfigurations_internalQueries;
   "domains/analysisConfigurations/queries": typeof domains_analysisConfigurations_queries;
+  "domains/analysisWorkflowDetails/core/retryOneAnalysisWorkflowDetailLogic/index": typeof domains_analysisWorkflowDetails_core_retryOneAnalysisWorkflowDetailLogic_index;
   "domains/analysisWorkflowDetails/internalCrud": typeof domains_analysisWorkflowDetails_internalCrud;
   "domains/analysisWorkflowDetails/mutations": typeof domains_analysisWorkflowDetails_mutations;
   "domains/analysisWorkflowDetails/queries": typeof domains_analysisWorkflowDetails_queries;

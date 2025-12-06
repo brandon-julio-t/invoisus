@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
 import { mutation } from "../../_generated/server";
-import { retryOneAnalysisWorkflowDetailLogic } from "./core/retry-one-analysis-workflow-detail-logic";
+import { retryOneAnalysisWorkflowDetailLogic } from "./core/retryOneAnalysisWorkflowDetailLogic";
 
 export const retryOneAnalysisWorkflowDetail = mutation({
   args: {
