@@ -14,16 +14,7 @@
     "format": "prettier --write . --cache --cache-location .prettiercache",
     "typecheck": "next typegen && tsgo --noEmit --tsBuildInfoFile .tsbuildinfo",
     "check": "npm-run-all format lint typecheck",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix --cache --cache-location .eslintcache",
-      "prettier --write --cache --cache-location .prettiercache"
-    ],
-    "*.{json,css,md,html}": [
-      "prettier --write --cache --cache-location .prettiercache"
-    ]
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.77",
@@ -111,8 +102,7 @@
     "@typescript/native-preview": "latest",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.7",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
+    "lefthook": "^2.0.8",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",

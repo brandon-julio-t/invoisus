@@ -1,0 +1,17 @@
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      run: bunx eslint --fix --cache --cache-location .eslintcache {staged_files}
+      glob: "*.{js,jsx,ts,tsx}"
+      stage_fixed: true
+    prettier:
+      run: bunx prettier --write --cache --cache-location .prettiercache {staged_files}
+      glob: "*.{js,jsx,ts,tsx,json,css,md,html}"
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  commands:
+    typecheck:
+      run: bun run typecheck
