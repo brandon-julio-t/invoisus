@@ -48,6 +48,7 @@ export default defineSchema({
     fileSize: v.number(),
     fileType: v.string(),
     fileKey: v.string(),
+    imageFileKeys: v.optional(v.array(v.string())),
     status: v.union(
       v.literal("queued"),
       v.literal("processing"),

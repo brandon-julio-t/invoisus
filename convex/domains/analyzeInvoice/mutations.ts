@@ -68,6 +68,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         fileSize: file.size,
         fileType: file.type,
         fileKey: file.fileKey,
+        imageFileKeys: file.imageFileKeys,
         lastUpdatedTime: Date.now(),
       });
     }
