@@ -162,7 +162,7 @@ const WorkflowListPage = () => {
                               size="sm"
                               className="flex-nowrap"
                             >
-                              <ItemContent>
+                              <ItemContent className="w-24">
                                 <ItemDescription>{item.label}</ItemDescription>
                                 <ItemTitle>{item.value}</ItemTitle>
                               </ItemContent>
