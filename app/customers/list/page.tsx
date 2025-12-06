@@ -41,7 +41,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
-import { useDebounce } from "@uidotdev/usehooks";
 import { usePaginatedQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
 import {
@@ -57,6 +56,7 @@ import Link from "next/link";
 import { parseAsString, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
+import { useDebounceValue } from "usehooks-ts";
 import type { CustomerFormProps } from "../_components/customer-form";
 import { CustomerForm } from "../_components/customer-form";
 import { CustomerTableRow } from "./_components/customer-table-row";
@@ -69,7 +69,7 @@ const CustomersListPage = () => {
     parseAsString.withDefault(""),
   );
 
-  const debouncedSearch = useDebounce(search, 200);
+  const [debouncedSearch] = useDebounceValue(search, 200);
 
   const paginatedQuery = usePaginatedQuery(
     api.domains.customers.queries.getCustomersListPaginated,
