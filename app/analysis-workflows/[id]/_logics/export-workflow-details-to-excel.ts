@@ -1,19 +1,16 @@
 "use client";
 
-import type { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
-import type { FunctionReturnType } from "convex/server";
 import { format } from "date-fns";
 import * as XLSX from "xlsx";
 import type { WorkflowDetailsType } from "../_components/types";
 
 export const exportWorkflowDetailsToExcel = ({
-  header,
+  analysisWorkflowHeaderId,
   details,
 }: {
-  header: FunctionReturnType<
-    typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
-  >;
+  analysisWorkflowHeaderId: Id<"analysisWorkflowHeaders">;
   details: WorkflowDetailsType;
 }) => {
   // Collect all unique data extraction keys across all details
@@ -104,11 +101,8 @@ export const exportWorkflowDetailsToExcel = ({
   XLSX.utils.book_append_sheet(workbook, worksheet);
 
   // Generate filename with workflow ID and date
-  const formattedDate = format(
-    header._creationTime ?? new Date(),
-    "yyyy-MM-dd",
-  );
-  const filename = `workflow-details-${header._id}-${formattedDate}.xlsx`;
+  const formattedDate = format(new Date(), "yyyy-MM-dd");
+  const filename = `workflow-details-${analysisWorkflowHeaderId}-${formattedDate}.xlsx`;
 
   // Write file
   XLSX.writeFile(workbook, filename);

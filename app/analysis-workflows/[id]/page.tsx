@@ -45,7 +45,6 @@ import {
   ArrowLeftIcon,
   CheckIcon,
   DownloadIcon,
-  FileIcon,
   LoaderIcon,
   TelescopeIcon,
   XIcon,
@@ -56,10 +55,10 @@ import { useParams } from "next/navigation";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import React from "react";
 import { toast } from "sonner";
+import { ExportToExcelButton } from "./_components/export-to-excel-button";
 import { RetryAllFailedButton } from "./_components/retry-all-failed-button";
 import { WorkflowDetailsTable } from "./_components/workflow-details-table";
 import { downloadWorkflowDetailsFile } from "./_logics/download-workflow-details-file";
-import { exportWorkflowDetailsToExcel } from "./_logics/export-workflow-details-to-excel";
 
 const WorkflowDetailPage = () => {
   const params = useParams();
@@ -99,26 +98,6 @@ const WorkflowDetailPage = () => {
     if (workflowDetailsQuery.status === "CanLoadMore") {
       workflowDetailsQuery.loadMore(100);
     }
-  };
-
-  const onExportExcel = () => {
-    if (!workflowHeaderQuery) {
-      toast.error("Workflow header not found");
-      return;
-    }
-
-    if (!workflowDetailsQuery) {
-      toast.error("Workflow details not found");
-      return;
-    }
-
-    const toastId = toast.loading("Exporting to Excel...");
-    exportWorkflowDetailsToExcel({
-      header: workflowHeaderQuery,
-      details: workflowDetailsQuery.results,
-    });
-    toast.dismiss(toastId);
-    toast.success("Excel file exported successfully");
   };
 
   const generateDownloadUrl = useMutation(api.r2.generateDownloadUrl);
@@ -208,17 +187,9 @@ const WorkflowDetailPage = () => {
             </ItemContent>
 
             <ItemActions className="flex-wrap">
-              <Button
-                variant="outline"
-                onClick={onExportExcel}
-                disabled={
-                  workflowDetailsQuery.isLoading ||
-                  workflowDetailsQuery.results.length <= 0
-                }
-              >
-                <FileIcon />
-                Export to Excel
-              </Button>
+              <ExportToExcelButton
+                analysisWorkflowHeaderId={analysisWorkflowHeaderId}
+              />
 
               <Button
                 variant="outline"
