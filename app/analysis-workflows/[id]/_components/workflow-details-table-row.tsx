@@ -81,11 +81,13 @@ export const WorkflowDetailsTableRow = ({
             color={
               detail.problemExistanceType === "certainly has problem"
                 ? "red"
-                : "yellow"
+                : "green"
             }
             className="capitalize"
           >
-            {detail.problemExistanceType}
+            {detail.problemExistanceType === "certainly has problem"
+              ? "Has Problem"
+              : "No Problem"}
           </Badge>
         </TableCell>
         <TableCell>

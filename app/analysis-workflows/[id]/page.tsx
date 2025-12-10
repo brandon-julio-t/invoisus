@@ -316,9 +316,9 @@ const WorkflowDetailPage = () => {
               <SelectGroup>
                 <SelectLabel>Problem Identification</SelectLabel>
                 <SelectItem value="certainly has problem">
-                  Certainly has problem
+                  Has Problem
                 </SelectItem>
-                <SelectItem value="not certain">Not certain</SelectItem>
+                <SelectItem value="not certain">No Problem</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
