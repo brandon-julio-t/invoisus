@@ -67,6 +67,28 @@ export const getAnalysisWorkflowDetails = query({
       }
     }
 
-    return await queryIndexed.order("asc").paginate(args.paginationOpts);
+    const paginated = await queryIndexed
+      .order("asc")
+      .paginate(args.paginationOpts);
+    return {
+      ...paginated,
+      page: paginated.page.map((item) => {
+        let problemExistanceType:
+          | typeof item.problemExistanceType
+          | "no problem" = item.problemExistanceType;
+
+        if (problemExistanceType === "not certain") {
+          problemExistanceType = "no problem";
+        } else {
+          problemExistanceType = "certainly has problem";
+        }
+
+        return {
+          ...item,
+
+          problemExistanceType,
+        };
+      }),
+    };
   },
 });
