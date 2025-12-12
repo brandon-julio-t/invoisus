@@ -20,6 +20,6 @@ export const getAuthUser = query({
       return null;
     }
 
-    return await ctx.db.get(userId);
+    return await ctx.db.get("users", userId);
   },
 });

@@ -23,7 +23,7 @@ export async function updateOneCustomer({
     data: Infer<typeof vCustomer>;
   };
 }) {
-  return await ctx.db.patch(args.id, args.data);
+  return await ctx.db.patch("customers", args.id, args.data);
 }
 
 export async function deleteOneCustomer({
@@ -35,5 +35,5 @@ export async function deleteOneCustomer({
     id: Id<"customers">;
   };
 }) {
-  return await ctx.db.delete(args.id);
+  return await ctx.db.delete("customers", args.id);
 }

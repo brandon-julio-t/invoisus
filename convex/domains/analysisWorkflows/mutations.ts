@@ -17,6 +17,7 @@ export const retryAllFailedAnalysisWorkflowDetails = mutation({
     }
 
     const analysisWorkflowHeader = await ctx.db.get(
+      "analysisWorkflowHeaders",
       args.analysisWorkflowHeaderId,
     );
     console.log("analysisWorkflowHeader", analysisWorkflowHeader);

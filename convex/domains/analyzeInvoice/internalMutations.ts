@@ -16,7 +16,10 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
     const analysisWorkflowHeaderId =
       args.context as Id<"analysisWorkflowHeaders">;
 
-    const analysisWorkflowHeader = await ctx.db.get(analysisWorkflowHeaderId);
+    const analysisWorkflowHeader = await ctx.db.get(
+      "analysisWorkflowHeaders",
+      analysisWorkflowHeaderId,
+    );
     if (!analysisWorkflowHeader) {
       throw new Error("Analysis workflow header not found");
     }
@@ -39,29 +42,41 @@ export const aiInvoiceAnalysisWorkflowComplete = internalMutation({
     const isSuccess = args.result.kind === "success";
 
     if (args.result.kind === "success") {
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "success",
-        errorMessage: undefined,
-        lastUpdatedTime: currentTime,
-      });
+      await ctx.db.patch(
+        "analysisWorkflowDetails",
+        analysisWorkflowDetail._id,
+        {
+          status: "success",
+          errorMessage: undefined,
+          lastUpdatedTime: currentTime,
+        },
+      );
     } else if (args.result.kind === "failed") {
       const errorMessage = args.result.error;
 
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "failed",
-        errorMessage: errorMessage,
-        problemExistanceType: "certainly has problem",
-        lastUpdatedTime: currentTime,
-      });
+      await ctx.db.patch(
+        "analysisWorkflowDetails",
+        analysisWorkflowDetail._id,
+        {
+          status: "failed",
+          errorMessage: errorMessage,
+          problemExistanceType: "certainly has problem",
+          lastUpdatedTime: currentTime,
+        },
+      );
     } else if (args.result.kind === "canceled") {
-      await ctx.db.patch(analysisWorkflowDetail._id, {
-        status: "failed",
-        errorMessage: "Workflow canceled",
-        lastUpdatedTime: currentTime,
-      });
+      await ctx.db.patch(
+        "analysisWorkflowDetails",
+        analysisWorkflowDetail._id,
+        {
+          status: "failed",
+          errorMessage: "Workflow canceled",
+          lastUpdatedTime: currentTime,
+        },
+      );
     }
 
-    await ctx.db.patch(analysisWorkflowHeaderId, {
+    await ctx.db.patch("analysisWorkflowHeaders", analysisWorkflowHeaderId, {
       lastUpdatedTime: currentTime,
 
       successCount: isSuccess

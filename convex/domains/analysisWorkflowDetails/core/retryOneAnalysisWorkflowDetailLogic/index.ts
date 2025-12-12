@@ -14,7 +14,10 @@ export async function retryOneAnalysisWorkflowDetailLogic({
   userId: Id<"users">;
   analysisWorkflowDetailId: Id<"analysisWorkflowDetails">;
 }) {
-  const analysisWorkflowDetail = await ctx.db.get(analysisWorkflowDetailId);
+  const analysisWorkflowDetail = await ctx.db.get(
+    "analysisWorkflowDetails",
+    analysisWorkflowDetailId,
+  );
   console.log("analysisWorkflowDetail", analysisWorkflowDetail);
   if (!analysisWorkflowDetail) {
     throw new ConvexError("Analysis workflow detail not found");
@@ -25,6 +28,7 @@ export async function retryOneAnalysisWorkflowDetailLogic({
   }
 
   const analysisWorkflowHeader = await ctx.db.get(
+    "analysisWorkflowHeaders",
     analysisWorkflowDetail.analysisWorkflowHeaderId,
   );
   console.log("analysisWorkflowHeader", analysisWorkflowHeader);
@@ -32,7 +36,7 @@ export async function retryOneAnalysisWorkflowDetailLogic({
     throw new ConvexError("Analysis workflow header not found");
   }
 
-  await ctx.db.patch(analysisWorkflowHeader._id, {
+  await ctx.db.patch("analysisWorkflowHeaders", analysisWorkflowHeader._id, {
     failedCount: (analysisWorkflowHeader.failedCount ?? 0) - 1,
     lastUpdatedTime: Date.now(),
   });
@@ -61,7 +65,7 @@ export async function retryOneAnalysisWorkflowDetailLogic({
 
   console.log("workflowId", workflowId);
 
-  await ctx.db.patch(analysisWorkflowDetail._id, {
+  await ctx.db.patch("analysisWorkflowDetails", analysisWorkflowDetail._id, {
     workflowId,
     status: "queued",
     lastUpdatedTime: Date.now(),

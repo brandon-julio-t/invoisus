@@ -29,7 +29,7 @@ export const getPaginatedAnalysisWorkflowHeaders = query({
           return {
             ...item,
             createdByUser: item?.createdByUserId
-              ? await ctx.db.get(item?.createdByUserId)
+              ? await ctx.db.get("users", item?.createdByUserId)
               : null,
           };
         }),
@@ -51,11 +51,11 @@ export const getAnalysisWorkflowHeaderById = query({
       throw new Error("User not found");
     }
 
-    const header = await ctx.db.get(args.id);
+    const header = await ctx.db.get("analysisWorkflowHeaders", args.id);
     return {
       ...header,
       createdByUser: header?.createdByUserId
-        ? await ctx.db.get(header?.createdByUserId)
+        ? await ctx.db.get("users", header?.createdByUserId)
         : null,
     };
   },
