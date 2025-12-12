@@ -8,6 +8,15 @@ const eslintConfig = [
   ...nextTypescript,
   ...convexPlugin.configs.recommended,
 
+  {
+    files: ["convex/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: "./convex/tsconfig.json",
+      },
+    },
+  },
+
   globalIgnores([
     "node_modules/**",
     ".next/**",
