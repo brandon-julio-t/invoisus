@@ -79,8 +79,6 @@ export const getAnalysisWorkflowDetails = query({
 
         if (problemExistanceType === "not certain") {
           problemExistanceType = "no problem";
-        } else {
-          problemExistanceType = "certainly has problem";
         }
 
         return {
