@@ -9,7 +9,7 @@ import { internal } from "../../_generated/api";
 import { internalAction } from "../../_generated/server";
 import { r2 } from "../../r2";
 import { createModel } from "./aiModelFactory";
-import { getCustomerByNumber } from "./aiTools";
+import { queryCustomerDataByCustomerNumber } from "./aiTools";
 import { vModelPreset } from "./validators";
 
 export const analyzeInvoiceWithAi = internalAction({
@@ -129,7 +129,8 @@ ${args.fileType}
       stopWhen: stepCountIs(20),
 
       tools: {
-        getCustomerByNumber: getCustomerByNumber(ctx),
+        queryCustomerDataByCustomerNumber:
+          queryCustomerDataByCustomerNumber(ctx),
       },
 
       system: pdfAnalysisPrompt,
