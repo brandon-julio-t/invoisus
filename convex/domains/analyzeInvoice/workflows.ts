@@ -103,19 +103,32 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       aiDataExtractionResult,
     );
 
+    const problemExistanceType = aiDataExtractionResult.problemExistanceType as
+      | "certainly has problem"
+      | "not certain";
+
     await step.runMutation(
       internal.domains.analysisWorkflowDetails.internalCrud.update,
       {
         id: analysisWorkflowDetail._id,
         patch: {
           dataExtractionResult: aiDataExtractionResult,
-          problemExistanceType: aiDataExtractionResult.problemExistanceType as
-            | "certainly has problem"
-            | "not certain",
+          problemExistanceType: problemExistanceType,
           lastUpdatedTime: Date.now(),
         },
       },
     );
+
+    console.log(step.workflowId, "updated analysis workflow detail");
+
+    if (problemExistanceType !== "certainly has problem") {
+      console.log(
+        step.workflowId,
+        'Skipping appending AI data extraction result to Google Spreadsheet because problem existence type is not "certainly has problem"',
+      );
+
+      return;
+    }
 
     console.log(
       step.workflowId,
