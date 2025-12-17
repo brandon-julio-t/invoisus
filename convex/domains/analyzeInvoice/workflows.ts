@@ -55,7 +55,8 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     console.log(step.workflowId, "Analyzing invoice with AI");
 
     const aiAnalysisResult = await step.runAction(
-      internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi,
+      internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi
+        .internalActionFn,
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
@@ -83,7 +84,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
 
     const aiDataExtractionResult = await step.runAction(
       internal.domains.analyzeInvoice.internalNodeActions
-        .extractDataFromInvoiceWithAi,
+        .extractDataFromInvoiceWithAi.internalActionFn,
       {
         userId: args.userId,
         workflowId: step.workflowId as WorkflowId,
@@ -114,6 +115,24 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
           lastUpdatedTime: Date.now(),
         },
       },
+    );
+
+    console.log(
+      step.workflowId,
+      "Appending AI data extraction result to Google Spreadsheet",
+    );
+
+    await step.runAction(
+      internal.domains.analyzeInvoice.internalNodeActions
+        .appendAiDataExtractionResultToGoogleSpreadsheet.internalActionFn,
+      {
+        aiDataExtractionResult: aiDataExtractionResult,
+      },
+    );
+
+    console.log(
+      step.workflowId,
+      "AI data extraction result appended to Google Spreadsheet",
     );
   },
 });

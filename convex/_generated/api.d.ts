@@ -23,7 +23,9 @@ import type * as domains_analysisWorkflows_queries from "../domains/analysisWork
 import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeInvoice/aiModelFactory.js";
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
 import type * as domains_analyzeInvoice_internalMutations from "../domains/analyzeInvoice/internalMutations.js";
-import type * as domains_analyzeInvoice_internalNodeActions from "../domains/analyzeInvoice/internalNodeActions.js";
+import type * as domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAi from "../domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAi.js";
+import type * as domains_analyzeInvoice_internalNodeActions_appendAiDataExtractionResultToGoogleSpreadsheet from "../domains/analyzeInvoice/internalNodeActions/appendAiDataExtractionResultToGoogleSpreadsheet.js";
+import type * as domains_analyzeInvoice_internalNodeActions_extractDataFromInvoiceWithAi from "../domains/analyzeInvoice/internalNodeActions/extractDataFromInvoiceWithAi.js";
 import type * as domains_analyzeInvoice_internalQueries from "../domains/analyzeInvoice/internalQueries.js";
 import type * as domains_analyzeInvoice_mutations from "../domains/analyzeInvoice/mutations.js";
 import type * as domains_analyzeInvoice_validators from "../domains/analyzeInvoice/validators.js";
@@ -64,7 +66,9 @@ declare const fullApi: ApiFromModules<{
   "domains/analyzeInvoice/aiModelFactory": typeof domains_analyzeInvoice_aiModelFactory;
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;
   "domains/analyzeInvoice/internalMutations": typeof domains_analyzeInvoice_internalMutations;
-  "domains/analyzeInvoice/internalNodeActions": typeof domains_analyzeInvoice_internalNodeActions;
+  "domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAi": typeof domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAi;
+  "domains/analyzeInvoice/internalNodeActions/appendAiDataExtractionResultToGoogleSpreadsheet": typeof domains_analyzeInvoice_internalNodeActions_appendAiDataExtractionResultToGoogleSpreadsheet;
+  "domains/analyzeInvoice/internalNodeActions/extractDataFromInvoiceWithAi": typeof domains_analyzeInvoice_internalNodeActions_extractDataFromInvoiceWithAi;
   "domains/analyzeInvoice/internalQueries": typeof domains_analyzeInvoice_internalQueries;
   "domains/analyzeInvoice/mutations": typeof domains_analyzeInvoice_mutations;
   "domains/analyzeInvoice/validators": typeof domains_analyzeInvoice_validators;
