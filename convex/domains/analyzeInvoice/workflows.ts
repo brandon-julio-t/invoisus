@@ -15,7 +15,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
   },
   handler: async (step, args) => {
     console.log("step.workflowId", step.workflowId);
-    console.log("args", args);
+    console.log(step.workflowId, "args", args);
 
     const analysisWorkflowDetail = await step.runQuery(
       internal.domains.analyzeInvoice.internalQueries
@@ -26,13 +26,20 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       },
     );
 
-    console.log("analysisWorkflowDetail", analysisWorkflowDetail);
+    console.log(
+      step.workflowId,
+      "analysisWorkflowDetail",
+      analysisWorkflowDetail,
+    );
 
     if (!analysisWorkflowDetail) {
       throw new Error("Analysis workflow detail not found");
     }
 
-    console.log("Updating analysis workflow detail status to processing");
+    console.log(
+      step.workflowId,
+      "Updating analysis workflow detail status to processing",
+    );
 
     await step.runMutation(
       internal.domains.analysisWorkflowDetails.internalCrud.update,
@@ -45,7 +52,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       },
     );
 
-    console.log("Analyzing invoice with AI");
+    console.log(step.workflowId, "Analyzing invoice with AI");
 
     const aiAnalysisResult = await step.runAction(
       internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi,
@@ -61,7 +68,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       },
     );
 
-    console.log("AI analysis result", aiAnalysisResult);
+    console.log(step.workflowId, "AI analysis result", aiAnalysisResult);
 
     await step.runMutation(
       internal.domains.analysisWorkflowDetails.internalCrud.update,
@@ -89,7 +96,11 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
       },
     );
 
-    console.log("AI data extraction result", aiDataExtractionResult);
+    console.log(
+      step.workflowId,
+      "AI data extraction result",
+      aiDataExtractionResult,
+    );
 
     await step.runMutation(
       internal.domains.analysisWorkflowDetails.internalCrud.update,
