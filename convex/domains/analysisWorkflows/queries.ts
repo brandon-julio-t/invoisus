@@ -1,7 +1,6 @@
 import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import type { Doc } from "../../_generated/dataModel";
 import { query } from "../../_generated/server";
 import { authComponent } from "../../auth";
 
@@ -19,9 +18,7 @@ export const getPaginatedAnalysisWorkflowHeaders = query({
         page: [],
         isDone: true,
         continueCursor: "",
-      } satisfies PaginationResult<
-        Doc<"analysisWorkflowHeaders"> & { createdByUser: Doc<"users"> | null }
-      >;
+      } satisfies PaginationResult<unknown>;
     }
     const userId = authUser._id as string;
     console.log("userId", userId);
