@@ -36,7 +36,7 @@ export function AuthLayoutView({
         <div className="container min-h-svh grid place-items-center">
           <Empty className="border">
             <EmptyHeader>
-              <EmptyMedia>
+              <EmptyMedia variant="icon">
                 <Spinner />
               </EmptyMedia>
               <EmptyTitle>Loading...</EmptyTitle>
