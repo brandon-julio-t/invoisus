@@ -1,6 +1,5 @@
 import "./globals.css";
 
-import { AppLayout } from "@/components/app-layout";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,7 +8,6 @@ import { getToken } from "@/lib/auth-server";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
@@ -26,12 +24,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [defaultOpen, initialToken] = await Promise.all([
-    cookies().then(
-      (cookieStore) => cookieStore.get("sidebar_state")?.value === "true",
-    ),
-    getToken(),
-  ]);
+  const initialToken = await getToken();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -53,9 +46,7 @@ export default async function RootLayout({
             <NuqsAdapter>
               <Toaster closeButton richColors position="bottom-right" />
 
-              <PostHogProvider>
-                <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
-              </PostHogProvider>
+              <PostHogProvider>{children}</PostHogProvider>
             </NuqsAdapter>
           </ConvexClientProvider>
         </ThemeProvider>
