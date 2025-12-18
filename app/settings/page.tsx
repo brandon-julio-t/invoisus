@@ -113,8 +113,8 @@ function SettingsPageBody({
       <Tabs defaultValue="pdfAnalysis">
         <FieldGroup>
           <TabsList>
-            <TabsTrigger value="pdfAnalysis">PDF Analysis</TabsTrigger>
-            <TabsTrigger value="dataExtraction">Data Extraction</TabsTrigger>
+            <TabsTrigger value="pdfAnalysis">1. PDF Analysis</TabsTrigger>
+            <TabsTrigger value="dataExtraction">2. Data Extraction</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pdfAnalysis">
