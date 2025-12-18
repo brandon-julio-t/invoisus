@@ -10,6 +10,7 @@ export type ModelPreset =
   | "auto"
   //
   | "gemini-3-pro-preview"
+  | "gemini-3-flash-preview"
   //
   | "gemini-2.5-pro"
   | "gemini-2.5-flash"
@@ -65,6 +66,11 @@ function makeModelAndProviderOptionsFromModelPreset(modelPreset: ModelPreset) {
     case "auto":
       return {
         model: openrouter("openrouter/auto"),
+      };
+
+    case "gemini-3-flash-preview":
+      return {
+        model: openrouter("google/gemini-3-flash-preview"),
       };
 
     case "gemini-3-pro-preview":
