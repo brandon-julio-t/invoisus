@@ -15,6 +15,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { ItemGroup } from "@/components/ui/item";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +27,8 @@ import type { FunctionReturnType } from "convex/server";
 import { ConvexError } from "convex/values";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
+import { GoogleSheetOutputByVendor } from "./_components/google-sheet-output-by-vendor";
+import { analysisConfigurationFormSchema } from "./schemas";
 
 export default function SettingsPage() {
   const analysisConfiguration = useQuery(
@@ -54,68 +56,94 @@ export default function SettingsPage() {
   );
 }
 
-type AnalysisConfiguration = FunctionReturnType<
-  typeof api.domains.analysisConfigurations.queries.getAnalysisConfiguration
->;
-
 function SettingsPageBody({
   analysisConfiguration,
 }: {
-  analysisConfiguration: AnalysisConfiguration;
+  analysisConfiguration: FunctionReturnType<
+    typeof api.domains.analysisConfigurations.queries.getAnalysisConfiguration
+  >;
 }) {
   const upsertAnalysisConfiguration = useMutation(
     api.domains.analysisConfigurations.mutations.upsertAnalysisConfiguration,
   );
 
+  const googleSheetConfigurationByVendorArray = Object.entries(
+    analysisConfiguration?.googleSheetConfigurationByVendor ?? {},
+  ).map(([vendor, config]) => ({
+    vendor,
+    spreadsheetId: config.spreadsheetId,
+    sheetName: config.sheetName,
+  }));
+
   const form = useForm({
     mode: "onTouched",
-    resolver: zodResolver(
-      z.object({
-        pdfAnalysisPrompt: z.string().trim().nonempty(),
-        dataExtractionPrompt: z.string().trim().nonempty(),
-        googleSheetConfigurationByVendor: z.record(
-          z.string().trim().nonempty(),
-          z.object({
-            spreadsheetId: z.string().trim().nonempty(),
-            sheetName: z.string().trim().nonempty(),
-          }),
-        ),
-      }),
-    ),
+    resolver: zodResolver(analysisConfigurationFormSchema),
     values: {
       pdfAnalysisPrompt: analysisConfiguration?.pdfAnalysisPrompt ?? "",
       dataExtractionPrompt: analysisConfiguration?.dataExtractionPrompt ?? "",
-      googleSheetConfigurationByVendor:
-        analysisConfiguration?.googleSheetConfigurationByVendor ??
-        ({} as Record<string, { spreadsheetId: string; sheetName: string }>),
+      googleSheetConfigurationByVendorArray,
     },
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {
-    await toast
-      .promise(
-        upsertAnalysisConfiguration({
-          id: analysisConfiguration?._id,
-          data,
-        }),
-        {
-          loading: "Saving changes...",
-          success: "Changes saved successfully",
-          error: (err) =>
-            err instanceof ConvexError ? err.data : "Failed to save changes",
-        },
-      )
-      .unwrap();
-  });
+  const onSubmit = form.handleSubmit(
+    async (data) => {
+      const googleSheetConfigurationByVendor =
+        data.googleSheetConfigurationByVendorArray.reduce(
+          (acc, curr) => {
+            acc[curr.vendor] = {
+              spreadsheetId: curr.spreadsheetId,
+              sheetName: curr.sheetName,
+            };
+            return acc;
+          },
+          {} as Record<string, { spreadsheetId: string; sheetName: string }>,
+        );
+
+      await toast
+        .promise(
+          upsertAnalysisConfiguration({
+            id: analysisConfiguration?._id,
+            data: {
+              dataExtractionPrompt: data.dataExtractionPrompt,
+              pdfAnalysisPrompt: data.pdfAnalysisPrompt,
+              googleSheetConfigurationByVendor:
+                googleSheetConfigurationByVendor,
+            },
+          }),
+          {
+            loading: "Saving changes...",
+            success: "Changes saved successfully",
+            error: (err) =>
+              err instanceof ConvexError ? err.data : "Failed to save changes",
+          },
+        )
+        .unwrap();
+    },
+    (error) => {
+      console.error(error);
+      toast.error("Failed to save changes", {
+        description: "Please check the form and try again",
+      });
+    },
+  );
 
   return (
     <form onSubmit={onSubmit}>
       <Tabs defaultValue="pdfAnalysis">
         <FieldGroup>
-          <TabsList>
-            <TabsTrigger value="pdfAnalysis">1. PDF Analysis</TabsTrigger>
-            <TabsTrigger value="dataExtraction">2. Data Extraction</TabsTrigger>
-          </TabsList>
+          <ScrollArea>
+            <ScrollBar orientation="horizontal" />
+
+            <TabsList>
+              <TabsTrigger value="pdfAnalysis">1. PDF Analysis</TabsTrigger>
+              <TabsTrigger value="dataExtraction">
+                2. Data Extraction
+              </TabsTrigger>
+              <TabsTrigger value="googleSheetOutputByVendor">
+                3. Google Sheet Output By Vendor
+              </TabsTrigger>
+            </TabsList>
+          </ScrollArea>
 
           <TabsContent value="pdfAnalysis">
             <Controller
@@ -159,6 +187,10 @@ function SettingsPageBody({
                 </Field>
               )}
             />
+          </TabsContent>
+
+          <TabsContent value="googleSheetOutputByVendor">
+            <GoogleSheetOutputByVendor form={form} />
           </TabsContent>
 
           <Field orientation="horizontal" className="justify-end">
