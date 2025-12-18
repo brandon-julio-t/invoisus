@@ -2,6 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex-helpers/react/cache/hooks";
+import { Authenticated } from "convex/react";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
 import React, { useEffect } from "react";
@@ -18,7 +19,9 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <PHProvider client={posthog}>
-      <AutoIdentify />
+      <Authenticated>
+        <AutoIdentify />
+      </Authenticated>
 
       {children}
     </PHProvider>
