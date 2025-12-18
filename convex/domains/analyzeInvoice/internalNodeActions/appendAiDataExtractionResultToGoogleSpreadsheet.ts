@@ -2,34 +2,61 @@
 
 import { auth, sheets } from "@googleapis/sheets";
 import { v } from "convex/values";
+import { internal } from "../../../_generated/api";
 import { internalAction } from "../../../_generated/server";
 
 export const internalActionFn = internalAction({
   args: {
-    // {
-    //   customerGroup: "永旺",
-    //   customerName: "永旺將軍澳",
-    //   customerNumber: "100314",
-    //   customerProblemType: "A",
-    //   invoiceDate: "2025-04-03",
-    //   invoiceNumber: "2025-16641",
-    //   issueCategory:
-    //     "Store code不一致, Invoice與PO總金額不符, 數量問題",
-    //   item: "美國爵士蘋果6x16",
-    //   problemExistanceType: "certainly has problem",
-    // }
+    /**
+     * @example
+     * {
+     *   customerGroup: "永旺",
+     *   customerName: "永旺將軍澳",
+     *   customerNumber: "100314",
+     *   customerProblemType: "A",
+     *   invoiceDate: "2025-04-03",
+     *   invoiceNumber: "2025-16641",
+     *   issueCategory:
+     *     "Store code不一致, Invoice與PO總金額不符, 數量問題",
+     *   item: "美國爵士蘋果6x16",
+     *   problemExistanceType: "certainly has problem",
+     *   vendor: "SKL" | "Freco"
+     * }
+     */
     aiDataExtractionResult: v.record(v.string(), v.string()),
   },
-  handler: async (_ctx, args) => {
+  handler: async (ctx, args) => {
     console.log("args", args);
 
-    // https://docs.google.com/spreadsheets/d/1sN6qJ97qcBnMj2znGmqHrSQK4BYX6TqgNtkIMC0ohuY/edit?gid=1997610999#gid=1997610999
-    const SPREADSHEET_ID = process.env.GOOGLE_SHEETS_SPREADSHEET_ID!;
+    const analysisConfiguration = await ctx.runQuery(
+      internal.domains.analysisConfigurations.internalQueries
+        .getAnalysisConfiguration,
+    );
+    console.log("analysisConfiguration", analysisConfiguration);
+    if (!analysisConfiguration) {
+      throw new Error("Analysis configuration not found");
+    }
 
-    const SPREADSHEET_SHEET_NAME = process.env.GOOGLE_SHEETS_SHEET_NAME!;
+    const googleSheetConfiguration =
+      analysisConfiguration.googleSheetConfigurationByVendor?.[
+        args.aiDataExtractionResult.vendor
+      ];
+    console.log("googleSheetConfiguration", googleSheetConfiguration);
+    if (!googleSheetConfiguration) {
+      throw new Error("Google Sheet Configuration not found");
+    }
 
+    const SPREADSHEET_ID = googleSheetConfiguration.spreadsheetId;
     console.log("SPREADSHEET_ID", SPREADSHEET_ID);
+    if (!SPREADSHEET_ID) {
+      throw new Error("Google Sheet Spreadsheet ID not found");
+    }
+
+    const SPREADSHEET_SHEET_NAME = googleSheetConfiguration.sheetName;
     console.log("SPREADSHEET_SHEET_NAME", SPREADSHEET_SHEET_NAME);
+    if (!SPREADSHEET_SHEET_NAME) {
+      throw new Error("Google Sheet Sheet Name not found");
+    }
 
     const authInstance = new auth.GoogleAuth({
       credentials: {

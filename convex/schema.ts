@@ -29,6 +29,15 @@ export default defineSchema({
     pdfAnalysisPrompt: v.string(),
     dataExtractionModelId: v.optional(vModelPreset),
     dataExtractionPrompt: v.string(),
+    googleSheetConfigurationByVendor: v.optional(
+      v.record(
+        v.string(),
+        v.object({
+          spreadsheetId: v.string(),
+          sheetName: v.string(),
+        }),
+      ),
+    ),
   }),
 
   analysisWorkflowHeaders: defineTable({
