@@ -1,7 +1,9 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
+import type { PaginationResult } from "convex/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
+import type { Doc } from "../../_generated/dataModel";
 import { query } from "../../_generated/server";
+import { authComponent } from "../../auth";
 
 export const getPaginatedAnalysisWorkflowHeaders = query({
   args: {
@@ -10,11 +12,19 @@ export const getPaginatedAnalysisWorkflowHeaders = query({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
-      throw new Error("User not found");
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
+    if (!authUser) {
+      return {
+        page: [],
+        isDone: true,
+        continueCursor: "",
+      } satisfies PaginationResult<
+        Doc<"analysisWorkflowHeaders"> & { createdByUser: Doc<"users"> | null }
+      >;
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     const paginated = await ctx.db
       .query("analysisWorkflowHeaders")
@@ -45,13 +55,18 @@ export const getAnalysisWorkflowHeaderById = query({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
-      throw new Error("User not found");
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
+    if (!authUser) {
+      return null;
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     const header = await ctx.db.get("analysisWorkflowHeaders", args.id);
+    if (!header) {
+      return null;
+    }
     return {
       ...header,
       createdByUser: header?.createdByUserId

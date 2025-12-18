@@ -17,21 +17,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { Spinner } from "@/components/ui/spinner";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@bprogress/next";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LockIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
@@ -57,7 +52,6 @@ const formSchema = z.discriminatedUnion("step", [
 type FormValues = z.infer<typeof formSchema>;
 
 export default function PasswordReset() {
-  const { signIn } = useAuthActions();
   const router = useRouter();
 
   const form = useForm<FormValues>({
@@ -73,40 +67,59 @@ export default function PasswordReset() {
   const onSubmit = form.handleSubmit(
     async (data: FormValues) => {
       if (data.step === "send") {
-        const formData = new FormData();
-        formData.append("email", data.email);
-        formData.append("flow", "reset");
-
         await toast
-          .promise(signIn("password", formData), {
-            loading: "Sending reset code...",
-            success: "Reset code sent successfully",
-            error: {
-              message: "Failed to send reset code",
-              description: "Please check your email address and try again",
+          .promise(
+            authClient
+              .requestPasswordReset({
+                email: data.email,
+              })
+              .then((response) => {
+                if (response.error) {
+                  console.error(response.error);
+                  throw new Error(response.error.message, {
+                    cause: response.error,
+                  });
+                }
+              }),
+            {
+              loading: "Sending reset code...",
+              success: "Reset code sent successfully",
+              error: {
+                message: "Failed to send reset code",
+                description: "Please check your email address and try again",
+              },
             },
-          })
+          )
           .unwrap();
 
         form.setValue("step", "verify");
       }
 
       if (data.step === "verify") {
-        const formData = new FormData();
-        formData.append("code", data.code);
-        formData.append("newPassword", data.newPassword);
-        formData.append("email", data.email);
-        formData.append("flow", "reset-verification");
-
         await toast
-          .promise(signIn("password", formData), {
-            loading: "Resetting password...",
-            success: "Password reset successfully",
-            error: {
-              message: "Failed to reset password",
-              description: "Please check your code and try again",
+          .promise(
+            authClient
+              .resetPassword({
+                newPassword: data.newPassword,
+                token: data.code,
+              })
+              .then((response) => {
+                if (response.error) {
+                  console.error(response.error);
+                  throw new Error(response.error.message, {
+                    cause: response.error,
+                  });
+                }
+              }),
+            {
+              loading: "Resetting password...",
+              success: "Password reset successfully",
+              error: {
+                message: "Failed to reset password",
+                description: "Please check your code and try again",
+              },
             },
-          })
+          )
           .unwrap();
 
         router.push("/login");
@@ -203,19 +216,10 @@ export default function PasswordReset() {
                           <FormItem>
                             <FormLabel>Verification Code</FormLabel>
                             <FormControl>
-                              <InputOTP maxLength={6} {...field}>
-                                <InputOTPGroup>
-                                  <InputOTPSlot index={0} />
-                                  <InputOTPSlot index={1} />
-                                  <InputOTPSlot index={2} />
-                                </InputOTPGroup>
-                                <InputOTPSeparator />
-                                <InputOTPGroup>
-                                  <InputOTPSlot index={3} />
-                                  <InputOTPSlot index={4} />
-                                  <InputOTPSlot index={5} />
-                                </InputOTPGroup>
-                              </InputOTP>
+                              <Input
+                                {...field}
+                                placeholder="Enter your verification code"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

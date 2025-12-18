@@ -1,7 +1,12 @@
 import { v } from "convex/values";
 import { workflow } from "../..";
-import { internal } from "../../_generated/api";
-import { internalAction, internalQuery } from "../../_generated/server";
+import { components, internal } from "../../_generated/api";
+import {
+  internalAction,
+  internalMutation,
+  internalQuery,
+} from "../../_generated/server";
+import { authComponent, createAuth } from "../../auth";
 
 export const getAllProcessingAnalysisWorkflowDetails = internalQuery({
   args: {},
@@ -57,5 +62,95 @@ export const stopAllProcessingWorkflows = internalAction({
           console.error("error cancelling analysis workflow detail:", error);
         });
     }
+  },
+});
+
+export const migrateAllConvexAuthUsersToBetterAuth = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    for (const user of users) {
+      console.log("migrating user", user);
+
+      const jobId = await ctx.scheduler.runAfter(
+        0,
+        internal.admin.console.dangerousFunctions
+          .migrateOneConvexAuthUserToBetterAuth,
+        {
+          userId: user._id,
+        },
+      );
+
+      console.log("jobId", jobId);
+    }
+  },
+});
+
+export const migrateOneConvexAuthUserToBetterAuth = internalMutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const span = `migrateConvexAuthToBetterAuth-${args.userId}`;
+
+    const convexAuthUser = await ctx.db.get("users", args.userId);
+    console.log(span, "convexAuthUser", convexAuthUser);
+    if (!convexAuthUser) {
+      throw new Error("User not found");
+    }
+
+    console.log(span, "migrating user", convexAuthUser);
+
+    const existingBetterAuthUser = await ctx.runQuery(
+      components.betterAuth.functions.getUserByEmail,
+      {
+        email: convexAuthUser.email ?? "",
+      },
+    );
+
+    if (existingBetterAuthUser) {
+      console.log(span, "existingBetterAuthUser", existingBetterAuthUser);
+      return;
+    }
+
+    const convexAuthAccount = await ctx.db
+      .query("authAccounts")
+      .withIndex("userIdAndProvider", (q) => q.eq("userId", convexAuthUser._id))
+      .first();
+
+    console.log(span, "convexAuthAccount", convexAuthAccount);
+
+    const { auth } = await authComponent.getAuth(createAuth, ctx);
+
+    const response = await auth.api.signUpEmail({
+      body: {
+        name: convexAuthUser.name ?? convexAuthUser.email ?? convexAuthUser._id,
+        email: convexAuthUser.email ?? convexAuthUser._id,
+        password: "TEMPORARY-PASSWORD",
+      },
+    });
+
+    console.log(span, "response", response);
+
+    const betterAuthUserId = response.user.id;
+
+    console.log(span, "betterAuthUserId", betterAuthUserId);
+
+    await ctx.runMutation(
+      components.betterAuth.functions.updateHashedPassword,
+      {
+        userId: betterAuthUserId,
+        password:
+          convexAuthAccount?.secret ??
+          convexAuthUser.email ??
+          convexAuthUser._id,
+      },
+    );
+
+    await ctx.db.patch("users", convexAuthUser._id, {
+      externalId: betterAuthUserId,
+    });
+
+    console.log(span, "migrated user", convexAuthUser);
   },
 });

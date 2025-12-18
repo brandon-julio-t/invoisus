@@ -10,8 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "@bprogress/next";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -30,8 +30,6 @@ const registerSchema = z.object({
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const { signIn } = useAuthActions();
-
   const router = useRouter();
 
   const form = useForm<RegisterFormValues>({
@@ -43,35 +41,47 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
-    const formData = new FormData();
-    formData.append("email", values.email);
-    formData.append("password", values.password);
-    formData.append("flow", "signUp");
-
     await toast
-      .promise(signIn("password", formData), {
-        loading: "Signing up...",
-        success: "Signed up successfully",
-        error: (error) => {
-          console.error(error);
+      .promise(
+        authClient.signUp
+          .email({
+            email: values.email,
+            password: values.password,
+            name: values.email.split("@")[0], // Use email prefix as name
+          })
+          .then((response) => {
+            if (response.error) {
+              console.error(response.error);
+              throw new Error(response.error.message, {
+                cause: response.error,
+              });
+            }
+          }),
+        {
+          loading: "Signing up...",
+          success: "Signed up successfully",
+          error: (error) => {
+            console.error(error);
 
-          const isPasswordTooWeak =
-            error instanceof Error &&
-            error.message.includes("Invalid password") &&
-            error.message.includes("validateDefaultPasswordRequirements");
+            const isPasswordTooWeak =
+              error instanceof Error &&
+              (error.message.includes("Invalid password") ||
+                error.message.includes("validateDefaultPasswordRequirements") ||
+                error.message.includes("password"));
 
-          console.log({ "error.message": error.message, isPasswordTooWeak });
+            console.log({ "error.message": error.message, isPasswordTooWeak });
 
-          return {
-            message: isPasswordTooWeak
-              ? "Password is too weak"
-              : "Failed to sign up",
-            description: isPasswordTooWeak
-              ? "Please use a stronger password or contact support if the problem persists"
-              : "Please check your email and password or contact support if the problem persists",
-          };
+            return {
+              message: isPasswordTooWeak
+                ? "Password is too weak"
+                : "Failed to sign up",
+              description: isPasswordTooWeak
+                ? "Please use a stronger password or contact support if the problem persists"
+                : "Please check your email and password or contact support if the problem persists",
+            };
+          },
         },
-      })
+      )
       .unwrap();
 
     router.push("/");

@@ -10,8 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "@bprogress/next";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -27,8 +27,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const { signIn } = useAuthActions();
-
   const router = useRouter();
 
   const form = useForm<LoginFormValues>({
@@ -40,20 +38,33 @@ export function LoginForm() {
   });
 
   const onSubmit = async (values: LoginFormValues) => {
-    const formData = new FormData();
-    formData.append("email", values.email);
-    formData.append("password", values.password);
-    formData.append("flow", "signIn");
-
     await toast
-      .promise(signIn("password", formData), {
-        loading: "Signing in...",
-        success: "Signed in successfully",
-        error: {
-          message: "Failed to sign in",
-          description: "Please check your email and password",
+      .promise(
+        authClient.signIn
+          .email({
+            email: values.email,
+            password: values.password,
+          })
+          .then((response) => {
+            if (response.error) {
+              console.error(response.error);
+              throw new Error(response.error.message, {
+                cause: response.error,
+              });
+            }
+          }),
+        {
+          loading: "Signing in...",
+          success: "Signed in successfully",
+          error: (error) => ({
+            message: "Failed to sign in",
+            description:
+              error instanceof Error
+                ? error.message
+                : "Please check your email and password",
+          }),
         },
-      })
+      )
       .unwrap();
 
     router.push("/");

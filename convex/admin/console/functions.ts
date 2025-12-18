@@ -1,6 +1,6 @@
-import { createAccount } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { internalAction } from "../../_generated/server";
+import { authComponent, createAuth } from "../../auth";
 
 export const createUser = internalAction({
   args: {
@@ -9,18 +9,14 @@ export const createUser = internalAction({
     password: v.string(),
   },
   handler: async (ctx, args) => {
-    const result = await createAccount(ctx, {
-      provider: "password",
-      account: {
-        id: args.email,
-        secret: args.password,
-      },
-      profile: {
+    const { auth } = await authComponent.getAuth(createAuth, ctx);
+
+    return await auth.api.signUpEmail({
+      body: {
         name: args.name,
         email: args.email,
+        password: args.password,
       },
     });
-
-    return result;
   },
 });

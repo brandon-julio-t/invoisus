@@ -1,6 +1,7 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { ConvexError, v } from "convex/values";
+import type { Id } from "../../_generated/dataModel";
 import { mutation } from "../../_generated/server";
+import { authComponent } from "../../auth";
 import { retryOneAnalysisWorkflowDetailLogic } from "../analysisWorkflowDetails/core/retryOneAnalysisWorkflowDetailLogic";
 
 export const retryAllFailedAnalysisWorkflowDetails = mutation({
@@ -10,11 +11,12 @@ export const retryAllFailedAnalysisWorkflowDetails = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new ConvexError("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     const analysisWorkflowHeader = await ctx.db.get(
       "analysisWorkflowHeaders",
@@ -45,7 +47,7 @@ export const retryAllFailedAnalysisWorkflowDetails = mutation({
 
       await retryOneAnalysisWorkflowDetailLogic({
         ctx,
-        userId,
+        userId: userId as unknown as Id<"users">,
         analysisWorkflowDetailId: analysisWorkflowDetail._id,
       });
     }

@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Tooltip,
@@ -54,8 +55,6 @@ const ViewFileDialogContent = ({
 }: ViewFileDialogContentProps) => {
   const downloadUrl = useQuery(api.r2.queryDownloadUrl, { key: fileKey });
 
-  const isLoading = downloadUrl === undefined;
-
   return (
     <>
       <div className="flex size-full flex-1 flex-col gap-6">
@@ -64,10 +63,17 @@ const ViewFileDialogContent = ({
           <DialogDescription>Viewing &quot;{filename}&quot;</DialogDescription>
         </DialogHeader>
 
-        {isLoading ? (
+        {downloadUrl === undefined ? (
           <div className="bg-muted grid size-full flex-1 animate-pulse place-items-center overflow-hidden rounded-xl border">
             <Spinner className="size-8" />
           </div>
+        ) : downloadUrl === null ? (
+          <Empty>
+            <EmptyHeader>File not found</EmptyHeader>
+            <EmptyDescription>
+              The file you are looking for does not exist.
+            </EmptyDescription>
+          </Empty>
         ) : (
           <iframe
             src={downloadUrl}

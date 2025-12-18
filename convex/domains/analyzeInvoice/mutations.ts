@@ -1,8 +1,9 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
+import type { Id } from "../../_generated/dataModel";
 import { mutation } from "../../_generated/server";
+import { authComponent } from "../../auth";
 import { vModelPreset } from "./validators";
 
 export const handleEnqueueAiInvoiceAnalysis = mutation({
@@ -22,11 +23,12 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
   handler: async (ctx, args) => {
     console.log(args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id;
+    console.log("userId", userId);
 
     const analysisWorkflowHeaderId = await ctx.db.insert(
       "analysisWorkflowHeaders",
@@ -34,7 +36,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         filesCount: args.files.length,
         pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
         dataExtractionModelPreset: args.dataExtractionModelPreset,
-        createdByUserId: userId,
+        createdByUserId: userId as unknown as Id<"users">,
         lastUpdatedTime: Date.now(),
       },
     );
@@ -44,7 +46,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         ctx,
         internal.domains.analyzeInvoice.workflows.aiInvoiceAnalysisWorkflow,
         {
-          userId: userId,
+          userId: userId as unknown as Id<"users">,
           analysisWorkflowHeaderId,
           pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
           dataExtractionModelPreset: args.dataExtractionModelPreset,

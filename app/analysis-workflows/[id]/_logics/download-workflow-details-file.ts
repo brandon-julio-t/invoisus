@@ -2,7 +2,8 @@
 
 import type { api } from "@/convex/_generated/api";
 import { triggerBrowserDownloadFileFromBlob } from "@/lib/file-download";
-import type { FunctionArgs, FunctionReturnType } from "convex/server";
+import type { ReactMutation } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
 import JSZip from "jszip";
 import { toast } from "sonner";
 import type { WorkflowDetailsType } from "../_components/types";
@@ -12,13 +13,13 @@ export const downloadWorkflowDetailsFile = async ({
   details,
   generateDownloadUrl,
 }: {
-  header: FunctionReturnType<
-    typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
+  header: NonNullable<
+    FunctionReturnType<
+      typeof api.domains.analysisWorkflows.queries.getAnalysisWorkflowHeaderById
+    >
   >;
   details: WorkflowDetailsType;
-  generateDownloadUrl: (
-    args: FunctionArgs<typeof api.r2.generateDownloadUrl>,
-  ) => Promise<FunctionReturnType<typeof api.r2.generateDownloadUrl>>;
+  generateDownloadUrl: ReactMutation<typeof api.r2.generateDownloadUrl>;
 }) => {
   // Group details by problem existence type
   const groupedDetails = details.reduce(

@@ -1,65 +1,20 @@
-import { Email } from "@convex-dev/auth/providers/Email";
-import type { RandomReader } from "@oslojs/crypto/random";
-import { generateRandomString } from "@oslojs/crypto/random";
 import {
   Container,
   Head,
   Heading,
   Html,
+  Link,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components";
-import { formatDistanceToNow } from "date-fns";
-import { Resend as ResendAPI } from "resend";
 
-export const ResendOTPPasswordReset = Email({
-  id: "resend-otp-password-reset",
-
-  apiKey: process.env.RESEND_API_KEY,
-
-  async generateVerificationToken() {
-    const random: RandomReader = {
-      read(bytes) {
-        crypto.getRandomValues(bytes);
-      },
-    };
-
-    const alphabet = "0123456789";
-    const length = 6;
-    return generateRandomString(random, alphabet, length);
-  },
-
-  async sendVerificationRequest({
-    identifier: email,
-    provider,
-    token,
-    expires,
-  }) {
-    const resend = new ResendAPI(provider.apiKey);
-
-    const { data, error } = await resend.emails.send({
-      from: "Invoisus <notify@noreply.farmio.io>",
-      to: [email],
-      subject: `Reset password in Invoisus`,
-      react: PasswordResetEmail({ code: token, expires }),
-    });
-
-    if (error) {
-      console.error(error);
-      throw new Error(JSON.stringify(error));
-    }
-
-    console.log(data);
-  },
-});
-
-function PasswordResetEmail({
+export function PasswordResetEmail({
   code,
-  expires,
+  url,
 }: {
   code: string;
-  expires: Date;
+  url: string;
 }) {
   return (
     <Html>
@@ -75,9 +30,7 @@ function PasswordResetEmail({
           <Section className="text-center">
             <Text className="font-semibold">Verification code</Text>
             <Text className="text-4xl font-bold">{code}</Text>
-            <Text>
-              (This code will expire in {formatDistanceToNow(expires)})
-            </Text>
+            <Link href={url}>Reset password</Link>
           </Section>
         </Container>
       </Tailwind>

@@ -1,8 +1,8 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { R2 } from "@convex-dev/r2";
 import { v } from "convex/values";
 import { components } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { authComponent } from "./auth";
 
 export const r2 = new R2(components.r2);
 
@@ -30,11 +30,13 @@ export const generateDownloadUrl = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });
   },
@@ -48,11 +50,13 @@ export const queryDownloadUrl = query({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
-      throw new Error("User not found");
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
+    if (!authUser) {
+      return null;
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });
   },

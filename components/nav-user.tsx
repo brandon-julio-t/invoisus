@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "@bprogress/next";
-import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { usePostHog } from "posthog-js/react";
 import React from "react";
@@ -35,12 +35,11 @@ export function NavUser() {
 
   const posthog = usePostHog();
   const router = useRouter();
-  const { signOut } = useAuthActions();
   const [isSigningOut, startSigningOut] = React.useTransition();
   const onSignOut = async () => {
     startSigningOut(async () => {
       await toast
-        .promise(signOut(), {
+        .promise(authClient.signOut(), {
           loading: "Signing out...",
           success: "Signed out successfully",
           error: "Failed to sign out",

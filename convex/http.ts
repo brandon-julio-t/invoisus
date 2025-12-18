@@ -1,12 +1,13 @@
 import { httpRouter } from "convex/server";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
-import { auth } from "./auth";
+import { authComponent, createAuth } from "./auth";
 import type { SlackChallenge, SlackEvent } from "./mcKinseyAi/types";
 
 const http = httpRouter();
 
-auth.addHttpRoutes(http);
+// auth.addHttpRoutes(http);
+authComponent.registerRoutes(http, createAuth);
 
 http.route({
   path: "/slack",

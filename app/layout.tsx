@@ -5,7 +5,7 @@ import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { getToken } from "@/lib/auth-server";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
@@ -26,38 +26,40 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const [defaultOpen, initialToken] = await Promise.all([
+    cookies().then(
+      (cookieStore) => cookieStore.get("sidebar_state")?.value === "true",
+    ),
+    getToken(),
+  ]);
 
   return (
-    <ConvexAuthNextjsServerProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
+      >
+        <Script
+          src="//mozilla.github.io/pdf.js/build/pdf.mjs"
+          type="module"
+        ></Script>
+
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          <Script
-            src="//mozilla.github.io/pdf.js/build/pdf.mjs"
-            type="module"
-          ></Script>
+          <ConvexClientProvider initialToken={initialToken}>
+            <NuqsAdapter>
+              <Toaster closeButton richColors position="bottom-right" />
 
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ConvexClientProvider>
-              <NuqsAdapter>
-                <Toaster closeButton richColors position="bottom-right" />
-
-                <PostHogProvider>
-                  <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
-                </PostHogProvider>
-              </NuqsAdapter>
-            </ConvexClientProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ConvexAuthNextjsServerProvider>
+              <PostHogProvider>
+                <AppLayout defaultOpen={defaultOpen}>{children}</AppLayout>
+              </PostHogProvider>
+            </NuqsAdapter>
+          </ConvexClientProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

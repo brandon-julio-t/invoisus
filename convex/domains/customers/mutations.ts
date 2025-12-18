@@ -1,6 +1,6 @@
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { mutation } from "../../_generated/server";
+import { authComponent } from "../../auth";
 import {
   createOneCustomer,
   deleteOneCustomer,
@@ -13,11 +13,12 @@ export const createCustomer = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     const id = await createOneCustomer({ ctx, args });
     console.log("id", id);
@@ -31,11 +32,12 @@ export const importCustomers = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     for (const customer of args.customers) {
       console.log("customer", customer);
@@ -71,11 +73,12 @@ export const updateCustomer = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     await updateOneCustomer({ ctx, args });
   },
@@ -88,11 +91,12 @@ export const deleteCustomer = mutation({
   handler: async (ctx, args) => {
     console.log("args", args);
 
-    const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
-    if (!userId) {
+    const authUser = await authComponent.safeGetAuthUser(ctx);
+    if (!authUser) {
       throw new Error("User not found");
     }
+    const userId = authUser._id as string;
+    console.log("userId", userId);
 
     await deleteOneCustomer({ ctx, args });
   },
