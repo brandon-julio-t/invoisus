@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "eslint . --fix --cache --cache-location .eslintcache",
     "format": "prettier --write . --cache --cache-location .prettiercache",
-    "typecheck": "next typegen && tsgo --noEmit --tsBuildInfoFile .tsbuildinfo",
+    "typecheck": "next typegen && tsc --noEmit --tsBuildInfoFile .tsbuildinfo",
     "check": "npm-run-all format lint typecheck",
     "prepare": "lefthook install"
   },
@@ -100,7 +100,6 @@
     "@types/node": "^25.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20251217.1",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.10",
     "lefthook": "^2.0.9",
