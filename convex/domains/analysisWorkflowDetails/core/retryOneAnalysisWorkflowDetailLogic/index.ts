@@ -53,6 +53,7 @@ export async function retryOneAnalysisWorkflowDetailLogic({
         analysisWorkflowHeader.dataExtractionModelPreset as ModelPreset,
       fileKey: analysisWorkflowDetail.fileKey,
       imageFileKeys: analysisWorkflowDetail.imageFileKeys ?? [],
+      version: analysisWorkflowHeader.version,
     },
     {
       onComplete:

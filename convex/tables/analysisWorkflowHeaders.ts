@@ -9,4 +9,5 @@ export const analysisWorkflowHeaders = defineTable({
   failedCount: v.optional(v.number()),
   createdByUserId: v.optional(v.id("users")),
   lastUpdatedTime: v.optional(v.number()),
+  version: v.optional(v.union(v.literal("v1"), v.literal("v2"))),
 });

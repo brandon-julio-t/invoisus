@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
 import { mutation } from "../../_generated/server";
+import schema from "../../schema";
 import { getUserByBetterAuth } from "../users/logics";
 import { vModelPreset } from "./validators";
 
@@ -9,6 +10,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
   args: {
     pdfAnalysisModelPreset: vModelPreset,
     dataExtractionModelPreset: vModelPreset,
+    version: schema.tables.analysisWorkflowHeaders.validator.fields.version,
     files: v.array(
       v.object({
         name: v.string(),
@@ -50,6 +52,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
           dataExtractionModelPreset: args.dataExtractionModelPreset,
           fileKey: file.fileKey,
           imageFileKeys: file.imageFileKeys,
+          version: args.version,
         },
         {
           onComplete:

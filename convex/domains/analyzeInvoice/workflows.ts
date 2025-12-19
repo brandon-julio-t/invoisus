@@ -2,6 +2,7 @@ import type { WorkflowId } from "@convex-dev/workflow";
 import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
+import schema from "../../schema";
 import { vModelPreset } from "./validators";
 
 export const aiInvoiceAnalysisWorkflow = workflow.define({
@@ -12,6 +13,7 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
     dataExtractionModelPreset: vModelPreset,
     fileKey: v.string(),
     imageFileKeys: v.array(v.string()),
+    version: schema.tables.analysisWorkflowHeaders.validator.fields.version,
   },
   handler: async (step, args) => {
     console.log("step.workflowId", step.workflowId);
@@ -54,20 +56,47 @@ export const aiInvoiceAnalysisWorkflow = workflow.define({
 
     console.log(step.workflowId, "Analyzing invoice with AI");
 
-    const aiAnalysisResult = await step.runAction(
-      internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi
-        .internalActionFn,
-      {
-        userId: args.userId,
-        workflowId: step.workflowId as WorkflowId,
-        modelPreset: args.pdfAnalysisModelPreset,
-        fileName: analysisWorkflowDetail.fileName,
-        fileSize: analysisWorkflowDetail.fileSize,
-        fileType: analysisWorkflowDetail.fileType,
-        fileKey: analysisWorkflowDetail.fileKey,
-        imageFileKeys: args.imageFileKeys,
-      },
-    );
+    let aiAnalysisResult: { text: string } = {
+      text: "",
+    };
+
+    if (args.version === "v1") {
+      const result = await step.runAction(
+        internal.domains.analyzeInvoice.internalNodeActions.analyzeInvoiceWithAi
+          .internalActionFn,
+        {
+          userId: args.userId,
+          workflowId: step.workflowId as WorkflowId,
+          modelPreset: args.pdfAnalysisModelPreset,
+          fileName: analysisWorkflowDetail.fileName,
+          fileSize: analysisWorkflowDetail.fileSize,
+          fileType: analysisWorkflowDetail.fileType,
+          fileKey: analysisWorkflowDetail.fileKey,
+          imageFileKeys: args.imageFileKeys,
+        },
+      );
+
+      aiAnalysisResult = result;
+    } else if (args.version === "v2") {
+      const result = await step.runAction(
+        internal.domains.analyzeInvoice.internalNodeActions
+          .analyzeInvoiceWithAiV2.internalActionFn,
+        {
+          userId: args.userId,
+          workflowId: step.workflowId as WorkflowId,
+          modelPreset: args.pdfAnalysisModelPreset,
+          fileName: analysisWorkflowDetail.fileName,
+          fileSize: analysisWorkflowDetail.fileSize,
+          fileType: analysisWorkflowDetail.fileType,
+          fileKey: analysisWorkflowDetail.fileKey,
+          imageFileKeys: args.imageFileKeys,
+        },
+      );
+
+      aiAnalysisResult = result;
+    } else {
+      console.error("Invalid version", args.version);
+    }
 
     console.log(step.workflowId, "AI analysis result", aiAnalysisResult);
 

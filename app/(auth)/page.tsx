@@ -39,20 +39,25 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/kibo-ui/dropzone";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { api } from "@/convex/_generated/api";
-import { cn } from "@/lib/utils";
 import { useRouter } from "@bprogress/next";
 import { useUploadFile } from "@convex-dev/r2/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { useMutation } from "convex/react";
-import { ChevronsUpDownIcon, IterationCcwIcon, SendIcon } from "lucide-react";
+import { IterationCcwIcon, SendIcon } from "lucide-react";
 import React from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { FormFilesPreviewSection } from "./_components/form-files-preview-section";
-import { FormModelSelectorCombobox } from "./_components/form-model-selector-section";
 import type { FileUploadForm } from "./form";
 import { fileUploadSchema } from "./form";
 
@@ -71,6 +76,7 @@ const HomePage = () => {
         analysisConfigurations?.pdfAnalysisModelId ?? "gemini-3-pro-preview",
       dataExtractionModelPreset:
         analysisConfigurations?.dataExtractionModelId ?? "gpt-5-mini-medium",
+      version: "v1",
     },
   });
 
@@ -211,6 +217,7 @@ const HomePage = () => {
             files: uploadedFiles,
             pdfAnalysisModelPreset: data.pdfAnalysisModelPreset,
             dataExtractionModelPreset: data.dataExtractionModelPreset,
+            version: data.version,
           }),
           {
             loading: "Submitting invoice analysis request...",
@@ -289,6 +296,28 @@ const HomePage = () => {
             />
 
             <FieldGroup>
+              <Controller
+                control={form.control}
+                name="version"
+                render={({ field }) => (
+                  <FormItem className="justify-end">
+                    <FormLabel>Version</FormLabel>
+                    <FormControl>
+                      <Select {...field} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a version" />
+                        </SelectTrigger>
+                        <SelectContent align="end">
+                          <SelectItem value="v1">V1</SelectItem>
+                          <SelectItem value="v2">V2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Field orientation="horizontal" className="justify-end">
                 <Button
                   type="button"
@@ -382,52 +411,6 @@ const HomePage = () => {
             />
 
             <FormFilesPreviewSection files={files} form={form} />
-
-            <FormField
-              control={form.control}
-              name="pdfAnalysisModelPreset"
-              render={({ field }) => (
-                <FormItem
-                  className={cn(
-                    process.env.NODE_ENV === "production" && "hidden",
-                  )}
-                >
-                  <FormLabel>PDF Analysis Model</FormLabel>
-                  <FormModelSelectorCombobox {...field} align="start">
-                    <FormControl>
-                      <Button variant="outline" className="w-fit">
-                        <span>{field.value}</span>
-                        <ChevronsUpDownIcon />
-                      </Button>
-                    </FormControl>
-                  </FormModelSelectorCombobox>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dataExtractionModelPreset"
-              render={({ field }) => (
-                <FormItem
-                  className={cn(
-                    process.env.NODE_ENV === "production" && "hidden",
-                  )}
-                >
-                  <FormLabel>Data Extraction Model</FormLabel>
-                  <FormModelSelectorCombobox {...field} align="start">
-                    <FormControl>
-                      <Button variant="outline" className="w-fit">
-                        <span>{field.value}</span>
-                        <ChevronsUpDownIcon />
-                      </Button>
-                    </FormControl>
-                  </FormModelSelectorCombobox>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </FieldSet>
         </form>
       </Form>

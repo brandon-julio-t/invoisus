@@ -25,6 +25,7 @@ import type * as domains_analyzeInvoice_aiModelFactory from "../domains/analyzeI
 import type * as domains_analyzeInvoice_aiTools from "../domains/analyzeInvoice/aiTools.js";
 import type * as domains_analyzeInvoice_internalMutations from "../domains/analyzeInvoice/internalMutations.js";
 import type * as domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAi from "../domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAi.js";
+import type * as domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAiV2 from "../domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAiV2.js";
 import type * as domains_analyzeInvoice_internalNodeActions_appendAiDataExtractionResultToGoogleSpreadsheet from "../domains/analyzeInvoice/internalNodeActions/appendAiDataExtractionResultToGoogleSpreadsheet.js";
 import type * as domains_analyzeInvoice_internalNodeActions_extractDataFromInvoiceWithAi from "../domains/analyzeInvoice/internalNodeActions/extractDataFromInvoiceWithAi.js";
 import type * as domains_analyzeInvoice_internalQueries from "../domains/analyzeInvoice/internalQueries.js";
@@ -75,6 +76,7 @@ declare const fullApi: ApiFromModules<{
   "domains/analyzeInvoice/aiTools": typeof domains_analyzeInvoice_aiTools;
   "domains/analyzeInvoice/internalMutations": typeof domains_analyzeInvoice_internalMutations;
   "domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAi": typeof domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAi;
+  "domains/analyzeInvoice/internalNodeActions/analyzeInvoiceWithAiV2": typeof domains_analyzeInvoice_internalNodeActions_analyzeInvoiceWithAiV2;
   "domains/analyzeInvoice/internalNodeActions/appendAiDataExtractionResultToGoogleSpreadsheet": typeof domains_analyzeInvoice_internalNodeActions_appendAiDataExtractionResultToGoogleSpreadsheet;
   "domains/analyzeInvoice/internalNodeActions/extractDataFromInvoiceWithAi": typeof domains_analyzeInvoice_internalNodeActions_extractDataFromInvoiceWithAi;
   "domains/analyzeInvoice/internalQueries": typeof domains_analyzeInvoice_internalQueries;
