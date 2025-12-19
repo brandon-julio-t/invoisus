@@ -38,6 +38,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         dataExtractionModelPreset: args.dataExtractionModelPreset,
         createdByUserId: user._id,
         lastUpdatedTime: Date.now(),
+        version: args.version,
       },
     );
 
