@@ -141,7 +141,7 @@ const WorkflowDetailPage = () => {
     <ItemGroup className="container gap-6">
       <section>
         <Button variant="ghost" asChild>
-          <Link href="/analysis-workflows">
+          <Link href="/analysis-workflows/list">
             <ArrowLeftIcon />
             Back to analysis workflows
           </Link>
@@ -173,7 +173,7 @@ const WorkflowDetailPage = () => {
           </EmptyHeader>
           <EmptyContent>
             <Button asChild>
-              <Link href="/analysis-workflows">
+              <Link href="/analysis-workflows/list">
                 Back to analysis workflows list
               </Link>
             </Button>
