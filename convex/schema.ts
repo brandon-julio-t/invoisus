@@ -8,7 +8,6 @@ import { vModelPreset } from "./domains/analyzeInvoice/validators";
 // app will continue to work.
 // The schema provides more precise TypeScript types.
 export default defineSchema({
-
   users: defineTable({
     name: v.optional(v.string()),
     image: v.optional(v.string()),
