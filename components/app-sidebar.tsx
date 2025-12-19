@@ -28,36 +28,41 @@ import { usePathname } from "next/navigation";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
 
-const navLinks: Array<{
-  href: React.ComponentProps<typeof Link>["href"];
-  icon: LucideIcon;
-  label: string;
-}> = [
-  {
-    href: "/",
-    icon: FileCode2Icon,
-    label: "Analyze Invoices",
-  },
-  {
-    href: "/analysis-workflows/list",
-    icon: WorkflowIcon,
-    label: "Analysis History",
-  },
-  {
-    href: "/customers/list",
-    icon: UsersIcon,
-    label: "Customers",
-  },
-  {
-    href: "/settings",
-    icon: SettingsIcon,
-    label: "Settings",
-  },
-];
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+
+  const navLinks: Array<{
+    href: React.ComponentProps<typeof Link>["href"];
+    icon: LucideIcon;
+    label: string;
+    isActive: boolean;
+  }> = [
+    {
+      href: "/",
+      icon: FileCode2Icon,
+      label: "Analyze Invoices",
+      isActive: pathname === "/",
+    },
+    {
+      href: "/analysis-workflows/list",
+      icon: WorkflowIcon,
+      label: "Analysis History",
+      isActive: pathname.startsWith("/analysis-workflows"),
+    },
+    {
+      href: "/customers/list",
+      icon: UsersIcon,
+      label: "Customers",
+      isActive: pathname.startsWith("/customers"),
+    },
+    {
+      href: "/settings",
+      icon: SettingsIcon,
+      label: "Settings",
+      isActive: pathname.startsWith("/settings"),
+    },
+  ];
 
   return (
     <Sidebar {...props}>
@@ -77,28 +82,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navLinks.map((link) => {
-                const isActive =
-                  link.href === "/"
-                    ? pathname === link.href
-                    : pathname.startsWith(link.href.toString());
-
-                return (
-                  <SidebarMenuItem key={link.href.toString()}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      tooltip={link.label}
-                      onClick={() => setOpenMobile(false)}
-                    >
-                      <Link href={link.href}>
-                        <link.icon />
-                        <span>{link.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {navLinks.map((link) => (
+                <SidebarMenuItem key={link.href.toString()}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={link.isActive}
+                    tooltip={link.label}
+                    onClick={() => setOpenMobile(false)}
+                  >
+                    <Link href={link.href}>
+                      <link.icon />
+                      <span>{link.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
