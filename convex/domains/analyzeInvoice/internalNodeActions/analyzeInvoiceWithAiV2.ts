@@ -4,7 +4,7 @@ import { vWorkflowId } from "@convex-dev/workflow";
 import { openrouter } from "@openrouter/ai-sdk-provider";
 import { withTracing } from "@posthog/ai";
 import type { UserContent } from "ai";
-import { generateText, hasToolCall, stepCountIs, tool } from "ai";
+import { generateText, stepCountIs, tool } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
 import { internal } from "../../../_generated/api";
@@ -102,7 +102,7 @@ export const internalActionFn = internalAction({
     const analysisResult = await generateText({
       model,
 
-      stopWhen: [stepCountIs(100), hasToolCall("submitFinalReport")],
+      stopWhen: stepCountIs(Number.MAX_SAFE_INTEGER),
 
       tools: {
         queryDataFromInvoice: tool({
@@ -150,7 +150,7 @@ export const internalActionFn = internalAction({
             const result = await generateText({
               model,
 
-              stopWhen: [stepCountIs(100)],
+              stopWhen: stepCountIs(Number.MAX_SAFE_INTEGER),
 
               system:
                 "Answer the user's question or inquiry based on the given invoice file. The answer should be in a concise and clear format.",
