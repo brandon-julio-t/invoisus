@@ -39,7 +39,7 @@ const navLinks: Array<{
     label: "Analyze Invoices",
   },
   {
-    href: "/analysis-workflows",
+    href: "/analysis-workflows/list",
     icon: WorkflowIcon,
     label: "Analysis History",
   },
