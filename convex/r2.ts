@@ -33,7 +33,7 @@ export const generateDownloadUrl = mutation({
     const authUser = await authComponent.safeGetAuthUser(ctx);
     console.log("authUser", authUser);
     if (!authUser) {
-      return "";
+      return null;
     }
 
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });

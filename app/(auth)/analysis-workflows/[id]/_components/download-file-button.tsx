@@ -23,11 +23,19 @@ export const DownloadFileButton = ({
   const onDownloadFile = async () => {
     startDownloading(async () => {
       const fileDownloadUrl = await toast
-        .promise(generateDownloadUrl({ key: fileKey }), {
-          loading: `Generating download URL for file...`,
-          success: `Download URL generated for file.`,
-          error: `Failed to generate download URL for file.`,
-        })
+        .promise(
+          generateDownloadUrl({ key: fileKey }).then((r) => {
+            if (!r) {
+              throw new Error("Failed to generate download URL");
+            }
+            return r;
+          }),
+          {
+            loading: `Generating download URL for file...`,
+            success: `Download URL generated for file.`,
+            error: `Failed to generate download URL for file.`,
+          },
+        )
         .unwrap();
 
       await toast

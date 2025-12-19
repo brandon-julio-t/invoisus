@@ -57,6 +57,13 @@ export const downloadWorkflowDetailsFile = async ({
               key: detail.fileKey,
             });
 
+            if (!fileDownloadUrl) {
+              const msg = `Failed to generate download URL for file: ${detail.fileName}`;
+              console.error(msg);
+              toast.error(msg);
+              return;
+            }
+
             const response = await fetch(fileDownloadUrl);
             if (!response.ok) {
               const msg = `Failed to download file: ${detail.fileName}`;
