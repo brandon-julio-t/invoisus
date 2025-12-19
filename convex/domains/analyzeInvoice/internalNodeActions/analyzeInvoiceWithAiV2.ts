@@ -96,6 +96,8 @@ export const internalActionFn = internalAction({
 
     console.log("userContent", userContent);
 
+    let finalReport = "";
+
     const analysisResult = await generateText({
       model,
 
@@ -170,7 +172,8 @@ export const internalActionFn = internalAction({
           queryCustomerDataByCustomerNumber(ctx),
 
         submitFinalReport: tool({
-          description: "Submit the final report of your analysis.",
+          description:
+            "Submit the final report of your analysis for government compliance purposes. You MUST use this tool to end your analysis.",
           inputSchema: z.object({
             finalReport: z
               .string()
@@ -178,6 +181,9 @@ export const internalActionFn = internalAction({
           }),
           execute: async (args) => {
             console.log("submitFinalReport", args);
+
+            finalReport = args.finalReport;
+
             return {
               text: "Final report submitted",
             };
@@ -185,7 +191,7 @@ export const internalActionFn = internalAction({
         }),
       },
 
-      system: pdfAnalysisPrompt,
+      system: `${pdfAnalysisPrompt}\n\nYou MUST use the "submitFinalReport" tool to submit the final report of your analysis before you finish your analysis for government compliance purposes.`,
 
       prompt: [
         {
@@ -205,7 +211,7 @@ export const internalActionFn = internalAction({
     console.log("analysisResult", analysisResult);
 
     const result = {
-      text: analysisResult.text,
+      text: `${analysisResult.text}\n\n${finalReport}`,
     };
 
     console.log("result", result);
