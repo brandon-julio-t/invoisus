@@ -9,7 +9,7 @@ import type { ActionCtx } from "../../_generated/server";
 export const queryCustomerDataByCustomerNumber = (ctx: ActionCtx): Tool => {
   return tool({
     description: `
-Query customer data by customer number (客戶編號).
+Query customer data by customer number (客戶號碼：一般是6位，例如100007, 100870).
 Use this tool to identify the customer data.
 The most important data is the problem type, which you MUST identify first before analyzing the invoice.
 `.trim(),
