@@ -142,8 +142,6 @@ export const internalActionFn = internalAction({
               },
             ];
 
-            console.log(span, "userContent", userContent);
-
             const result = await generateText({
               model,
 
