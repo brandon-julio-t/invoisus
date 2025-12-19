@@ -1,4 +1,22 @@
 services:
+  postgres:
+    image: postgres:alpine
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-convex_root_password}
+      - POSTGRES_DB=${POSTGRES_DB:-convex_self_hosted}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
   backend:
     # Change this to :${REV} if you want to pin to a specific version
     image: ghcr.io/get-convex/convex-backend:latest
@@ -24,11 +42,11 @@ services:
       - DATABASE_URL
       - DISABLE_BEACON
       - DOCUMENT_RETENTION_DELAY=${DOCUMENT_RETENTION_DELAY:-172800} # Lower default document retention to 2 days
-      - DO_NOT_REQUIRE_SSL
-      - INSTANCE_NAME
+      - DO_NOT_REQUIRE_SSL=1
+      - INSTANCE_NAME=${INSTANCE_NAME:-convex-self-hosted}
       - INSTANCE_SECRET
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-convex_root_password}@postgres:5432
       - MYSQL_URL
-      - POSTGRES_URL
       - REDACT_LOGS_TO_CLIENT
       - RUST_BACKTRACE
       - RUST_LOG=${RUST_LOG:-info}
@@ -38,7 +56,9 @@ services:
       - S3_STORAGE_MODULES_BUCKET
       - S3_STORAGE_SEARCH_BUCKET
       - S3_STORAGE_SNAPSHOT_IMPORTS_BUCKET
-
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: curl -f http://localhost:3210/version
       interval: 5s
@@ -59,3 +79,4 @@ services:
 
 volumes:
   data:
+  postgres_data:
