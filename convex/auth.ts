@@ -105,6 +105,6 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
 export const getAuthUser = query({
   args: {},
   handler: async (ctx) => {
-    return authComponent.safeGetAuthUser(ctx);
+    return await authComponent.safeGetAuthUser(ctx);
   },
 });
