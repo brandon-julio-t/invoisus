@@ -10,9 +10,9 @@
     "predev": "convex dev --until-success && convex dashboard",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint . --fix --cache --cache-location .eslintcache",
-    "format": "prettier --write . --cache --cache-location .prettiercache",
-    "typecheck": "next typegen && tsc --noEmit --tsBuildInfoFile .tsbuildinfo",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "typecheck": "next typegen && tsc --noEmit",
     "check": "npm-run-all format lint typecheck",
     "prepare": "lefthook install"
   },
