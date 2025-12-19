@@ -96,6 +96,7 @@ export const internalActionFn = internalAction({
 
     console.log("userContent", userContent);
 
+    const aiQnA: string[] = [];
     let finalReport = "";
 
     const analysisResult = await generateText({
@@ -144,6 +145,8 @@ export const internalActionFn = internalAction({
               },
             ];
 
+            aiQnA.push(`Question: ${toolArgs.query}`);
+
             const result = await generateText({
               model,
 
@@ -161,6 +164,8 @@ export const internalActionFn = internalAction({
             });
 
             console.log(span, "result.text", result.text);
+
+            aiQnA.push(`Answer: ${result.text}`);
 
             return {
               text: result.text,
@@ -205,6 +210,7 @@ export const internalActionFn = internalAction({
         throw error;
       })
       .finally(async () => {
+        console.log("aiQnA", aiQnA);
         await phClient.shutdown();
       });
 
