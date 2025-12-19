@@ -36,6 +36,7 @@ import type * as domains_customers_logics from "../domains/customers/logics.js";
 import type * as domains_customers_mutations from "../domains/customers/mutations.js";
 import type * as domains_customers_queries from "../domains/customers/queries.js";
 import type * as domains_customers_validators from "../domains/customers/validators.js";
+import type * as domains_users_logics from "../domains/users/logics.js";
 import type * as http from "../http.js";
 import type * as index from "../index.js";
 import type * as libs_ai from "../libs/ai.js";
@@ -80,6 +81,7 @@ declare const fullApi: ApiFromModules<{
   "domains/customers/mutations": typeof domains_customers_mutations;
   "domains/customers/queries": typeof domains_customers_queries;
   "domains/customers/validators": typeof domains_customers_validators;
+  "domains/users/logics": typeof domains_users_logics;
   http: typeof http;
   index: typeof index;
   "libs/ai": typeof libs_ai;

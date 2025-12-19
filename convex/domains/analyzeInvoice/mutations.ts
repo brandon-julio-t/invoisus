@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { workflow } from "../..";
 import { internal } from "../../_generated/api";
 import { mutation } from "../../_generated/server";
-import { authComponent } from "../../auth";
+import { getUserByBetterAuth } from "../users/logics";
 import { vModelPreset } from "./validators";
 
 export const handleEnqueueAiInvoiceAnalysis = mutation({
@@ -22,17 +22,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
   handler: async (ctx, args) => {
     console.log(args);
 
-    const authUser = await authComponent.safeGetAuthUser(ctx);
-    if (!authUser) {
-      throw new Error("User not found");
-    }
-    const userId = authUser._id;
-    console.log("userId", userId);
-
-    const localUser = await ctx.db
-      .query("users")
-      .withIndex("externalId", (q) => q.eq("externalId", userId))
-      .first();
+    const localUser = await getUserByBetterAuth({ ctx });
     if (!localUser) {
       throw new Error("User not found");
     }
