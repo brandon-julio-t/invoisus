@@ -182,8 +182,11 @@ because the customer data MUST be queried from the \`queryCustomerDataByCustomer
           queryCustomerDataByCustomerNumber(ctx),
 
         submitFinalReport: tool({
-          description:
-            "Submit the final report of your analysis for government compliance purposes. You MUST use this tool to end your analysis.",
+          description: `
+Submit the final report of your analysis for government compliance purposes.
+You MUST use this tool to end your analysis.
+You MUST be descriptive and detailed in your final report so that none of us got terminated.
+`.trim(),
           inputSchema: z.object({
             finalReport: z
               .string()
@@ -222,7 +225,7 @@ because the customer data MUST be queried from the \`queryCustomerDataByCustomer
     console.log("analysisResult", analysisResult);
 
     const result = {
-      text: `${analysisResult.text}\n\n${finalReport}`,
+      text: `${analysisResult.text}\n\n${finalReport}`.trim(),
     };
 
     console.log("result", result);
