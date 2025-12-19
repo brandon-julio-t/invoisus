@@ -106,7 +106,12 @@ export const internalActionFn = internalAction({
 
       tools: {
         queryDataFromInvoice: tool({
-          description: "Query data from the invoice.",
+          description: `
+Query data from the invoice.
+
+If you want to query customer data, only query the customer number and customer name,
+because the customer data MUST be queried from the \`queryCustomerDataByCustomerNumber\` tool.
+`.trim(),
           inputSchema: z.object({
             query: z
               .string()

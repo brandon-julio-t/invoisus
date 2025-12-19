@@ -12,6 +12,7 @@ export const queryCustomerDataByCustomerNumber = (ctx: ActionCtx): Tool => {
 Query customer data by customer number (客戶號碼：一般是6位，例如100007, 100870).
 Use this tool to identify the customer data.
 The most important data is the problem type, which you MUST identify first before analyzing the invoice.
+The data returned by this tool TRUMPS over other customer data that you may have queried from the invoice.
 `.trim(),
     inputSchema: z.object({
       number: z.string(),
