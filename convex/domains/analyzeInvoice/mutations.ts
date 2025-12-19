@@ -22,8 +22,9 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
   handler: async (ctx, args) => {
     console.log(args);
 
-    const localUser = await getUserByBetterAuth({ ctx });
-    if (!localUser) {
+    const user = await getUserByBetterAuth({ ctx });
+    console.log("user", user);
+    if (!user) {
       throw new Error("User not found");
     }
 
@@ -33,7 +34,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         filesCount: args.files.length,
         pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
         dataExtractionModelPreset: args.dataExtractionModelPreset,
-        createdByUserId: localUser._id,
+        createdByUserId: user._id,
         lastUpdatedTime: Date.now(),
       },
     );
@@ -43,7 +44,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
         ctx,
         internal.domains.analyzeInvoice.workflows.aiInvoiceAnalysisWorkflow,
         {
-          userId: localUser._id,
+          userId: user._id,
           analysisWorkflowHeaderId,
           pdfAnalysisModelPreset: args.pdfAnalysisModelPreset,
           dataExtractionModelPreset: args.dataExtractionModelPreset,
