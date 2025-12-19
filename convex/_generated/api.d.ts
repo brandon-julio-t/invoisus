@@ -45,6 +45,11 @@ import type * as mcKinseyAi_internalNodeActions from "../mcKinseyAi/internalNode
 import type * as mcKinseyAi_types from "../mcKinseyAi/types.js";
 import type * as migrations from "../migrations.js";
 import type * as r2 from "../r2.js";
+import type * as tables_analysisConfigurations from "../tables/analysisConfigurations.js";
+import type * as tables_analysisWorkflowDetails from "../tables/analysisWorkflowDetails.js";
+import type * as tables_analysisWorkflowHeaders from "../tables/analysisWorkflowHeaders.js";
+import type * as tables_customers from "../tables/customers.js";
+import type * as tables_users from "../tables/users.js";
 
 import type {
   ApiFromModules,
@@ -90,6 +95,11 @@ declare const fullApi: ApiFromModules<{
   "mcKinseyAi/types": typeof mcKinseyAi_types;
   migrations: typeof migrations;
   r2: typeof r2;
+  "tables/analysisConfigurations": typeof tables_analysisConfigurations;
+  "tables/analysisWorkflowDetails": typeof tables_analysisWorkflowDetails;
+  "tables/analysisWorkflowHeaders": typeof tables_analysisWorkflowHeaders;
+  "tables/customers": typeof tables_customers;
+  "tables/users": typeof tables_users;
 }>;
 
 /**
