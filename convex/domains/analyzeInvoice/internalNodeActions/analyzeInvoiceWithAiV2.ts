@@ -119,7 +119,7 @@ export const internalActionFn = internalAction({
             console.log(span, "toolArgs", toolArgs);
 
             const model = withTracing(
-              openrouter("openai/gpt-5.2"),
+              openrouter("google/gemini-3-pro-preview"),
               phClient,
               posthogProperties,
             );
