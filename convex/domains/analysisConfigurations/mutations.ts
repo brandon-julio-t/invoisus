@@ -12,11 +12,10 @@ export const upsertAnalysisConfiguration = mutation({
     console.log("args", args);
 
     const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
     if (!authUser) {
       throw new ConvexError("User not found");
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     if (args.id) {
       await ctx.db.patch("analysisConfigurations", args.id, args.data);

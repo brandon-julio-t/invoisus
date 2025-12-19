@@ -14,11 +14,10 @@ export const createCustomer = mutation({
     console.log("args", args);
 
     const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
     if (!authUser) {
       throw new Error("User not found");
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     const id = await createOneCustomer({ ctx, args });
     console.log("id", id);
@@ -33,11 +32,10 @@ export const importCustomers = mutation({
     console.log("args", args);
 
     const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
     if (!authUser) {
       throw new Error("User not found");
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     for (const customer of args.customers) {
       console.log("customer", customer);
@@ -74,11 +72,10 @@ export const updateCustomer = mutation({
     console.log("args", args);
 
     const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
     if (!authUser) {
       throw new Error("User not found");
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     await updateOneCustomer({ ctx, args });
   },
@@ -92,11 +89,10 @@ export const deleteCustomer = mutation({
     console.log("args", args);
 
     const authUser = await authComponent.safeGetAuthUser(ctx);
+    console.log("authUser", authUser);
     if (!authUser) {
       throw new Error("User not found");
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     await deleteOneCustomer({ ctx, args });
   },

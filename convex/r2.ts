@@ -33,10 +33,8 @@ export const generateDownloadUrl = mutation({
     const authUser = await authComponent.safeGetAuthUser(ctx);
     console.log("authUser", authUser);
     if (!authUser) {
-      throw new Error("User not found");
+      return "";
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     return await r2.getUrl(args.key, { expiresIn: args.expiresIn });
   },
