@@ -53,7 +53,7 @@ export const handleEnqueueAiInvoiceAnalysis = mutation({
           dataExtractionModelPreset: args.dataExtractionModelPreset,
           fileKey: file.fileKey,
           imageFileKeys: file.imageFileKeys,
-          version: args.version,
+          version: args.version ?? "v1",
         },
         {
           onComplete:
