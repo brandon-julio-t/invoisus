@@ -6,7 +6,6 @@ import type { SlackChallenge, SlackEvent } from "./mcKinseyAi/types";
 
 const http = httpRouter();
 
-// auth.addHttpRoutes(http);
 authComponent.registerRoutes(http, createAuth);
 
 http.route({
