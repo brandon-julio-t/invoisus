@@ -1,7 +1,6 @@
 "use client";
 
-import type { UseTipTapEditorParams } from "@/components/tip-tap-editor";
-import { TipTapEditor, useTipTapEditor } from "@/components/tip-tap-editor";
+import { TipTapEditor } from "@/components/tip-tap-editor";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { AnalysisConfigurationFormSchemaType } from "../schemas";
@@ -19,33 +18,20 @@ export function PdfAnalysis({
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={field.name}>PDF Analysis Prompt</FieldLabel>
 
-          <PdfAnalysisField
-            value={field.value}
-            onValueChange={(v) => {
-              const markdown = v.editor.getMarkdown();
-              field.onChange(markdown);
+          <TipTapEditor
+            editorOptions={{
+              content: field.value,
+              contentType: "markdown",
+              onUpdate: (v) => {
+                const markdown = v.editor.getMarkdown();
+                field.onChange(markdown);
+              },
             }}
-          />
+          ></TipTapEditor>
 
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>
       )}
     />
   );
-}
-
-function PdfAnalysisField({
-  value,
-  onValueChange,
-}: {
-  value: string;
-  onValueChange: UseTipTapEditorParams["onUpdate"];
-}) {
-  const editor = useTipTapEditor({
-    content: value,
-    contentType: "markdown",
-    onUpdate: onValueChange,
-  });
-
-  return <TipTapEditor editor={editor} />;
 }
