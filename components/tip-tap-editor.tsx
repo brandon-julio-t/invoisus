@@ -31,6 +31,12 @@ import {
   CommandSeparator,
 } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+  TooltipContent,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 /**
  * @docs - quickstart: https://tiptap.dev/docs/editor/getting-started/install/nextjs
@@ -95,132 +101,158 @@ export function TipTapEditor({
         <BubbleMenu
           editor={editor}
           data-slot="tip-tap-editor-bubble-menu"
-          className="bg-popover text-popover-foreground z-50 flex flex-row flex-wrap gap-1 rounded-md border p-1 shadow-md outline-hidden"
+          className="bg-popover text-popover-foreground z-50 flex flex-row flex-wrap gap-0 rounded-md border p-1 shadow-md outline-hidden"
           options={{
             placement: "bottom-start",
           }}
         >
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                type="button"
-                size="sm"
-                className="group"
-              >
-                <span>{activeBlockStateLabel}</span>
-                <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Command>
-                <CommandInput placeholder="Turn into.." />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup>
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().setParagraph().run()
-                      }
+          <TooltipProvider>
+            <Popover>
+              <PopoverTrigger asChild>
+                <TooltipRoot>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      size="sm"
+                      className="group"
                     >
-                      <Heading1Icon />
-                      <span>Text</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isParagraph ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().toggleHeading({ level: 1 }).run()
-                      }
-                    >
-                      <Heading1Icon />
-                      <span>Heading 1</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isHeading1 ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().toggleHeading({ level: 2 }).run()
-                      }
-                    >
-                      <Heading2Icon />
-                      <span>Heading 2</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isHeading2 ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().toggleHeading({ level: 3 }).run()
-                      }
-                    >
-                      <Heading3Icon />
-                      <span>Heading 3</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isHeading3 ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
+                      <span>{activeBlockStateLabel}</span>
+                      <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>Change the block state</span>
+                  </TooltipContent>
+                </TooltipRoot>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Turn into.." />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup>
+                      <CommandItem
+                        onSelect={() =>
+                          editor.chain().focus().setParagraph().run()
+                        }
+                      >
+                        <Heading1Icon />
+                        <span>Text</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isParagraph ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                      <CommandItem
+                        onSelect={() =>
+                          editor
+                            .chain()
+                            .focus()
+                            .toggleHeading({ level: 1 })
+                            .run()
+                        }
+                      >
+                        <Heading1Icon />
+                        <span>Heading 1</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isHeading1 ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                      <CommandItem
+                        onSelect={() =>
+                          editor
+                            .chain()
+                            .focus()
+                            .toggleHeading({ level: 2 })
+                            .run()
+                        }
+                      >
+                        <Heading2Icon />
+                        <span>Heading 2</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isHeading2 ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                      <CommandItem
+                        onSelect={() =>
+                          editor
+                            .chain()
+                            .focus()
+                            .toggleHeading({ level: 3 })
+                            .run()
+                        }
+                      >
+                        <Heading3Icon />
+                        <span>Heading 3</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isHeading3 ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
 
-                    <CommandSeparator />
+                      <CommandSeparator />
 
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().toggleOrderedList().run()
-                      }
-                    >
-                      <ListOrderedIcon />
-                      <span>Ordered List</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isOrderedList ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
-                    <CommandItem
-                      onSelect={() =>
-                        editor.chain().focus().toggleBulletList().run()
-                      }
-                    >
-                      <ListIcon />
-                      <span>Bullet List</span>
-                      <CheckIcon
-                        className={cn(
-                          "ml-auto",
-                          editorState.isBulletList ? "visible" : "invisible",
-                        )}
-                      />
-                    </CommandItem>
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+                      <CommandItem
+                        onSelect={() =>
+                          editor.chain().focus().toggleOrderedList().run()
+                        }
+                      >
+                        <ListOrderedIcon />
+                        <span>Ordered List</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isOrderedList ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                      <CommandItem
+                        onSelect={() =>
+                          editor.chain().focus().toggleBulletList().run()
+                        }
+                      >
+                        <ListIcon />
+                        <span>Bullet List</span>
+                        <CheckIcon
+                          className={cn(
+                            "ml-auto",
+                            editorState.isBulletList ? "visible" : "invisible",
+                          )}
+                        />
+                      </CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
 
-          <ButtonGroup>
-            <Button
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              variant={editorState.isBold ? "outline" : "ghost"}
-              type="button"
-              size="icon-sm"
-            >
-              <BoldIcon />
-            </Button>
-          </ButtonGroup>
+            <ButtonGroup>
+              <TooltipRoot>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    variant={editorState.isBold ? "outline" : "ghost"}
+                    type="button"
+                    size="icon-sm"
+                  >
+                    <BoldIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Toggle bold</TooltipContent>
+              </TooltipRoot>
+            </ButtonGroup>
+          </TooltipProvider>
         </BubbleMenu>
       )}
 
