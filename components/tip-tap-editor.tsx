@@ -36,6 +36,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
  * @docs - quickstart: https://tiptap.dev/docs/editor/getting-started/install/nextjs
  * @docs - bubble menu: https://tiptap.dev/docs/editor/extensions/functionality/bubble-menu
  * @docs - drag handle: https://tiptap.dev/docs/editor/extensions/functionality/drag-handle
+ * @docs - placeholder: https://tiptap.dev/docs/editor/extensions/functionality/placeholder
  */
 export function TipTapEditor({
   className,
