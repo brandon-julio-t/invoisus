@@ -95,7 +95,7 @@ export function TipTapEditor({
         <BubbleMenu
           editor={editor}
           data-slot="tip-tap-editor-bubble-menu"
-          className="bg-popover text-popover-foreground z-50 rounded-md border p-1 shadow-md outline-hidden flex flex-row flex-wrap gap-1"
+          className="bg-popover text-popover-foreground z-50 flex flex-row flex-wrap gap-1 rounded-md border p-1 shadow-md outline-hidden"
           options={{
             placement: "bottom-start",
           }}
@@ -109,7 +109,7 @@ export function TipTapEditor({
                 className="group"
               >
                 <span>{activeBlockStateLabel}</span>
-                <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180 transition-transform" />
+                <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -245,9 +245,9 @@ export function TipTapEditor({
           "[&_h3]:text-lg [&_h3]:font-medium",
 
           // ordered list styles
-          "[&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul_p]:inline",
+          "[&_ul]:ml-6 [&_ul]:list-outside [&_ul]:list-disc [&_ul_p]:inline",
           // bullet list styles
-          "[&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol_p]:inline",
+          "[&_ol]:ml-6 [&_ol]:list-outside [&_ol]:list-decimal [&_ol_p]:inline",
 
           className,
         )}
