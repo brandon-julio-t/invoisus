@@ -245,9 +245,9 @@ export function TipTapEditor({
           "[&_h3]:text-lg [&_h3]:font-medium",
 
           // ordered list styles
-          "[&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-4.5 [&_ul_p]:inline",
+          "[&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul_p]:inline",
           // bullet list styles
-          "[&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-4.5 [&_ol_p]:inline",
+          "[&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol_p]:inline",
 
           className,
         )}
