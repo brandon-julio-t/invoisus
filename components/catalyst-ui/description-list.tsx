@@ -24,7 +24,7 @@ export function DescriptionTerm({
       {...props}
       className={clsx(
         className,
-        "col-start-1 border-t border-border pt-3 text-muted-foreground first:border-none sm:border-t sm:py-3",
+        "border-border text-muted-foreground col-start-1 border-t pt-3 first:border-none sm:border-t sm:py-3",
       )}
     />
   );
@@ -39,7 +39,7 @@ export function DescriptionDetails({
       {...props}
       className={clsx(
         className,
-        "pt-1 pb-3 text-foreground sm:border-t sm:py-3 sm:nth-2:border-none",
+        "text-foreground pt-1 pb-3 sm:border-t sm:py-3 sm:nth-2:border-none",
       )}
     />
   );

@@ -65,7 +65,7 @@ export function GoogleSheetOutputByVendor({
                         className="truncate break-all"
                       >
                         <span className="underline">here</span>
-                        <ExternalLinkIcon className="size-(--text-sm) inline-block ml-1" />
+                        <ExternalLinkIcon className="ml-1 inline-block size-(--text-sm)" />
                       </a>
                     </FieldDescription>
                     {fieldState.invalid && (

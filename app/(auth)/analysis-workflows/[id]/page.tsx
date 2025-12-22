@@ -226,7 +226,7 @@ const WorkflowDetailPage = () => {
                     ? format(workflowHeaderQuery.lastUpdatedTime, "PPPPp")
                     : "N/A"}{" "}
                   {workflowHeaderQuery.lastUpdatedTime && (
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {formatDistanceStrict(
                         workflowHeaderQuery._creationTime ?? 0,
                         workflowHeaderQuery.lastUpdatedTime ?? 0,
@@ -243,13 +243,13 @@ const WorkflowDetailPage = () => {
                 </DescriptionDetails>
 
                 <DescriptionTerm>Workflow ID:</DescriptionTerm>
-                <DescriptionDetails className="font-mono truncate">
+                <DescriptionDetails className="truncate font-mono">
                   {workflowHeaderQuery._id}
                 </DescriptionDetails>
               </DescriptionList>
             </ItemFooter>
           </Item>
-          <ItemGroup className="flex-col md:flex-row md:flex-wrap gap-6">
+          <ItemGroup className="flex-col gap-6 md:flex-row md:flex-wrap">
             {[
               {
                 label: "Processing",

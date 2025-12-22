@@ -33,7 +33,7 @@ export function AuthLayoutView({
   return (
     <>
       <AuthLoading>
-        <div className="container min-h-svh grid place-items-center">
+        <div className="container grid min-h-svh place-items-center">
           <Empty className="border">
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -67,7 +67,7 @@ export function AuthLayoutView({
       </Authenticated>
 
       <Unauthenticated>
-        <div className="container min-h-svh grid place-items-center">
+        <div className="container grid min-h-svh place-items-center">
           <Empty className="border">
             <EmptyHeader>
               <EmptyMedia>
