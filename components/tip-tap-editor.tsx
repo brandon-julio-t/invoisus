@@ -216,13 +216,7 @@ export function TipTapEditor({
         </BubbleMenu>
       )}
 
-      <DragHandle
-        editor={editor}
-        computePositionConfig={{
-          placement: "left-start",
-          strategy: "absolute",
-        }}
-      >
+      <DragHandle editor={editor}>
         <div className="pr-1">
           <Button type="button" variant="ghost" size="icon-sm">
             <GripVertical />
