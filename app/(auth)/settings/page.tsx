@@ -8,17 +8,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { ItemGroup } from "@/components/ui/item";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "convex-helpers/react/cache/hooks";
@@ -26,8 +20,9 @@ import { useMutation } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { ConvexError } from "convex/values";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { DataExtraction } from "./_components/data-extraction";
 import { GoogleSheetOutputByVendor } from "./_components/google-sheet-output-by-vendor";
 import { PdfAnalysis } from "./_components/pdf-analysis";
 import { analysisConfigurationFormSchema } from "./schemas";
@@ -161,25 +156,7 @@ function SettingsPageBody({
           </TabsContent>
 
           <TabsContent value="Data Extraction">
-            <Controller
-              control={form.control}
-              name="dataExtractionPrompt"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    Data Extraction Prompt
-                  </FieldLabel>
-                  <Textarea
-                    {...field}
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+            <DataExtraction form={form} />
           </TabsContent>
 
           <TabsContent value="Google Sheet Output By Vendor">

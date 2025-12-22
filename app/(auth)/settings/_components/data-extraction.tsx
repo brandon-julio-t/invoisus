@@ -6,7 +6,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { AnalysisConfigurationFormSchemaType } from "../schemas";
 
-export function PdfAnalysis({
+export function DataExtraction({
   form,
 }: {
   form: UseFormReturn<AnalysisConfigurationFormSchemaType>;
@@ -14,12 +14,12 @@ export function PdfAnalysis({
   return (
     <Controller
       control={form.control}
-      name="pdfAnalysisPrompt"
+      name="dataExtractionPrompt"
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={field.name}>PDF Analysis Prompt</FieldLabel>
+          <FieldLabel htmlFor={field.name}>Data Extraction Prompt</FieldLabel>
 
-          <PdfAnalysisField
+          <DataExtractionField
             value={field.value}
             onValueChange={(v) => {
               const markdown = v.editor.getMarkdown();
@@ -34,7 +34,7 @@ export function PdfAnalysis({
   );
 }
 
-function PdfAnalysisField({
+function DataExtractionField({
   value,
   onValueChange,
 }: {
