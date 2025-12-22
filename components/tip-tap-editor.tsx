@@ -213,15 +213,17 @@ export function TipTapEditor({
         editor={editor}
         data-slot="tip-tap-editor-content"
         className={cn(
-          // Heading styles
-          "[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:py-4",
-          "[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:py-2",
-          "[&_h3]:text-lg [&_h3]:font-medium [&_h3]:py-1",
-          "[&_p]:py-0.5",
+          // container styles
+          "[&_.tiptap]:flex [&_.tiptap]:flex-col [&_.tiptap]:gap-4",
 
-          // Ordered List styles
+          // heading styles
+          "[&_h1]:text-2xl [&_h1]:font-bold",
+          "[&_h2]:text-xl [&_h2]:font-semibold",
+          "[&_h3]:text-lg [&_h3]:font-medium",
+
+          // ordered list styles
           "[&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-4.5 [&_ul_p]:inline",
-          // Bullet List styles
+          // bullet list styles
           "[&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-4.5 [&_ol_p]:inline",
           className,
         )}
