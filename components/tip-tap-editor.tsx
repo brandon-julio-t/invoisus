@@ -101,7 +101,7 @@ export function TipTapEditor({
         <BubbleMenu
           editor={editor}
           data-slot="tip-tap-editor-bubble-menu"
-          className="bg-popover text-popover-foreground z-50 flex flex-row flex-wrap gap-0 rounded-md border p-1 shadow-md outline-hidden"
+          className="bg-popover text-popover-foreground z-50 flex flex-row flex-wrap gap-1 rounded-md border p-1 shadow-md outline-hidden"
           options={{
             placement: "bottom-start",
           }}
