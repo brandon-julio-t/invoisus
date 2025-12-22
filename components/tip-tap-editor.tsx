@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import DragHandle from "@tiptap/extension-drag-handle-react";
 import { Markdown } from "@tiptap/markdown";
 import type { EditorContentProps, UseEditorOptions } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -10,6 +11,7 @@ import {
   BoldIcon,
   CheckIcon,
   ChevronDownIcon,
+  GripVertical,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
@@ -29,6 +31,11 @@ import {
 } from "./ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
+/**
+ * @docs - quickstart: https://tiptap.dev/docs/editor/getting-started/install/nextjs
+ * @docs - bubble menu: https://tiptap.dev/docs/editor/extensions/functionality/bubble-menu
+ * @docs - drag handle: https://tiptap.dev/docs/editor/extensions/functionality/drag-handle
+ */
 export function TipTapEditor({
   className,
   editorOptions,
@@ -208,6 +215,20 @@ export function TipTapEditor({
           </ButtonGroup>
         </BubbleMenu>
       )}
+
+      <DragHandle
+        editor={editor}
+        computePositionConfig={{
+          placement: "left-start",
+          strategy: "absolute",
+        }}
+      >
+        <div className="pr-1">
+          <Button type="button" variant="ghost" size="icon-sm">
+            <GripVertical />
+          </Button>
+        </div>
+      </DragHandle>
 
       <EditorContent
         editor={editor}
