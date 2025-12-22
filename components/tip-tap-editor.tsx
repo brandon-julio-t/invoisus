@@ -222,9 +222,9 @@ export function TipTapEditor({
           "[&_p]:py-0.5",
 
           // Ordered List styles
-          "[&_ul]:list-disc [&_ul]:list-inside [&_ul_p]:inline-block",
+          "[&_ul]:list-disc [&_ul]:list-inside [&_ul_p]:inline",
           // Bullet List styles
-          "[&_ol]:list-decimal [&_ol]:list-inside [&_ol_p]:inline-block",
+          "[&_ol]:list-decimal [&_ol]:list-inside [&_ol_p]:inline",
           className,
         )}
         {...props}
