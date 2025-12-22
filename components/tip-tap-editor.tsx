@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import DragHandle from "@tiptap/extension-drag-handle-react";
+import { Placeholder } from "@tiptap/extensions";
 import { Markdown } from "@tiptap/markdown";
 import type { EditorContentProps, UseEditorOptions } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -46,7 +47,13 @@ export function TipTapEditor({
   const editor = useEditor({
     // Don't render immediately on the server to avoid SSR issues
     immediatelyRender: false,
-    extensions: [StarterKit, Markdown],
+    extensions: [
+      StarterKit,
+      Markdown,
+      Placeholder.configure({
+        placeholder: "Start typing...",
+      }),
+    ],
     content: "<p>Hello World! 🌎️</p>",
     ...editorOptions,
   });
@@ -240,6 +247,7 @@ export function TipTapEditor({
           "[&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-4.5 [&_ul_p]:inline",
           // bullet list styles
           "[&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-4.5 [&_ol_p]:inline",
+
           className,
         )}
         {...props}
