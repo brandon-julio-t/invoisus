@@ -29,6 +29,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { GoogleSheetOutputByVendor } from "./_components/google-sheet-output-by-vendor";
+import { PdfAnalysis } from "./_components/pdf-analysis";
 import { analysisConfigurationFormSchema } from "./schemas";
 
 export default function SettingsPage() {
@@ -156,25 +157,7 @@ function SettingsPageBody({
           </ScrollArea>
 
           <TabsContent value="PDF Analysis">
-            <Controller
-              control={form.control}
-              name="pdfAnalysisPrompt"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    PDF Analysis Prompt
-                  </FieldLabel>
-                  <Textarea
-                    {...field}
-                    id={field.name}
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+            <PdfAnalysis form={form} />
           </TabsContent>
 
           <TabsContent value="Data Extraction">
