@@ -108,8 +108,8 @@ export function TipTapEditor({
         >
           <TooltipProvider>
             <Popover>
-              <PopoverTrigger asChild>
-                <TooltipRoot>
+              <TooltipRoot>
+                <PopoverTrigger asChild>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
@@ -121,11 +121,9 @@ export function TipTapEditor({
                       <ChevronDownIcon className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <span>Change the block state</span>
-                  </TooltipContent>
-                </TooltipRoot>
-              </PopoverTrigger>
+                </PopoverTrigger>
+                <TooltipContent>Turn into</TooltipContent>
+              </TooltipRoot>
               <PopoverContent className="w-auto p-0" align="start">
                 <Command>
                   <CommandInput placeholder="Turn into.." />
