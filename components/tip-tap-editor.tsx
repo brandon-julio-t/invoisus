@@ -74,8 +74,6 @@ export function TipTapEditor({
     activeBlockStateLabel = "Heading 3";
   }
 
-  console.log(editorState);
-
   return (
     <>
       {editor && (
