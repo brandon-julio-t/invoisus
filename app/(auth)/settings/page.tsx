@@ -10,9 +10,8 @@ import {
 } from "@/components/ui/empty";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { ItemGroup } from "@/components/ui/item";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "convex-helpers/react/cache/hooks";
@@ -22,9 +21,7 @@ import { ConvexError } from "convex/values";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { DataExtraction } from "./_components/data-extraction";
 import { GoogleSheetOutputByVendor } from "./_components/google-sheet-output-by-vendor";
-import { PdfAnalysis } from "./_components/pdf-analysis";
 import { analysisConfigurationFormSchema } from "./schemas";
 
 export default function SettingsPage() {
@@ -54,8 +51,8 @@ export default function SettingsPage() {
 }
 
 const formTabs = [
-  "PDF Analysis",
-  "Data Extraction",
+  // "PDF Analysis",
+  // "Data Extraction",
   "Google Sheet Output By Vendor",
 ] as const;
 
@@ -68,7 +65,7 @@ function SettingsPageBody({
 }) {
   const [tab, setTab] = useQueryState(
     "tab",
-    parseAsStringLiteral(formTabs).withDefault("PDF Analysis"),
+    parseAsStringLiteral(formTabs).withDefault("Google Sheet Output By Vendor"),
   );
 
   const upsertAnalysisConfiguration = useMutation(
@@ -139,7 +136,7 @@ function SettingsPageBody({
     <form onSubmit={onSubmit}>
       <Tabs value={tab} onValueChange={(value) => setTab(value as typeof tab)}>
         <FieldGroup>
-          <ScrollArea>
+          {/* <ScrollArea>
             <ScrollBar orientation="horizontal" />
 
             <TabsList>
@@ -149,14 +146,16 @@ function SettingsPageBody({
                 </TabsTrigger>
               ))}
             </TabsList>
-          </ScrollArea>
+          </ScrollArea> */}
 
           <TabsContent value="PDF Analysis">
-            <PdfAnalysis form={form} />
+            {/* <PdfAnalysis form={form} /> */}
+            <GoogleSheetOutputByVendor form={form} />
           </TabsContent>
 
           <TabsContent value="Data Extraction">
-            <DataExtraction form={form} />
+            {/* <DataExtraction form={form} /> */}
+            <GoogleSheetOutputByVendor form={form} />
           </TabsContent>
 
           <TabsContent value="Google Sheet Output By Vendor">
