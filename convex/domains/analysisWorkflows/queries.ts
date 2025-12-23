@@ -20,8 +20,6 @@ export const getPaginatedAnalysisWorkflowHeaders = query({
         continueCursor: "",
       } satisfies PaginationResult<unknown>;
     }
-    const userId = authUser._id as string;
-    console.log("userId", userId);
 
     const paginated = await ctx.db
       .query("analysisWorkflowHeaders")
