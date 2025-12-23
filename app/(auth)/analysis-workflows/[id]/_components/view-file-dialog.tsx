@@ -11,11 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex-helpers/react/cache/hooks";
 import { DownloadIcon } from "lucide-react";
@@ -30,13 +25,7 @@ export const ViewFileDialog = ({
 }) => {
   return (
     <Dialog>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DialogTrigger asChild>{children}</DialogTrigger>
-        </TooltipTrigger>
-        <TooltipContent>View file</TooltipContent>
-      </Tooltip>
-
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="h-svh w-full max-w-none sm:max-w-none">
         <ViewFileDialogContent fileKey={fileKey} filename={filename} />
       </DialogContent>

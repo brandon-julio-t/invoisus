@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -26,39 +21,34 @@ export function RetryButton({
   );
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          disabled={isLoading}
-          onClick={async () => {
-            setIsLoading(true);
+    <Button
+      variant="ghost"
+      size="icon"
+      disabled={isLoading}
+      onClick={async () => {
+        setIsLoading(true);
 
-            await toast
-              .promise(
-                retryOneAnalysisWorkflowDetail({
-                  analysisWorkflowDetailId,
-                }),
-                {
-                  loading: "Retrying analysis workflow detail...",
-                  success: "Analysis workflow detail retried successfully",
-                  error: (err) =>
-                    err instanceof ConvexError
-                      ? err.data
-                      : "Failed to retry analysis workflow detail",
-                  finally: () => {
-                    setIsLoading(false);
-                  },
-                },
-              )
-              .unwrap();
-          }}
-        >
-          {isLoading ? <Spinner /> : <RefreshCcwIcon />}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>Retry this analysis workflow detail</TooltipContent>
-    </Tooltip>
+        await toast
+          .promise(
+            retryOneAnalysisWorkflowDetail({
+              analysisWorkflowDetailId,
+            }),
+            {
+              loading: "Retrying analysis workflow detail...",
+              success: "Analysis workflow detail retried successfully",
+              error: (err) =>
+                err instanceof ConvexError
+                  ? err.data
+                  : "Failed to retry analysis workflow detail",
+              finally: () => {
+                setIsLoading(false);
+              },
+            },
+          )
+          .unwrap();
+      }}
+    >
+      {isLoading ? <Spinner /> : <RefreshCcwIcon />}
+    </Button>
   );
 }

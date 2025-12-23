@@ -15,6 +15,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
+  TooltipRoot,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatCamelCaseToHuman, formatFileSize } from "@/lib/strings";
@@ -93,31 +95,48 @@ export const WorkflowDetailsTableRow = ({
           )}
         </TableCell>
         <TableCell>
-          {detail.status === "failed" && (
-            <RetryButton analysisWorkflowDetailId={detail._id} />
-          )}
+          <TooltipProvider>
+            {detail.status === "failed" && (
+              <TooltipRoot>
+                <TooltipTrigger asChild>
+                  <RetryButton analysisWorkflowDetailId={detail._id} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Retry this analysis workflow detail
+                </TooltipContent>
+              </TooltipRoot>
+            )}
 
-          <ViewFileDialog fileKey={detail.fileKey} filename={detail.fileName}>
-            <Button variant="ghost" size="icon">
-              <EyeIcon />
-            </Button>
-          </ViewFileDialog>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DownloadFileButton
+            <TooltipRoot>
+              <ViewFileDialog
                 fileKey={detail.fileKey}
                 filename={detail.fileName}
-                variant="ghost"
-                size="icon"
               >
-                {({ isDownloading }) =>
-                  isDownloading ? <Spinner /> : <DownloadIcon />
-                }
-              </DownloadFileButton>
-            </TooltipTrigger>
-            <TooltipContent>Download file</TooltipContent>
-          </Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <EyeIcon />
+                  </Button>
+                </TooltipTrigger>
+              </ViewFileDialog>
+              <TooltipContent>View file</TooltipContent>
+            </TooltipRoot>
+
+            <TooltipRoot>
+              <TooltipTrigger asChild>
+                <DownloadFileButton
+                  fileKey={detail.fileKey}
+                  filename={detail.fileName}
+                  variant="ghost"
+                  size="icon"
+                >
+                  {({ isDownloading }) =>
+                    isDownloading ? <Spinner /> : <DownloadIcon />
+                  }
+                </DownloadFileButton>
+              </TooltipTrigger>
+              <TooltipContent>Download file</TooltipContent>
+            </TooltipRoot>
+          </TooltipProvider>
         </TableCell>
       </TableRow>
 
